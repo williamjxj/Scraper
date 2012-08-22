@@ -61,7 +61,7 @@ $help && usage();
 # print $jobs . "\n"; print $db_name . "\n";
 
 if ($first) {
-	my $ca1 = $craig->select_us_cities();
+	my $ca1 = $craig->select_ca_cities();
 	foreach my $ca2 (@$ca1) {
 		print $ca2->[0] . "\n";
 	}
@@ -70,19 +70,12 @@ if ($first) {
 
 my $db_name;
 if ( $jobs eq 'jobs' ) {
-	$db_name = USJOBS;
-}
-elsif ( $jobs eq 'services' ) {
-	$db_name = USSERVICES;
-}
-elsif ( $jobs eq 'gigs' ) {
-	$db_name = USGIGS;
-}
-elsif ( $jobs eq 'resumes' ) {
-	$db_name = USRESUMES;
+   $db_name = 'craigslist_cajobs';
 }
 else {
-	die "There is no suitable job selected.";
+	$jobs = 'jobs';
+   $db_name = 'craigslist_cajobs';
+	# die "There is no suitable job selected.";
 }
 
 if ($list) {
@@ -102,69 +95,24 @@ EOF
 
 # date +'%a %d %b' -d "2 day ago"
 if ($todate) {
-	$end_date = $craig->get_us_end_date($todate);
+	$end_date = $craig->get_end_date($todate);
 }
 if ( $city && $item ) {
 	my ( $r1, $r2 ) = ( '', '' );
 
-	$r1 = $craig->select_us_city($city);
+	$r1 = $craig->select_city($city);
 	die "No such city: <" . $city . ">, $0 quit." unless ($r1);
 
-	$r2 = $craig->select_category($item, $jobs);
-	die "No such category: <" . $item . ">, $0 quit." unless ($r2);
-
-	$start_url = $r1 . $r2 if ( $city && $item );
-	$craig->write_log( "URL: <" . $start_url . ">." );
-}
-if ( $keywords && $email ) {
-	$craig->select_keywords_email( $keywords, $email );
-}
-elsif ($keywords) {
-	$craig->select_keywords($keywords);
-}
-else {
-	die "There is no suitable job selected.";
-}
-
-if ($list) {
-	my $list1 = $craig->select_items($jobs);
-	foreach my $list2 (@$list1) {
-		print $list2->[0] . "\n";
+	if (($jobs eq 'resumes') && ($item eq 'resumes')) {
+		$r2 = 'res/';
 	}
-	exit 2;
-}
-if ($version) {
-	print <<EOF;
-
-$0:  Version 2.0
-EOF
-	exit 2;
-}
-
-# date +'%a %d %b' -d "2 day ago"
-if ($todate) {
-	$end_date = $craig->get_us_end_date($todate);
-}
-if ( $city && $item ) {
-	my ( $r1, $r2 ) = ( '', '' );
-
-	$r1 = $craig->select_us_city($city);
-	die "No such city: <" . $city . ">, $0 quit." unless ($r1);
-
-	$r2 = $craig->select_category($item, $jobs);
-	die "No such category: <" . $item . ">, $0 quit." unless ($r2);
+	else {
+		$r2 = $craig->select_category($item, $jobs);
+		die "No such category: <" . $item . ">, $0 quit." unless ($r2);
+	}
 
 	$start_url = $r1 . $r2 if ( $city && $item );
 	$craig->write_log( "URL: <" . $start_url . ">." );
-}
-if ( $keywords && $email ) {
-	$craig->select_keywords_email( $keywords, $email );
-}
-elsif ($keywords) {
-	$craig->select_keywords($keywords);
-}
-elsif ($email) {
-	$craig->select_email($email);
 }
 
 $mech = WWW::Mechanize->new( autocheck => 0 );
@@ -194,14 +142,12 @@ unless ($ht) {
 	exit 6;
 }
 
-# for auburn+creative/computer/event etc, return gig data. ht='Thu' etc
-if ( length($ht) < 10 ) {
-	$ht = $craig->parse_gigs_html($html);
-}
 $page_url = $craig->parse_next_page($ht);
 
 my $aoh = $craig->parse_item_main($ht);
 
+my ( $pdt, $pemail, $phone, $web, $relevant, $email1 ) = ('', '', '', '', '');
+my ( $t0, $t1, $t2, $t3 , $ttt );
 foreach my $t ( @{$aoh} ) {
 	my $url = $t->[0];
 
@@ -215,13 +161,30 @@ foreach my $t ( @{$aoh} ) {
 	$mech->success
 	  or next;           # $mech->success or die $mech->response->status_line;
 
-	my ( $pdt, $pemail, $phone, $web, $relevant ) =
-	  $craig->parse_detail( $mech->content );
+	if (($jobs eq 'resumes') && ($item eq 'resumes')) {
+		( $pdt, $pemail, $phone, $web, $relevant ) = $craig->parse_detail_resumes( $mech->content );
+	}
+	else {
+		( $pdt, $pemail, $phone, $web, $relevant, $email1 ) = $craig->parse_detail( $mech->content );
+	}
 
 	$pemail = '' unless ( defined $pemail );
 	$pemail = '' unless ($pemail);
 
-	my ( $t0, $t1, $t2, $t3 ) = @{$t};
+	if( $pemail && ! $email1 ) {
+		$email1  = $pemail;
+	}
+	elsif ($pemail && ($pemail !~ m/\@craigslist.org/)) {
+		if ($email1) {
+			my $ex = $pemail;
+			$pemail = $email1;
+			$email1 = $ex;
+		}
+	}
+	$pemail  = $dbh->quote( $pemail );
+	$email1  = $dbh->quote( $email1 );
+
+	( $t0, $t1, $t2, $t3 ) = @{$t};
 	$t0  = $dbh->quote( $t->[0] );
 	$t1  = $dbh->quote( $t->[1] );
 	$t2  = $dbh->quote( $t->[2] );
@@ -232,18 +195,10 @@ foreach my $t ( @{$aoh} ) {
 	$relevant = $dbh->quote($relevant);
 
 	my $c1 = $dbh->quote($city);    # st john's,NL
-=comment
-	$craig->write_log( "No: "
-		  . ($num) . " -- [" . $t0 . ", " . $t1 . ", " . $t2 . ", " . $item . ", " . $pdt . ", " . $pemail . ", " . $phone . ", " . $web . ", " . $c1 . ", " . $item . "]\n" );
-=cut
 
-	$sth = $dbh->do(
-		qq{ insert ignore into } . $db_name . qq{
-			(url,keywords,relevant,location,item,post_time,email,phone,
-			web,city,category,date)
-		values($t0,$t1,$relevant,$t2,'$item','$pdt','$pemail',
-			$phone, $web, $c1,'$jobs',now())}
-	);
+	# $craig->write_log( "No: " . ($num) . " -- [" . $t0 . ", " . $t1 . ", " . $t2 . ", " . $item . ", " . $pdt . ", " . $pemail . ", " . $phone . ", " . $web . ", " . $c1 . ", " . $email1 . "]\n" );
+	# $craig->write_log( "No: " . $url . ", " . $num . " -- [" . $pemail . ", " . $email1 . "]\n" );
+
 
 	$mech->back();
 }

@@ -1,246 +1,208 @@
-#! /cygdrive/c/Perl/bin/perl.exe
+#! /cygdrive/c/Perl/bin/perl.exe -w
+###!/usr/bin/perl
 
-use lib qw(../lib/);
-use craig_config;
+use lib qw(./lib/);
+use config;
+
 use db;
-use craig;
+use chinafnews;
 
 use warnings;
 use strict;
+use utf8;
 use Data::Dumper;
 use FileHandle;
 use WWW::Mechanize;
 use DBI;
 use Getopt::Long;
 
-local ($|) = 1;
-undef $/;
+sub BEGIN
+{
+	$SIG{'INT'}  = 'IGNORE';
+	$SIG{'QUIT'} = 'IGNORE';
+	$SIG{'TERM'} = 'IGNORE';
+	$SIG{'PIPE'} = 'IGNORE';
+	$SIG{'CHLD'} = 'IGNORE';
+
+	$ENV{'PATH'} = '/usr/bin/:/bin/:.';
+
+	local ($|) = 1;
+	undef $/;
+}
 
 #-----------------------------------
 # 0. initialize:
 #-----------------------------------
-our ( $num,       $start_time, $end_time, $end_date ) = ( 0,     0,     0, '' );
-our ( $start_url, $page_url,   $todate )   = ( undef, undef, INTERVAL_DATE );
-our ( $mech, $db, $craig, $log ) = ( undef, undef );
+our ( $mech, $db, $news, $log ) = ( undef, undef );
+
 our ( $dbh, $sth );
 
-$start_time = time;
+our ( $start_url, $page_url,  $next_page )   = ( URL3, undef, undef );
 
+our ( $num,  $start_time, $end_time, $end_date ) = ( 0,     0,     0, '' );
+
+my($cate_id, $db_name, $createdby, $chan_id, $chan_name, $created) = (3, DBNAME, '网页自动抓取程序');
+
+# 页面的有效链接, 和翻页部分.
+my ($links, $next);
+
+# 初始化数据库:
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
 $dsn .= ":hostname=$host";
 $db = new db( $user, $pass, $dsn );
 $dbh = $db->{dbh};
 
-$craig = new craig( $db->{dbh} ) or die;
 
-$log = $craig->get_filename(__FILE__);
-$craig->set_log($log);
-$craig->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
+# 初始化页面抓取模块:
+$news = new chinafnews( $db->{dbh} ) or die;
 
-my ( $city, $item, $keywords, $email ) = ( undef, undef, undef, undef );
-my ( $jobs, $first, $help, $version, $list ) = ( 'jobs', undef, undef, undef );
+# 日志文件:
+$start_time = localtime() . time;
 
+$log = $news->get_filename(__FILE__);
+$news->set_log($log);
+$news->write_log( "[" . $log . "]: start at: [" . $start_time . "]." );
+
+
+##### 判别输入粗参数部分:
+my ( $first, $list, $todate, $channel, $item, $keywords, $help, $version ) = ( undef, undef, undef, undef, undef, undef, undef );
 usage()
   unless (
 	GetOptions(
-		'jobs=s'     => \$jobs,
 		'first'      => \$first,
 		'list'       => \$list,
 		'todate=s'   => \$todate,
-		'city=s'     => \$city,
+		'channel=s'  => \$channel,
 		'item=s'     => \$item,
 		'keywords=s' => \$keywords,
-		'email=s'    => \$email,
 		'help|?'     => \$help,
 		'version'    => \$version
 	)
   );
-
+  
 $help && usage();
 
-# print $jobs . "\n"; print $db_name . "\n";
-
+# 判断是否有输入参数?
 if ($first) {
-	my $ca1 = $craig->select_us_cities();
+	my $ca1 = $news->select_items();
 	foreach my $ca2 (@$ca1) {
+		print Dumper($ca2);
 		print $ca2->[0] . "\n";
 	}
 	exit 1;
 }
-
-my $db_name;
-if ( $jobs eq 'jobs' ) {
-	$db_name = USJOBS;
-}
-elsif ( $jobs eq 'services' ) {
-	$db_name = USSERVICES;
-}
-elsif ( $jobs eq 'gigs' ) {
-	$db_name = USGIGS;
-}
-elsif ( $jobs eq 'resumes' ) {
-       $db_name = USRESUMES;
-		$item = $jobs;
-}
-else {
-	die "There is no suitable job selected.";
-}
-
 if ($list) {
-	my $list1 = $craig->select_items($jobs);
-	foreach my $list2 (@$list1) {
-		print $list2->[0] . "\n";
+	my $list = $news->select_channels();
+	foreach my $channels (@$list) {
+		print $channels->[0] . "\n";
 	}
 	exit 2;
 }
-if ($version) {
-	print <<EOF;
-
-$0:  Version 2.0
-EOF
-	exit 2;
-}
-
 # date +'%a %d %b' -d "2 day ago"
 if ($todate) {
-	$end_date = $craig->get_us_end_date($todate);
-}
-if ( $city && $item ) {
-	my ( $r1, $r2 ) = ( '', '' );
-
-	$r1 = $craig->select_us_city($city);
-	die "No such city: <" . $city . ">, $0 quit." unless ($r1);
-
-	if (($jobs eq 'resumes') && ($item eq 'resumes')) {
-		$r2 = 'res/';
-	}
-	else {
-		$r2 = $craig->select_category($item, $jobs);
-		die "No such category: <" . $item . ">, $0 quit." unless ($r2);
-	}
-
-	$start_url = $r1 . $r2 if ( $city && $item );
-	$craig->write_log( "URL: <" . $start_url . ">." );
-}
-if ( $keywords && $email ) {
-	$craig->select_keywords_email( $keywords, $email );
-}
-elsif ($keywords) {
-	$craig->select_keywords($keywords);
-}
-elsif ($email) {
-	$craig->select_email($email);
-}
-
-$mech = WWW::Mechanize->new( autocheck => 0 );
-if ( $start_url =~ m/cgi-bin/ ) {
-	$mech->get($start_url);
-	$mech->success or die $mech->response->status_line;
-	$page_url = $craig->parse_cgi_page( $mech->content );
+	$end_date = $news->get_end_date($todate);
 }
 else {
-	$page_url = $start_url;
+	$todate =  INTERVAL_DATE;	
 }
+
+my ($chs, @queue) = ([], ());
+if($channel) {
+	$chs = $news->select_channel_by_id($channel);
+	push(@queue, URL2 . $chs->[1]);
+}
+else {
+	$chs= $news->select_channels();
+	foreach my $ch (@{$chs}) {
+		push(@queue, URL2 . $ch->[1]);
+	}
+}
+print Dumper(\@queue);
+
+
+if($item) {
+	$news->select_items_by_cid($item);	
+}
+if ($keywords) {
+	$keywords = '食品';
+	$news->select_keywords(utf8::encode($keywords));
+}
+#
+#if ($version) {
+#	get_ver();
+#}
+
+
+########### 正式 抓取
+
+$mech = WWW::Mechanize->new( autocheck => 0 );
 
 LOOP:
+
+# 第一次从首页开始抓取,以后取'下一页'的链接,继续抓取.
+if (defined($next_page)) {
+	$page_url = $next_page;
+}
+else {
+	$page_url = $start_url;	
+}
+
 $mech->get($page_url);
 $mech->success or die $mech->response->status_line;
-my $html = $mech->content;
 
-# Only parse data before $end_date.
-my $ht = $craig->parse_date( $end_date, $html );
-unless ($ht) {
-	$dbh->disconnect();
-	$end_time = time;
-	$craig->write_log( "Terminated: Total [$todate] days' data (end at: $end_date): [ " . ( $end_time - $start_time ) . " ] seconds used.\n" );
-	$craig->write_log( "[$jobs],[$city],[$item]: There are total [ $num ] records was processed succesfully!\n");
-	$craig->write_log("==============================================\n");
-	$craig->close_log();
-	exit 6;
-}
 
-# for auburn+creative/computer/event etc, return gig data. ht='Thu' etc
-if ( length($ht) < 10 ) {
-	$ht = $craig->parse_gigs_html($html);
-}
-$page_url = $craig->parse_next_page($ht);
+$links = $news->get_links( $news->parse_list_page_1($mech->content) );
+$next = $news->get_next_page( $news->parse_list_page_2($mech->content) );
 
-my $aoh = $craig->parse_item_main($ht);
+print Dumper($links);
+print Dumper($next);
 
-my ( $pdt, $pemail, $phone, $web, $relevant, $email1 ) = ('', '', '', '', '');
-my ( $t0, $t1, $t2, $t3 , $ttt );
-foreach my $t ( @{$aoh} ) {
-	my $url = $t->[0];
 
-	if ( $t->[2] eq 'img' ) {
-		$t->[2] = '';    # t->[]2]=location
-	}
-	$t->[2] =~ s/\).*$//s if ( $t->[2] =~ m/\)/ );
+$chan_name = $dbh->quote(utf8::encode('饮食健康'));
 
-	$num++;
+$chan_id = $news->select_channel_by_name($chan_name);
+
+foreach my $url ( @{$links} ) {
+
 	$mech->follow_link( url => $url );
-	$mech->success
-	  or next;           # $mech->success or die $mech->response->status_line;
+	$mech->success or next;
 
-	if (($jobs eq 'resumes') && ($item eq 'resumes')) {
-		( $pdt, $pemail, $phone, $web, $relevant ) = $craig->parse_detail_resumes( $mech->content );
-	}
-	else {
-		( $pdt, $pemail, $phone, $web, $relevant, $email1 ) = $craig->parse_detail( $mech->content );
-	}
+	# print $mech->content;
 
-	$pemail = '' unless ( defined $pemail );
-	$pemail = '' unless ($pemail);
+	my ( $name, $notes, $created, $content ) = $news->parse_detail( $mech->content );
 
-	if( $pemail && ! $email1 ) {
-		$email1  = $pemail;
-	}
-	elsif ($pemail && ($pemail !~ m/\@craigslist.org/)) {
-		if ($email1) {
-			my $ex = $pemail;
-			$pemail = $email1;
-			$email1 = $ex;
-		}
-	}
-	$pemail  = $dbh->quote( $pemail );
-	$email1  = $dbh->quote( $email1 );
+	$name = $dbh->quote($name);
+	$notes = $dbh->quote($notes);
+	$content = $dbh->quote($content);
+	$created = $dbh->quote($created);
+	$createdby = $dbh->quote(utf8::encode($createdby));
+	
+	my $sql = q{ insert ignore into } . $db_name . 
+		qq{
+			(name,
+			notes,
+			content,
+			cate_id,
+			chan_id, 
+			chan_name, 
+			createdby,
+			created 
+		) values(
+			$name, 
+			$notes,
+			$content,
+			$cate_id,
+			$chan_id,
+			$chan_name,
+			$createdby,
+			$created
+		)};
+	
+	print $sql;
+		
+	$sth = $dbh->do($sql);
 
-	( $t0, $t1, $t2, $t3 ) = @{$t};
-	$t0  = $dbh->quote( $t->[0] );
-	$t1  = $dbh->quote( $t->[1] );
-	$t2  = $dbh->quote( $t->[2] );
-	$pdt = ' ' unless ($pdt);
-
-	$phone    = $dbh->quote($phone);
-	$web      = $dbh->quote($web);
-	$relevant = $dbh->quote($relevant);
-
-	my $c1 = $dbh->quote($city);    # st john's,NL
-
-	print "No: " . ($num) . " -- [" . $t0 . ", " . $t1 . ", " . $t2 . ", " . $item . ", " . $pdt . ", " . $pemail . ", " . $phone . ", " . $web . ", " . $c1 . ", " . $email1 . "]\n";
-	# $craig->write_log( "No: " . ($num) . " -- [" . $t0 . ", " . $t1 . ", " . $t2 . ", " . $item . ", " . $pdt . ", " . $pemail . ", " . $phone . ", " . $web . ", " . $c1 . ", " . $email1 . "]\n" );
-	# $craig->write_log( "No: " . $url . ", " . $num . " -- [" . $pemail . ", " . $email1 . "]\n" );
-
-	# add column email1 to craigslist_usjobs on July 15, 2010.
-	if ($jobs eq 'jobs') {
-		$sth = $dbh->do(
-			qq{ insert ignore into } . $db_name . qq{
-				(url,keywords,relevant,location,item,post_time,email,phone,
-				web,city,category,date, email1)
-			values($t0,$t1,$relevant,$t2,'$item','$pdt',$email1,
-				$phone, $web, $c1,'$jobs',now(), $pemail) }
-		);
-	}
-	else {
-		$sth = $dbh->do(
-			qq{ insert ignore into } . $db_name . qq{
-				(url,keywords,relevant,location,item,post_time,email,phone,
-				web,city,category,date)
-			values($t0,$t1,$relevant,$t2,'$item','$pdt',$pemail,
-				$phone, $web, $c1,'$jobs',now())}
-		);
-	}
-
+exit;	
 	$mech->back();
 }
 
@@ -249,41 +211,49 @@ goto LOOP if ($page_url);
 $dbh->disconnect();
 
 $end_time = time;
-$craig->write_log( "Total [$todate] days' data (end at: $end_date): [ " . ( $end_time - $start_time ) . " ] seconds used.\n" );
-$craig->write_log( "[$jobs],[$city],[$item]: There are total [ $num ] records was processed succesfully!\n");
-$craig->write_log("----------------------------------------------\n");
-$craig->close_log();
+$news->write_log( "Total [$todate] days' data (end at: $end_date): [ " . ( $end_time - $start_time ) . " ] seconds used.\n" );
+$news->write_log("----------------------------------------------\n");
+$news->close_log();
 
 exit 8;
+
+
+###### 帮助函数 #######
 
 sub usage {
 	print <<HELP;
 Uage:
       $0
      or:
-      $0 -c city -i category
+      $0 -n channel_name #new channel
      or:
       $0 -t 3
      or:
-      $0 -k keyword -e email
+      $0 -k keyword
      or:
       $0 -h  [-v]
 Description:
+  -n which channel to scrape?
   -t from what date to download? default it's from 2 days before.
-  -c city, which city to scrape?
-  -i category/item, which category/item to scrape?
+  -k keyword search
   -h this help
   -v version
 
 Examples:
      (1) $0     # use default
-     (2) $0 -d  # use default 
-     (3) $0 -c vancouver -i services       # scrape vancouver's gigs
-     (4) $0 -c calgory -i 'services'
+     (3) $0 -n 'hot'       # scrape vancouver's gigs
+     (4) $0 -n 'fagui'
      (5) $0 -h  # get help
      (6) $0 -v  # get version
 
 HELP
-	exit 3;
+	exit 3;	
 }
+sub get_ver()
+{
+	print <<EOF;
 
+$0:  Version 2.0
+EOF
+	exit 2;
+}

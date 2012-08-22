@@ -1,5 +1,4 @@
 package db;
-# $Id$
 
 use Data::Dumper;
 use strict;
@@ -9,10 +8,11 @@ sub new
     my ($type, $user, $pass, $dsn) = @_;
     my $self = {};
 	$self->{dbh} = DBI->connect($dsn, $user, $pass, { RaiseError=>1 });
+	$self->{dbh}->do('SET NAMES "utf8"');
 	bless $self, $type;
 }
 
-# trace back to 2 days, '15-Mar-10'
+# trace back to 2 days: $todate=2
 sub get_routine_date
 {
 	my ($self,$todate) = @_;

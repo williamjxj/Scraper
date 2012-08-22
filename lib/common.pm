@@ -1,5 +1,4 @@
 package common;
-# $Id$
 
 use FileHandle;
 use Data::Dumper;
@@ -117,13 +116,6 @@ sub get_web
 	return $web;
 }
 
-sub strip_craig_userbody
-{
-	my ($self, $html) = @_;
-	$html =~ s/<!-- CLTAG GeographicArea=NW -->.*$//si;
-	return $html;
-}
-
 # for craigslist, 
 # <img src="http://images.craigslist.org/3n23o33l85V25R05S0a3pba3a8384720810c9.jpg" alt="image 1660711046-1">
 sub get_phone
@@ -186,27 +178,6 @@ sub trim
 	$str =~ s/^\s+// if ($str =~ m/^\s/);
 	$str =~ s/\s+$// if ($str =~ m/\s$/);
 	return $str;
-}
-
-# $message = $username.'/'.$passwd.'/'.$url; # postMail($message);
-sub post_mail
-{
-	my ($self, $message) = @_;
-	my $emailaddr = shift || "williamjxj\@hotmail.com";
-    $message = "Cragislist.og: send Email" unless ($message);
-
-	open (SENDMAIL, "|/usr/lib/sendmail -oi -t -odq") or die "Can't sendmail: $!\n";
-
-print SENDMAIL <<"EOF";
-From:   Craigslist Scraper <admin\@localhost>
-To:     $emailaddr
-Subject: Craigslist Scraper Message
-
-$message
-
-EOF
-;
-        close(SENDMAIL) or warn "sendmail didn't close nicely";
 }
 
 
