@@ -3,13 +3,13 @@
 
 use lib qw(./lib/);
 use config;
-
 use db;
 use chinafnews;
 
 use warnings;
 use strict;
 use utf8;
+#use DateTime;
 use Data::Dumper;
 use FileHandle;
 use WWW::Mechanize;
@@ -43,9 +43,6 @@ our ( $num,  $start_time, $end_time, $end_date ) = ( 0,     0,     0, '' );
 
 my($cate_id, $db_name, $createdby, $chan_id, $chan_name, $created) = (3, DBNAME, '网页自动抓取程序');
 
-# 页面的有效链接, 和翻页部分.
-my ($links, $next);
-
 # 初始化数据库:
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
 $dsn .= ":hostname=$host";
@@ -61,8 +58,8 @@ $start_time = localtime() . time;
 
 $log = $news->get_filename(__FILE__);
 $news->set_log($log);
-$news->write_log( "[" . $log . "]: start at: [" . $start_time . "]." );
-
+$news->write_log( "[" . __FILE__ . "]: start at: [" . $start_time . "]." );
+print  qx(basename __FILE__) ;
 
 ##### 判别输入粗参数部分:
 my ( $first, $list, $todate, $channel, $item, $keywords, $help, $version ) = ( undef, undef, undef, undef, undef, undef, undef );
@@ -109,16 +106,17 @@ else {
 my ($chs, @queue) = ([], ());
 if($channel) {
 	$chs = $news->select_channel_by_id($channel);
-	push(@queue, URL2 . $chs->[1]);
+	$chs->[1] = URL2 . $chs->[1] . '/';
+	push(@queue, $chs);
 }
 else {
 	$chs= $news->select_channels();
 	foreach my $ch (@{$chs}) {
-		push(@queue, URL2 . $ch->[1]);
+		$ch->[1] = URL2 . $ch->[1] . '/';
+		push(@queue, $ch);
 	}
 }
-print Dumper(\@queue);
-
+$news->write_log(\@queue, 'Queues:'.__LINE__.":");
 
 if($item) {
 	$news->select_items_by_cid($item);	
@@ -127,40 +125,44 @@ if ($keywords) {
 	$keywords = '食品';
 	$news->select_keywords(utf8::encode($keywords));
 }
-#
-#if ($version) {
-#	get_ver();
-#}
-
+if ($version) {
+	print VERSION;
+	exit;
+}
 
 ########### 正式 抓取
 
 $mech = WWW::Mechanize->new( autocheck => 0 );
 
-LOOP:
-
 # 第一次从首页开始抓取,以后取'下一页'的链接,继续抓取.
-if (defined($next_page)) {
-	$page_url = $next_page;
-}
-else {
-	$page_url = $start_url;	
-}
+foreach my $li (@queue) {
+	$news->write_log($li, 'Looping:'.__LINE__.':');	
+	$chan_name = utf8::encode($li->[2]);
+	$chan_id = $li->[0];
+	$page_url = $li->[1];
+	
+LOOP:
 
 $mech->get($page_url);
 $mech->success or die $mech->response->status_line;
 
 
-$links = $news->get_links( $news->parse_list_page_1($mech->content) );
-$next = $news->get_next_page( $news->parse_list_page_2($mech->content) );
+# 页面的有效链接, 和翻页部分.
+my $links = $news->get_links( $news->parse_list_page_1($mech->content));
+$next_page = $news->get_next_page( $news->parse_list_page_2($mech->content));
 
-print Dumper($links);
-print Dumper($next);
+if($next_page) {
+	$page_url = $next_page;
+}
+else {
+	$page_url = '';
+}
 
+$news->write_log(\@queue, 'links:'.__LINE__.":");
+$news->write_log($links);
+$news->write_log(\@queue, 'next page:'.__LINE__.":");
 
-$chan_name = $dbh->quote(utf8::encode('饮食健康'));
-
-$chan_id = $news->select_channel_by_name($chan_name);
+$chan_name = $dbh->quote($chan_name);
 
 foreach my $url ( @{$links} ) {
 
@@ -198,15 +200,16 @@ foreach my $url ( @{$links} ) {
 			$created
 		)};
 	
-	print $sql;
-		
+	$news->write_log($sql, 'insert:'.__LINE__.':');
 	$sth = $dbh->do($sql);
-
-exit;	
+	
 	$mech->back();
 }
 
 goto LOOP if ($page_url);
+
+}
+
 
 $dbh->disconnect();
 
@@ -248,12 +251,4 @@ Examples:
 
 HELP
 	exit 3;	
-}
-sub get_ver()
-{
-	print <<EOF;
-
-$0:  Version 2.0
-EOF
-	exit 2;
 }

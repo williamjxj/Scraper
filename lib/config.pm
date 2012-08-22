@@ -2,13 +2,12 @@ package config;
 
 require Exporter;
 @ISA = qw( Exporter );
-@EXPORT = qw(USER PASS HOST DSN LOGDIR VERSION URL HTML URL1 URL2 URL3 CATEGORY ITEM CHANNEL CONTEXT INTERVAL_DATE DBNAME);
+@EXPORT = qw(USER PASS HOST DSN VERSION URL HTML URL1 URL2 URL3 CATEGORY ITEM CHANNEL CONTEXT INTERVAL_DATE DBNAME);
 
 use constant USER => q{dixitruth};
 use constant PASS => q{dixi123456};
 use constant HOST => q{localhost};
 use constant DSN => q{DBI:mysql:dixi};
-use constant LOGDIR => q{./logs/};
 use constant VERSION => 1.0;
 use constant HTML => q{./html/};
 use constant URL => q{http://www.chinafnews.com};
