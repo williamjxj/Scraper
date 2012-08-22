@@ -15,6 +15,7 @@ use FileHandle;
 use WWW::Mechanize;
 use DBI;
 use Getopt::Long;
+#use feature qw(say);
 
 sub BEGIN
 {
@@ -140,6 +141,7 @@ foreach my $li (@queue) {
 	$chan_name = utf8::encode($li->[2]);
 	$chan_id = $li->[0];
 	$page_url = $li->[1];
+	$num = 0; #将循环计数复位.
 	
 LOOP:
 
@@ -171,6 +173,8 @@ foreach my $url ( @{$links} ) {
 
 	# print $mech->content;
 
+	$num ++;
+	
 	my ( $name, $notes, $created, $content ) = $news->parse_detail( $mech->content );
 
 	$name = $dbh->quote($name);
@@ -200,11 +204,13 @@ foreach my $url ( @{$links} ) {
 			$created
 		)};
 	
-	$news->write_log($sql, 'insert:'.__LINE__.':');
+	$news->write_log($sql, 'insert:'.$num.':');
 	$sth = $dbh->do($sql);
 	
 	$mech->back();
 }
+
+$news->write_log( "There are total [ $num ] records was processed succesfully for $page_url, $chan_name, $chan_id!\n");
 
 goto LOOP if ($page_url);
 
