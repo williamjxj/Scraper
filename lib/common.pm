@@ -3,14 +3,14 @@ package common;
 use FileHandle;
 use Data::Dumper;
 use strict;
-use constant LOGDIR => qq{./};
+
+use constant LOGDIR => q{./logs/};
 use constant RW_MODE => "w";
 
 sub new
 {
     my ($type, $app) = @_;
     my $self = {};
-	# 'craiglist', 'kijiji', or others?
 	$self->{app} = $app;
 	bless $self, $type;
 }
@@ -64,12 +64,10 @@ sub write_log
 	if (ref $msg) {
 		$Data::Dumper::Varname = $varname || __PACKAGE__;
 		print {$self->{log}} Dumper($msg);
-		# print Dumper($msg);
 	}
 	else {
 		$msg =~ s"\s+" "g;
-		print {$self->{log}} $msg . "\n";
-		# print $msg . "\n";
+		print {$self->{log}} $msg . "\n";		# print $msg . "\n";
 	}
 }
 
@@ -116,7 +114,6 @@ sub get_web
 	return $web;
 }
 
-# for craigslist, 
 # <img src="http://images.craigslist.org/3n23o33l85V25R05S0a3pba3a8384720810c9.jpg" alt="image 1660711046-1">
 sub get_phone
 {
@@ -137,31 +134,6 @@ sub get_phone
 	return $phone;
 }
 
-sub get_relevant {
-	my ( $self, $html ) = @_;
-
-	return unless $html;
-	$html =~ s/<!-- START CLTAGS -->.*$//si;
-	$html =~ s/(<br>|<br\s*\/>)/\n/g;
-	$html =~ s/<p>/\n/g;
-	$html =~ s/<ul.*?>/\n/g;
-	$html =~ s/<\/p>//g;
-	$html =~ s/<\/ul>//g;
-	$html =~ s/<li>//g;
-	$html =~ s/<\/li>/;/g;
-
-	$html =~ s/<img.*?>//sg            if ( $html =~ m/<img/ );
-	$html =~ s/\<font.*?\<\/font\>//sg if ( $html =~ m/<font/ );
-	$html =~ s/\<a\s.*?\<\/a\>//sg     if ( $html =~ m/<a\s/ );
-	$html =~ s/<br>//sg                if ( $html =~ m/<br>/ );
-	$html =~ s/<b>//sg                 if ( $html =~ m/<b>/ );
-	$html =~ s/^\W+//mg;
-	$html =~ s/\n/ /g;
-	$html =~ s/&bull;/ /g;
-	$html =~ s/&sdot;/ /g;
-	$html =~ s/\s{2,}/ /g;
-	return $html;
-}
 
 #-------------------------------
 # Misc 
