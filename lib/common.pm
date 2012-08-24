@@ -5,7 +5,7 @@ use Data::Dumper;
 use strict;
 
 use constant LOGDIR => q{./logs/};
-use constant RW_MODE => "w";
+use constant RW_MODE => "a";
 
 sub new
 {

@@ -1,6 +1,5 @@
 package food_120v_cn;
 
-use lib qw(./lib);
 use config;
 use common;
 @ISA = qw(common);
@@ -96,9 +95,7 @@ sub parse_detail {
 		$html =~ m{
 		<div\sclass="news_nav"
 		(?:.*?)
-		当前位置
-		(?:.*?)
-		首页
+		<span>
 		(?:.*?)
 		<a(?:.*?)>
 		(.*?)		#分类item
@@ -114,17 +111,16 @@ sub parse_detail {
 		(?:.*?)
 		<div\sclass="Source">
 		(.*?)	#来源
+		</div>
+		(?:.*?)
 		<div\sclass="news_wb"	>
 		(.*?)	#正文
 		<div\sclass="news_xx1"
 	}sgix
 	  )
 	{
-		my ( $item_name, $name, $date, $resource, $content ) = ( $1, $2, $3, $4 );
-		$date =~ s/^\s+// if ( $date =~ m/^\s/ );
-		$date =~ s/\s+$// if ( $date =~ m/\s$/ );
-		$date =~ s/,\s+/ /;
-		$date =~ s/ \w+$//;
+		my ( $item_name, $name, $date, $resource, $content ) = ( $1, $2, $3, $4, $5 );
+		$date =~ s/\D+//g; #20120824
 
 		$content =~ s/(<\/div>)+$/''/ if( $content =~ m/<\/div>$/ );
 

@@ -1,6 +1,6 @@
 package chinafnews;
 
-use lib qw(./lib);
+use lib qw(./);
 use config;
 use common;
 @ISA = qw(common);
