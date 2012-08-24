@@ -2,7 +2,7 @@
 ##!/usr/bin/perl -w
 # $Id$
 
-use lib qw(./);
+use lib qw(./lib);
 use config;
 use common;
 # use parse;

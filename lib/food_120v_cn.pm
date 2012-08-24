@@ -1,4 +1,4 @@
-package chinafnews;
+package food_120v_cn;
 
 use lib qw(./lib);
 use config;
@@ -21,11 +21,11 @@ sub parse_list_page_1 {
 	my ( $self, $html ) = @_;
 	while (
 		$html =~ m {
-		<div\sclass="fs-14\scor-06c\spadd-20"
+		<div\sclass="n_txt2"
 		(.*)
 		</ul>
 		(?:.*?)
-		<ul\sclass="inline">
+		<div\sclass="pagination">
 	}sgix
 	  )
 	{
@@ -33,6 +33,22 @@ sub parse_list_page_1 {
 	}
 	return '';
 }
+# extract 整个网页，提取出来关于页面翻转的有效部分。
+sub parse_list_page_2 {
+	my ( $self, $html ) = @_;
+	while (
+		$html =~ m {
+		<div\sclass="page-bottom">
+		(.*)
+		</div>
+	}sgix
+	  )
+	{
+		return $1;
+	}
+	return '';
+}
+
 # 这里取出所有文章链接的有效地址.
 sub get_links {
 	my ( $self, $html ) = @_;
@@ -51,36 +67,18 @@ sub get_links {
 	}
 	return $aoh;
 }
-# extract 整个网页，提取出来关于页面翻转的有效部分。
-sub parse_list_page_2 {
-	my ( $self, $html ) = @_;
-	while (
-		$html =~ m {
-		<ul\sclass="inline">
-		(.*)
-		</ul>
-		(?:.*?)
-		<div\sclass="clear"
-	}sgix
-	  )
-	{
-		return $1;
-	}
-	return '';
-}
+
 # 这里取出下一页的有效地址.
 sub get_next_page {
 	my ( $self, $html ) = @_;
 	return '' unless $html;
 	while (
 		$html =~ m {
-		<li>
-		(?:.*?)
-		<a\s(?:.*?)class="now"
+		<span\sclass="current"
 		(?:.*?)
 		<a\s(?:.*?)href="(.*?)"
 		(?:.*?)
-		</li>
+		</a>
 	}sgix
 	  )
 	{
@@ -96,38 +94,77 @@ sub parse_detail {
 
 	while (
 		$html =~ m{
-		<div\sid=contentA
+		<div\sclass="news_nav"
 		(?:.*?)
-		<h1>(.*?)</h1>  #标题
+		当前位置
 		(?:.*?)
-		<span\s+id=media_span>
-		(.*?)		#来源
-		</span>
+		首页
 		(?:.*?)
-		<div\sclass=r>
+		<a(?:.*?)>
+		(.*?)		#分类item
+		</a>  
+		(?:.*?)
+		<div\sclass="title">
+		(.*?)		#标题name
+		</div>
+		(?:.*?)
+		<div\sclass="time">
 		(.*?) 	#日期
 		</div>
 		(?:.*?)
-		<div\sclass="r">
+		<div\sclass="Source">
+		(.*?)	#来源
+		<div\sclass="news_wb"	>
 		(.*?)	#正文
-		<div\sclass="function\sclear"
-		
+		<div\sclass="news_xx1"
 	}sgix
 	  )
 	{
-		my ( $name, $resource, $date, $content ) = ( $1, $2, $3, $4 );
+		my ( $item_name, $name, $date, $resource, $content ) = ( $1, $2, $3, $4 );
 		$date =~ s/^\s+// if ( $date =~ m/^\s/ );
 		$date =~ s/\s+$// if ( $date =~ m/\s$/ );
 		$date =~ s/,\s+/ /;
 		$date =~ s/ \w+$//;
 
-		$content =~ s/<div>$/''/ if( $content =~ m/<div>$/ );
+		$content =~ s/(<\/div>)+$/''/ if( $content =~ m/<\/div>$/ );
 
-
-		push( @ary, $name, $resource, $date, $content );
+		push( @ary, $name, $item_name, $resource, $date, $content );
 	}
 	return @ary;
 }
+
+sub parse_keywords_list {
+	my ( $self, $html ) = @_;
+	while (
+		$html =~ m {
+			<div\sclass="news_xx1"
+			(.*?)
+			</div>
+	}sgix
+	)
+	{
+		return $1;
+	}
+	return '';
+}
+#解析并保存关键词。
+sub get_keywords {
+	my ( $self, $html ) = @_;
+	my $aoh = [];
+
+	while (
+		$html =~ m{
+			<a(?:.*?)>
+			(.*?)
+			</a>
+	}sgix
+	  )
+	{
+		push( @{$aoh}, $1 );
+	}
+	return $aoh;
+}
+
 
 # 好像没有用到。
 sub select_category {
@@ -140,46 +177,23 @@ sub select_category {
 	$sth->finish();
 	return $row[0];
 }
-# 好像没有用到。
+# 总循环的第一步。
 sub select_items {
 	my ( $self ) = @_;
 	my $aref = [];
 	$sth =
-	  $self->{dbh}->prepare( q{ select name from items where active='Y' order by weight } );
+	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where active='Y' order by weight } );
 	$sth->execute();
 	$aref = $sth->fetchall_arrayref();
 	$sth->finish();
 	return $aref;
 }
 # 好像没有用到。
-sub select_items_by_cid {
-	my ( $self, $cid ) = @_;
-	my $aref = [];
-	$sth =
-	  $self->{dbh}->prepare( q{ select name from items where cid=$cid } );
-	$sth->execute();
-	$aref = $sth->fetchall_arrayref();
-	$sth->finish();
-	return $aref;
-}
-# 总循环的第一步。
-sub select_channels {
-	my ( $self) = @_;
-	my $aref = [];
-	$sth =
-	  $self->{dbh}->prepare( q{ select mid, url, name from channels where groups=1 and active='Y' order by weight } );
-	$sth->execute();
-	$aref = $sth->fetchall_arrayref();
-	$sth->finish();
-	return $aref;
-}
-# 好像没有用到。
-sub select_channel_by_id {
-	my ( $self, $mid ) = @_;
-	my $sql = qq{ select mid, url, name from channels where mid=$mid };
+sub select_item_by_id {
+	my ( $self, $iid ) = @_;
 	my @row = ();
 	$sth =
-	  $self->{dbh}->prepare( $sql );
+	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where iid=$iid } );
 	$sth->execute();
 	@row = $sth->fetchrow_array();
 	$sth->finish();
@@ -191,28 +205,6 @@ sub select_keywords {
 	my $sql =
 	    "select * from contexts where content like '%" . $k . "%'";
 	$self->show_results($sql);
-}
-
-
-# 有用的参考：
-sub strip_dixi_userbody {
-	my ( $self, $html ) = @_;
-	$html =~ s/<!-- CLTAG GeographicArea=NW -->.*$//si
-	  if ( $html =~ m/CLTAG GeographicArea/i );
-	return $html;
-}
-
-# Thu 25 Mar
-sub get_end_date {
-	my ( $self, $todate ) = @_;
-	my $sth =
-	  $self->{dbh}->prepare( qq{ select date_format(date_sub(now(), interval } 
-		  . $todate
-		  . qq{ day), '%a %b %d' ) } );
-	$sth->execute();
-	my @row = $sth->fetchrow_array();
-	$sth->finish();
-	return $row[0];
 }
 
 1;
