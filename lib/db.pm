@@ -12,6 +12,19 @@ sub new
 	bless $self, $type;
 }
 
+# Thu 25 Mar
+sub get_end_date {
+	my ( $self, $todate ) = @_;
+	my $sth =
+	  $self->{dbh}->prepare( qq{ select date_format(date_sub(now(), interval } 
+		  . $todate
+		  . qq{ day), '%a %b %d' ) } );
+	$sth->execute();
+	my @row = $sth->fetchrow_array();
+	$sth->finish();
+	return $row[0];
+}
+
 # trace back to 2 days: $todate=2
 sub get_routine_date
 {
