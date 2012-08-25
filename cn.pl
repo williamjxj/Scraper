@@ -42,8 +42,8 @@ our ( $start_url, $page_url,  $next_page )   = ( q{http://www.chinafnews.com/new
 
 our ( $num,  $start_time, $end_time, $end_date ) = ( 0,     0,     0, '' );
 
-our ($cate_id, $createdby) = (3, '网页自动抓取程序');
-my  ($chan_id, $chan_name, $created);
+our($cate_id, $createdby) = (3, '网页自动抓取程序1');
+my ($chan_id, $chan_name, $created);
 
 # 初始化数据库:
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
@@ -83,7 +83,7 @@ $help && usage();
 if ($list) {
 	my $list = $news->select_channels();
 	foreach my $channels (@$list) {
-		print $channels->[0] . "\n";
+		print Dumper($channels);
 	}
 	exit 2;
 }
@@ -95,19 +95,25 @@ else {
 	$todate =  INTERVAL_DATE;	
 }
 
-my ($queue) = [];
+my ($chs, @queue) = ([], ());
 if($channel) {
-	$queue = $news->select_channel_by_id($channel);
+	$chs = $news->select_channel_by_id($channel);
+
+	$chs->[1] = q{http://www.chinafnews.com/news/} . $chs->[1] . '/';
+	push(@queue, $chs);
 }
 else {
-	$queue= $news->select_channels();
+	$chs= $news->select_channels();
+	foreach my $ch (@{$chs}) {
+		$ch->[1] = q{http://www.chinafnews.com/news/} . $ch->[1] . '/';
+		push(@queue, $ch);
+	}
 }
-#print Dumper(@queue);
 
-#if ($keywords) {
-#	$keywords = '食品';
-#	$news->select_keywords(utf8::encode($keywords));
-#}
+if ($keywords) {
+	$keywords = '食品';
+	$news->select_keywords(utf8::encode($keywords));
+}
 if ($version) {
 	print VERSION;
 	exit;
@@ -118,15 +124,14 @@ if ($version) {
 $mech = WWW::Mechanize->new( autocheck => 0 );
 
 # 第一次从首页开始抓取,以后取'下一页'的链接,继续抓取.
-foreach my $li (@{$queue}) {
-	print Dumper($li);
+foreach my $li (@queue) {
 	$news->write_log($li, 'Looping:'.__LINE__.':');	
-
+	$chan_name = $li->[2];
 	$chan_id = $li->[0];
-	$chan_name = $dbh->quote($li->[2]);
-	$page_url = 'http://www.chinafnews.com/news/' . $li->[1];
+	$page_url = $li->[1];
 	$num = 0; #将循环计数复位.
-
+	$chan_name = $dbh->quote($chan_name);
+	
 LOOP:
 
 $mech->get($page_url);
@@ -145,7 +150,6 @@ else {
 	$page_url = '';
 }
 
-
 foreach my $url ( @{$links} ) {
 
 	$mech->follow_link( url => $url );
@@ -162,26 +166,26 @@ foreach my $url ( @{$links} ) {
 	$content = $dbh->quote($content);
 	$published_date = $dbh->quote($published_date);
 	
-	my $sql = qq{ insert ignore into contents
-			(linkname,
+	my $sql = qq{ insert ignore into contexts
+			(name,
 			notes,
+			content,
 			cate_id,
 			chan_id, 
 			chan_name, 
 			published_date,
 			createdby,
-			created,
-			content
+			created 
 		) values(
 			$name, 
 			$notes,
+			$content,
 			$cate_id,
-			$chan_id, 
+			$chan_id,
 			$chan_name,
 			$published_date,
 			$createdby,
-			now(),
-			$content
+			now()
 		)};
 	
 	# $news->write_log($sql, 'insert:'.$num.':');
@@ -190,7 +194,7 @@ foreach my $url ( @{$links} ) {
 	$mech->back();
 }
 
-$news->write_log( "There are total [ $num ] records was processed succesfully for $page_url. \n");
+$news->write_log( "There are total [ $num ] records was processed succesfully for $page_url, $chan_name, $chan_id!\n");
 
 goto LOOP if ($page_url);
 

@@ -134,8 +134,7 @@ foreach my $url ( @{$links} ) {
 	$item_name = $dbh->quote($item_name);
 	$published_date = $dbh->quote($published_date);
 
-	my $sql = q{ insert ignore into } . $db_name . 
-		qq{
+	my $sql = qq{ insert ignore into contexts 
 			(name,
 			notes,
 			content,

@@ -134,13 +134,12 @@ foreach my $url ( @{$links} ) {
 	$item_name = $dbh->quote($item_name);
 	$published_date = $dbh->quote($published_date);
 
-	my $sql = q{ insert ignore into } . $db_name . 
-		qq{
-			(name,
+	my $sql = qq{ insert ignore into contents
+			(linkname,
 			notes,
 			content,
 			cate_id,
-			item_name,
+			item,
 			published_date, 
 			createdby,
 			created 
@@ -155,15 +154,13 @@ foreach my $url ( @{$links} ) {
 			now()
 		)};
 	
-	# $news->write_log($sql, 'insert:'.$num.':');
 	$sth = $dbh->do($sql);
 	
 	my $keywords = $news->get_keywords($news->parse_keywords_list($mech->content));
 	#插入关键词
 	foreach my $keyword (@{$keywords})  {
 		$keyword = $dbh->quote($keyword);
-		$sql = qq{ insert ignore into keywords(keyword) values( $keyword ) };
-		# $news->write_log($sql, 'insert keyword:'.$sql.':');
+		$sql = qq{ insert ignore into tags(name) values( $keyword ) };
 		$sth = $dbh->do($sql);	
 	}
 	

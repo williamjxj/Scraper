@@ -98,18 +98,18 @@ sub parse_detail {
 		$html =~ m{
 		<div\sid=contentA
 		(?:.*?)
-		<h1>(.*?)</h1>  #标题
+		<h1>(.*?)</h1>	 #标题: title
 		(?:.*?)
-		<span\s+id=media_span>
-		(.*?)		#来源
+		<span\sid=media_span>
+		(.*?)		#来源: from
 		</span>
 		(?:.*?)
 		<div\sclass=r>
-		(.*?) 	#日期
+		(.*?) 	#日期: date
 		</div>
 		(?:.*?)
-		<div\sclass="r">
-		(.*?)	#正文
+		<div\sid=contentText(?:.*?)>
+		(.*?)	#正文: content
 		<div\sclass="function\sclear"
 		
 	}sgix
