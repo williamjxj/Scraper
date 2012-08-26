@@ -124,6 +124,7 @@ foreach my $li (@{$queue}) {
 
 	$chan_id = $li->[0];
 	$chan_name = $dbh->quote($li->[2]);
+	#$chan_name = $li->[2];
 	$page_url = 'http://www.chinafnews.com/news/' . $li->[1];
 	$num = 0; #将循环计数复位.
 
@@ -161,6 +162,10 @@ foreach my $url ( @{$links} ) {
 	$notes = $dbh->quote($notes);
 	$content = $dbh->quote($content);
 	$published_date = $dbh->quote($published_date);
+
+print $name. "\n";
+print $notes . "\n";
+print $published_date."\n";
 	
 	my $sql = qq{ insert ignore into contents
 			(linkname,

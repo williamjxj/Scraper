@@ -24,9 +24,7 @@ sub BEGIN
 	$SIG{'TERM'} = 'IGNORE';
 	$SIG{'PIPE'} = 'IGNORE';
 	$SIG{'CHLD'} = 'IGNORE';
-
 	$ENV{'PATH'} = '/usr/bin/:/bin/:.';
-
 	local ($|) = 1;
 	undef $/;
 }
@@ -64,10 +62,11 @@ $news->set_log($log);
 $news->write_log( "[" . __FILE__ . "]: start at: [" . localtime() . "]." );
 
 ##### 判别输入粗参数部分:
-my ( $list, $todate, $channel, $keywords, $help, $version ) = ( undef, undef, undef, undef, undef, undef );
+my ( $aurl, $list, $todate, $channel, $keywords, $help, $version ) = ( undef, undef, undef, undef, undef, undef, undef );
 usage()
   unless (
 	GetOptions(
+		'aurl=s'	=> \$aurl,
 		'list'       => \$list,
 		'todate=s'   => \$todate,
 		'channel=s'  => \$channel,
@@ -122,6 +121,22 @@ if ($version) {
 ########### 正式 抓取
 
 $mech = WWW::Mechanize->new( autocheck => 0 );
+if ($aurl) {
+	print $aurl."\n";
+	$mech->get($aurl);
+	$mech->success or die $mech->response->status_line;
+	#print($mech->content);
+	my ( $name, $notes, $published_date, $content ) = $news->parse_detail( $mech->content );
+	if($name eq '') {
+		( $name, $published_date, $content ) = $news->parse_detail_without_from( $mech->content );
+	}
+	print $name . "\n";
+	print $notes . "\n";
+	print $published_date . "\n";
+	print $content . "\n";
+	exit 10;
+}
+
 
 # 第一次从首页开始抓取,以后取'下一页'的链接,继续抓取.
 foreach my $li (@queue) {
@@ -153,13 +168,24 @@ else {
 foreach my $url ( @{$links} ) {
 
 	$mech->follow_link( url => $url );
-	$mech->success or next;
+	#$mech->success or next;
+	if(! $mech->success) {
+		$news->write_log('Fail111 : ' . $chan_id . ', [' . $page_url . '], ' . $url);
+		next;
+	}
 
-	# print $mech->content;
+	my ( $name, $notes, $published_date, $content ) = $news->parse_detail( $mech->content );
+
+	# 'resource' is null.
+	if(!defined($name) || $name eq '') {
+		( $name, $published_date, $content ) = $news->parse_detail_without_from( $mech->content );
+	}
+	if($name eq '') {
+		$news->write_log('Fail2! not to insert: ' . $chan_id . ', [' . $page_url . '], ' . $url);
+		next;
+	}
 
 	$num ++;
-	
-	my ( $name, $notes, $published_date, $content ) = $news->parse_detail( $mech->content );
 
 	$name = $dbh->quote($name);
 	$notes = $dbh->quote($notes);

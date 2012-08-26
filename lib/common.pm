@@ -17,21 +17,20 @@ sub new
 
 sub get_filename {
 	my ($self, $filename) = @_;
-	#my ($stripname) = (qx(/usr/bin/basename $filename .pl) =~ m"(\w+)");
-	#$stripname = '_log_' unless $stripname;
+	my ($stripname) = (qx(basename $filename .pl) =~ m"(\w+)");
+	$stripname = $self->{app} unless $stripname;
 
 	my ($time, $date);
 	@$time = localtime(time);
 	$date = sprintf ("%02d%02d%02d", ($time->[5]+1900)%100, $time->[4]+1, $time->[3]);
 
-	#return LOGDIR.$self->{app}.'_'.$stripname.'_'.$date.'.log';
-	return LOGDIR.$self->{app}.'.log';
+	return LOGDIR.$stripname.'_'.$date.'.log';
 }
 
 sub set_log
 {
 	my ($self, $logname) = @_;
-	my $log = $logname || LOGDIR.__FILE__.".log";
+	my $log = $logname || LOGDIR.`basename __FILE__`.".log";
 	my $fh = FileHandle->new($log, RW_MODE);
 	if (defined $fh) {
 		$self->{log} = $fh;

@@ -111,20 +111,41 @@ sub parse_detail {
 		<div\sid=contentText(?:.*?)>
 		(.*?)	#正文: content
 		<div\sclass="function\sclear"
-		
-	}sgix
-	  )
-	{
+	}sgix) {
 		my ( $name, $resource, $date, $content ) = ( $1, $2, $3, $4 );
 		$date =~ s/^\s+// if ( $date =~ m/^\s/ );
 		$date =~ s/\s+$// if ( $date =~ m/\s$/ );
 		$date =~ s/,\s+/ /;
 		$date =~ s/ \w+$//;
-
-		$content =~ s/<div>$/''/ if( $content =~ m/<div>$/ );
-
-
+		$content =~ s/<\/div>$/''/ if( $content =~ m/<\/div>$/ );
 		push( @ary, $name, $resource, $date, $content );
+	}
+	return @ary;
+}
+sub parse_detail_without_from {
+	my ( $self, $html ) = @_;
+	my @ary = ();
+	while (
+		$html =~ m{
+		<div\sid=contentA
+		(?:.*?)
+		<h1>(.*?)</h1>	 #标题: title
+		(?:.*?)
+		<div\sclass=r>
+		(.*?) 	#日期: date
+		</div>
+		(?:.*?)
+		<div\sid=contentText(?:.*?)>
+		(.*?)	#正文: content
+		<div\sclass="function\sclear"
+	}sgix) {
+		my ( $name, $date, $content ) = ( $1, $2, $3);
+		$date =~ s/^\s+// if ( $date =~ m/^\s/ );
+		$date =~ s/\s+$// if ( $date =~ m/\s$/ );
+		$date =~ s/,\s+/ /;
+		$date =~ s/ \w+$//;
+		$content =~ s/<\/div>$/''/ if( $content =~ m/<\/div>$/ );
+		push( @ary, $name, $date, $content );
 	}
 	return @ary;
 }
@@ -163,11 +184,13 @@ sub select_items_by_cid {
 	return $aref;
 }
 # 总循环的第一步。
+#$self->{dbh}->prepare( q{ select mid, url, name from channels where groups=1 and active='Y' order by weight } );
+#$sth = $self->{dbh}->prepare( q{ select iid, iurl, name from items where groups=3 and active='Y' order by weight } );
 sub select_channels {
-	my ( $self) = @_;
+	my ( $self ) = @_;
 	my $aref = [];
 	$sth =
-	  $self->{dbh}->prepare( q{ select mid, url, name from channels where groups=1 and active='Y' order by weight } );
+		$self->{dbh}->prepare( q{ select mid, url, name from channels where groups=1 and active='Y' order by mid desc } );
 	$sth->execute();
 	$aref = $sth->fetchall_arrayref();
 	$sth->finish();
