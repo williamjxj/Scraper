@@ -38,7 +38,7 @@ our ( $mech, $db, $news, $log ) = ( undef, undef );
 
 our ( $dbh, $sth );
 
-my ( $page_url,  links, $next_page )   = ( undef, undef, undef );
+my ( $page_url, $next_page )   = ( undef, undef );
 
 my ( $num, $total, $start_time, $end_time, $end_date ) = ( 0, 0, 0, 0, '' );
 
@@ -115,7 +115,8 @@ if ($aurl) {
 	print $aurl."\n";
 	$mech->get($aurl);
 	$mech->success or die $mech->response->status_line;
-	#print($mech->content);
+	print($mech->content);
+	exit;
 	my ( $name, $notes, $published_date, $content ) = $news->parse_detail( $mech->content );
 	if($name eq '') {
 		( $name, $published_date, $content ) = $news->parse_detail_without_from( $mech->content );
@@ -152,7 +153,7 @@ if(! $mech->success) {
 }
 
 # 页面的有效链接, 和翻页部分.
-$links = $news->get_links( $news->parse_list_page_1($mech->content));
+my $links = $news->get_links( $news->parse_list_page_1($mech->content));
 $next_page = $news->get_next_page( $news->parse_list_page_2($mech->content));
 
 if($next_page) {
@@ -184,12 +185,18 @@ foreach my $url ( @{$links} ) {
 	#通过了，插入数据库。
 	$num ++;
 
+	$news->write_log($url); #.', channel name:' . $chan_name);
+
+	#patch
+	$published_date = $news->patch_date($published_date);
+	$content = $news->patch_content($content);
+
+
 	$name = $dbh->quote($name);
 	$notes = $dbh->quote($notes);
 	$content = $dbh->quote($content);
 	$published_date = $dbh->quote($published_date);
 	
-	$news->write_log($url.', channel name:' . $chan_name);
 	my $sql = qq{ insert ignore into contexts
 			(name,
 			notes,

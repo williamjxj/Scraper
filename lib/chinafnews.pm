@@ -113,11 +113,6 @@ sub parse_detail {
 		<div\sclass="function\sclear"
 	}sgix) {
 		my ( $name, $resource, $date, $content ) = ( $1, $2, $3, $4 );
-		$date =~ s/^\s+// if ( $date =~ m/^\s/ );
-		$date =~ s/\s+$// if ( $date =~ m/\s$/ );
-		$date =~ s/,\s+/ /;
-		$date =~ s/ \w+$//;
-		$content =~ s/<\/div>$/''/ if( $content =~ m/<\/div>$/ );
 		push( @ary, $name, $resource, $date, $content );
 	}
 	return @ary;
@@ -140,14 +135,25 @@ sub parse_detail_without_from {
 		<div\sclass="function\sclear"
 	}sgix) {
 		my ( $name, $date, $content ) = ( $1, $2, $3);
-		$date =~ s/^\s+// if ( $date =~ m/^\s/ );
-		$date =~ s/\s+$// if ( $date =~ m/\s$/ );
-		$date =~ s/,\s+/ /;
-		$date =~ s/ \w+$//;
-		$content =~ s/<\/div>$/''/ if( $content =~ m/<\/div>$/ );
 		push( @ary, $name, $date, $content );
 	}
 	return @ary;
+}
+
+sub patch_date {
+	my ($self, $date) = @_;
+	$date =~ s/^\s+// if ( $date =~ m/^\s/ );
+	$date =~ s/\s+$// if ( $date =~ m/\s$/ );
+	$date =~ s/,\s+/ /;
+	$date =~ s/ \w+$//;
+	return $date;
+}
+
+sub patch_content {
+	my ($self, $content) = @_;
+	$content =~ s/<table\sid="pagination".*$//sg if ($content =~ m/id="pagination"/);
+	$content =~ s/<\/div>$//sg if( $content =~ m/<\/div>$/ );
+	return $content;
 }
 
 # 好像没有用到。
