@@ -1,0 +1,10 @@
+$MYSQL -u "${USER}" -p"${PASS}" -h localhost -D ${DB} <<EOF
+    update monthly_notice set enable_process = 'Y' WHERE enable_process='N';
+EOF
+
+
+echo "The monthly data upload processing [ $param ] is done at `date '+%F %T'`." | /bin/mail -s "Data
+monthly upload processing is done." williamjxj@hotmail.com
+
+
+

@@ -17,7 +17,11 @@ sub new
 
 sub get_filename {
 	my ($self, $filename) = @_;
-	my ($stripname) = (qx(basename $filename .pl) =~ m"(\w+)");
+
+	# Use of uninitialized value in pattern match (m//) at lib//common.pm line 20.
+	# my ($stripname) = (qx(basename $filename .pl) =~ m"(\w+)");
+
+	my $stripname = qx(basename $filename .pl);
 	$stripname = $self->{app} unless $stripname;
 
 	my ($time, $date);
