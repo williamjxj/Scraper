@@ -9,7 +9,8 @@ use chinafnews;
 
 use warnings;
 use strict;
-#use utf8;
+#如果没有此句，createdby中文显示就不正确。
+use utf8;
 #use DateTime;
 #use feature qw(say);
 use Data::Dumper;
@@ -42,8 +43,7 @@ my ( $page_url, $next_page )   = ( undef, undef );
 
 my ( $num, $total, $start_time, $end_time, $end_date ) = ( 0, 0, 0, 0, '' );
 
-my ($cate_id, $queue) = (3, []);
-my ($chan_id, $chan_name) = (0, '');
+my ($cate_id, $queue, $chan_id, $chan_name) = (3, [], 0, undef);
 
 # 初始化数据库:
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
@@ -51,8 +51,8 @@ $dsn .= ":hostname=$host";
 $db = new db( $user, $pass, $dsn );
 $dbh = $db->{dbh};
 
-#my $createdby = $dbh->quote('网页自动抓取程序');
-my $createdby = '网页自动抓取程序';
+our $createdby = '网页抓取程序';
+$createdby = $dbh->quote($createdby);
 
 # 初始化页面抓取模块:
 $news = new chinafnews( $db->{dbh} ) or die;
@@ -65,11 +65,13 @@ $news->set_log($log);
 $news->write_log( "[" . __FILE__ . "]: start at: [" . localtime() . "]." );
 
 ##### 判别输入粗参数部分:
-my ( $aurl, $todate, $channel, $keywords, $help, $version ) = ( undef, undef, undef, undef, undef, undef );
+my ($todate, $channel, $keywords, $help, $version) = (undef, undef, undef, undef, undef);
+my ($aurl, $file) = (undef, undef);
 usage()
   unless (
 	GetOptions(
-		'aurl=s'	=> \$aurl,
+		'aurl=s'	 => \$aurl,
+		'file=s'	=> \$file,
 		'todate=s'   => \$todate,
 		'channel=s'  => \$channel,
 		'keywords=s' => \$keywords,
@@ -127,18 +129,32 @@ if ($aurl) {
 	print $content . "\n";
 	exit 10;
 }
-
+# 对于上次处理失败的case,再次处理一遍。
+if ($file) {
+	open FILE, "< ./logs/again.txt" or die $!;
+	my (@ary, $id, $url);
+	while (<FILE>) {
+		chomp;
+		($id, $url) = ($_ =~ m /(.*),(.*)/);
+		push(@ary, [$id, $url]);
+	}
+	close(FILE);
+	$queue = \@ary;
+}
 
 # 第一次从首页开始抓取,以后取'下一页'的链接,继续抓取.
 foreach my $li (@{$queue}) {
 	$chan_id = $li->[0];
-	# print '1:' . $li->[2] . "\n";
-	print '4:' . qq{'$li->[2]'} . "\n";
-	# x: print '5:' . q{"$li->[2]"} . "\n";
-	# x: print '2:' . utf8::encode($li->[2]) . "\n";
-	# x: print '3:' . $dbh->quote($li->[2]) . "\n";
-	$chan_name = $li->[2];
-	$page_url = BASEURL . $li->[1];
+
+	if(defined($li->[2])) {
+		$chan_name = $li->[2];
+		$page_url = BASEURL . $li->[1];
+	}
+	else {
+		$chan_name = '';
+		$page_url = $li->[1];
+	}
+
 	$num = 0; #将循环计数复位.
 	$news->write_log([$chan_id, $chan_name, $page_url], 'Looping:'.__LINE__.':');	
 
@@ -163,11 +179,12 @@ else {
 	$page_url = '';
 }
 
+
 foreach my $url ( @{$links} ) {
 
 	$mech->follow_link( url => $url );
 	if(! $mech->success) {
-		$news->write_log('Fail2 : ' . $chan_id . ', [' . $page_url . '], ' . $url);
+		$news->write_log('Fail2 : ' . $page_url . ', [' . $chan_id . '], ' . $url);
 		next;
 	}
 
@@ -177,8 +194,8 @@ foreach my $url ( @{$links} ) {
 	if(!defined($name) || $name eq '') {
 		( $name, $published_date, $content ) = $news->parse_detail_without_from( $mech->content );
 	}
-	if($name eq '') {
-		$news->write_log('Fail3! not to insert: ' . $chan_id . ', [' . $page_url . '], ' . $url);
+	if(!defined($name) || $name eq '') {
+		$news->write_log('Fail3! not to insert: ' . $page_url . ', [' . $chan_id . '], ' . $url);
 		next;
 	}
 
@@ -219,9 +236,9 @@ foreach my $url ( @{$links} ) {
 			now()
 		)};
 	
-	$news->write_log($sql, 'insert:'.$num.':');
+	#$news->write_log($sql, 'insert:'.$num.':');
+	#print $sql . "\n";
 	$sth = $dbh->do($sql);
-	
 	$mech->back();
 }
 
@@ -270,3 +287,5 @@ Examples:
 HELP
 	exit 3;	
 }
+
+

@@ -10,12 +10,13 @@ use warnings;
 use strict;
 use utf8;
 #use DateTime;
+#use feature qw(say);
 use Data::Dumper;
 use FileHandle;
 use WWW::Mechanize;
 use DBI;
 use Getopt::Long;
-#use feature qw(say);
+
 use constant BASEURL=>q{http://www.chinafnews.com/news/};
 
 sub BEGIN
@@ -46,7 +47,7 @@ my ( $num, $total, $start_time, $end_time, $end_date ) = ( 0, 0, 0, 0, '' );
 
 # 该程序归类:食品, 通道的id,名称 (under '食品'),和创建日期.
 my ($cate_id, $queue) = (3, []);
-my ($chan_id, $chan_name) = (0, '');
+my ($chan_id, $chan_name) = (0, undef);
 
 # 初始化数据库:
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
@@ -56,7 +57,7 @@ $dbh = $db->{dbh};
 
 # '网页自动抓取程序'加上引号,用于数据库的插入. 也可以直接定义为常量:
 # use constant createdby=>q{'网页自动抓取程序'};
-my $createdby = $dbh->quote('网页自动抓取程序');
+our $createdby = $dbh->quote('网页自动抓取程序');
 
 # 初始化页面抓取模块:
 $news = new chinafnews( $db->{dbh} ) or die;
@@ -69,11 +70,14 @@ $news->set_log($log);
 $news->write_log( "[" . __FILE__ . "]: start at: [" . localtime() . "]." );
 
 ##### 判别输入粗参数部分:
-my ( $aurl, $todate, $channel, $keywords, $help, $version ) = ( undef, undef, undef, undef, undef, undef );
+my ($todate, $channel, $keywords, $help, $version) = (undef, undef, undef, undef, undef);
+my ($aurl, $file) = (undef, undef);
+
 usage()
   unless (
 	GetOptions(
 		'aurl=s'	=> \$aurl,
+		'file=s'	=> \$file,
 		'todate=s'   => \$todate,
 		'channel=s'  => \$channel,
 		'keywords=s' => \$keywords,
@@ -131,12 +135,32 @@ if ($aurl) {
 	exit 10;
 }
 
+# 对于上次处理失败的case,再次处理一遍。
+if ($file) {
+	open FILE, "< ./logs/again.txt" or die $!;
+	my (@ary, $id, $url);
+	while (<FILE>) {
+		chomp;
+		($id, $url) = ($_ =~ m /(.*),(.*)/);
+		push(@ary, [$id, $url]);
+	}
+	close(FILE);
+	$queue = \@ary;
+}
 
 # 第一次从首页开始抓取,以后取'下一页'的链接,继续抓取.
 foreach my $li (@{$queue}) {
 	$chan_id = $li->[0];
-	$chan_name = $dbh->quote(utf8::encode($li->[2]));
-	$page_url = BASEURL . $li->[1];
+
+	if(defined($li->[2])) {
+		$chan_name = $li->[2];
+		$page_url = BASEURL . $li->[1];
+	}
+	else {
+		$chan_name = '';
+		$page_url = $li->[1];
+	}
+
 	$num = 0; #将循环计数复位.
 	$news->write_log([$chan_id, $chan_name, $page_url], 'Looping:'.__LINE__.':');	
 
@@ -167,19 +191,30 @@ foreach my $url ( @{$links} ) {
 
 	$mech->follow_link( url => $url );
 	if(! $mech->success) {
-		$news->write_log('Fail2 : ' . $chan_id . ', [' . $page_url . '], ' . $url);
+		$news->write_log('Fail2 : ' . $page_url . ', [' . $chan_id . '], ' . $url);
 		next;
 	}
 
 	my ( $name, $notes, $published_date, $content ) = $news->parse_detail( $mech->content );
 
+	# 如果'来源' is null，就要尝试没有‘来源’的解析。
 	if(!defined($name) || $name eq '') {
 		( $name, $published_date, $content ) = $news->parse_detail_without_from( $mech->content );
 	}
-	if($name eq '') {
-		$news->write_log('Fail3! not to insert: ' . $chan_id . ', [' . $page_url . '], ' . $url);
+	if(!defined($name) || $name eq '') {
+		$news->write_log('Fail3! not to insert: ' . $page_url . ', [' . $chan_id . '], ' . $url);
 		next;
 	}
+
+	#通过了，插入数据库。
+	$num ++;
+
+	$news->write_log($url); #.', channel name:' . $chan_name);
+
+	#patch
+	$published_date = $news->patch_date($published_date);
+	$content = $news->patch_content($content);
+
 
 	$name = $dbh->quote($name);
 	$notes = $dbh->quote($notes);
@@ -238,8 +273,6 @@ Uage:
       $0
      or:
       $0 -n channel_name #new channel
-     or:
-      $0 -t 3
      or:
       $0 -k keyword
      or:

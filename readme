@@ -7,4 +7,6 @@ echo "The monthly data upload processing [ $param ] is done at `date '+%F %T'`."
 monthly upload processing is done." williamjxj@hotmail.com
 
 
-
+SET character_set_client = x;
+SET character_set_results = x;
+SET character_set_connection = x;

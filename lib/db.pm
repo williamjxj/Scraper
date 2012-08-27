@@ -2,6 +2,7 @@ package db;
 
 use Data::Dumper;
 use strict;
+use utf8;
 
 sub new
 {
@@ -9,6 +10,9 @@ sub new
     my $self = {};
 	$self->{dbh} = DBI->connect($dsn, $user, $pass, { RaiseError=>1 });
 	$self->{dbh}->do('SET NAMES "utf8"');
+	# mysql_query("SET NAMES 'UTF8'");
+	# mysql_query("SET CHARACTER SET UTF8");
+	# mysql_query("SET CHARACTER_SET_RESULTS='UTF8'");
 	bless $self, $type;
 }
 

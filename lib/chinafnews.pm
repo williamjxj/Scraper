@@ -1,5 +1,6 @@
 package chinafnews;
 
+use utf8;
 use lib qw(./);
 use config;
 use common;
@@ -152,7 +153,7 @@ sub patch_date {
 sub patch_content {
 	my ($self, $content) = @_;
 	$content =~ s/<table\sid="pagination".*$//sg if ($content =~ m/id="pagination"/);
-	$content =~ s/<\/div>$//sg if( $content =~ m/<\/div>$/ );
+	#$content =~ s/<\/div>$//sg if( $content =~ m/<\/div>$/ );
 	return $content;
 }
 
@@ -190,13 +191,13 @@ sub select_items_by_cid {
 	return $aref;
 }
 # 总循环的第一步。
-#$self->{dbh}->prepare( q{ select mid, url, name from channels where groups=1 and active='Y' order by weight } );
+#$self->{dbh}->prepare( q{ select mid, url, name from channels where groups=1 and active='Y' order by mid desc } );
 #$sth = $self->{dbh}->prepare( q{ select iid, iurl, name from items where groups=3 and active='Y' order by weight } );
 sub select_channels {
 	my ( $self ) = @_;
 	my $aref = [];
 	$sth =
-		$self->{dbh}->prepare( q{ select mid, url, name from channels where groups=1 and active='Y' order by mid desc } );
+		$self->{dbh}->prepare( q{ select mid, url, name from channels where groups=1 and active='Y' order by mid  } );
 	$sth->execute();
 	$aref = $sth->fetchall_arrayref();
 	$sth->finish();
