@@ -10,3 +10,12 @@ EOF;
 mysql -u dixitruth -p"dixi123456" -D dixi -h localhost <<EOF
 SELECT count(*) total, chan_id, chan_name FROM `contexts` group by chan_id
 EOF;
+
+mysql -u dixitruth -p"dixi123456" -D dixi -h localhost <<EOF
+
+update contents set
+iid=chan_id, item=chan_name 
+where iid is NULL
+and item='蔬菜水果类'
+
+EOF;

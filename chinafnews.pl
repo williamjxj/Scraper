@@ -40,14 +40,14 @@ our ( $mech, $db, $news, $log ) = ( undef, undef );
 our ( $dbh, $sth ) = ( undef, undef );
 
 #当前页, 翻页变量.
-my ( $page_url,  $next_page ) = ( undef, undef );
+my ( $page_url,  $next_page, $current_page ) = ( undef, undef, undef );
 
 # 记录数,开始,结束时间.
-my ( $num, $total, $start_time, $end_time, $end_date ) = ( 0, 0, 0, 0, '' );
+my ( $num, $total, $start_time, $end_time, $end_date ) = ( 0, 0, 0, 0, undef );
 
 # 该程序归类:食品, 通道的id,名称 (under '食品'),和创建日期.
-my ($cate_id, $queue) = (3, []);
-my ($chan_id, $chan_name) = (0, undef);
+# 存放所有要插入数据库的标量。
+my ($href, $queue) = ({}, []);
 
 # 初始化数据库:
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
@@ -57,7 +57,9 @@ $dbh = $db->{dbh};
 
 # '网页自动抓取程序'加上引号,用于数据库的插入. 也可以直接定义为常量:
 # use constant createdby=>q{'网页自动抓取程序'};
-our $createdby = $dbh->quote('网页自动抓取程序');
+$href->{'createdby'} = $dbh->quote('网页自动抓取程序');
+$href->{'cate_id'} = FOOD;
+
 
 # 初始化页面抓取模块:
 $news = new chinafnews( $db->{dbh} ) or die;
@@ -70,16 +72,18 @@ $news->set_log($log);
 $news->write_log( "[" . __FILE__ . "]: start at: [" . localtime() . "]." );
 
 ##### 判别输入粗参数部分:
-my ($todate, $channel, $keywords, $help, $version) = (undef, undef, undef, undef, undef);
+my ($edate, $channel, $keywords, $help, $version) = (undef, undef, undef, undef, undef);
 my ($aurl, $file) = (undef, undef);
+my $table = CONTENTS;
 
 usage()
   unless (
 	GetOptions(
 		'aurl=s'	=> \$aurl,
 		'file=s'	=> \$file,
-		'todate=s'   => \$todate,
+		'edate=s'   => \$edate,
 		'channel=s'  => \$channel,
+		'table'		=> \$table,
 		'keywords=s' => \$keywords,
 		'help|?'     => \$help,
 		'version'    => \$version
@@ -90,18 +94,28 @@ $help && usage();
 
 # 判断是否有输入参数?
 # date +'%a %d %b' -d "2 day ago"
-if ($todate) {
-	$end_date = $news->get_end_date($todate);
+if ($edate) {
+	$end_date = $news->get_end_date($edate);
 }
 else {
-	$todate =  INTERVAL_DATE;	
+	$edate =  INTERVAL_DATE;	
 }
 
 if($channel) {
+<<<<<<< HEAD
 	push(@{$queue}, $news->select_channel_by_id($channel));
+=======
+	#$queue = $news->select_channel_by_id($channel);
+	push(@{$queue}, $news->select_channel_by_id($channel));	
+>>>>>>> 4e76f8b39983d819cb85f5df8c5f713fc4d8e45b
 }
 else {
 	$queue= $news->select_channels();
+}
+
+#插入contents表还是contexts表?缺省是contents表.
+if($table) {
+	$table = CONTEXTS;
 }
 
 if ($keywords) {
@@ -150,18 +164,18 @@ if ($file) {
 
 # 第一次从首页开始抓取,以后取'下一页'的链接,继续抓取.
 foreach my $li (@{$queue}) {
-	$chan_id = $li->[0];
-	$chan_name = $dbh->quote($li->[2]);
+	$href->{'chan_id'} = $li->[0];
+	$href->{'chan_name'} = $dbh->quote($li->[2]);
 	$page_url = BASEURL . $li->[1];
 	$num = 0; #将循环计数复位.
-	$news->write_log([$chan_id, $chan_name, $page_url], 'Looping:'.__LINE__.':');	
+	$news->write_log([$href->{'chan_id'}, $href->{'chan_name'}, $page_url], 'Looping:'.__LINE__.':');	
 
 LOOP:
 
 $mech->get($page_url);
 #$mech->success or die $mech->response->status_line;
 if(! $mech->success) {
-		$news->write_log('Fail1 : ' . $chan_id . ', [' . $page_url . '], ' . $chan_name);
+		$news->write_log('Fail1 : ' . $href->{'chan_id'} . ', [' . $page_url . '], ' . $href->{'chan_name'});
 		next;
 }
 
@@ -170,7 +184,14 @@ my $links = $news->get_links( $news->parse_list_page_1($mech->content));
 $next_page = $news->get_next_page( $news->parse_list_page_2($mech->content));
 
 if($next_page) {
-	$page_url = $next_page;
+	# 已经是最后一页了,跳过去.
+	if (defined($current_page) && $next_page eq $current_page) {
+		$page_url = '';
+	}
+	else {
+		$current_page = $page_url;
+		$page_url = $next_page;
+	}
 }
 else {
 	$page_url = '';
@@ -181,61 +202,46 @@ foreach my $url ( @{$links} ) {
 
 	$mech->follow_link( url => $url );
 	if(! $mech->success) {
-		$news->write_log('Fail2 : ' . $page_url . ', [' . $chan_id . '], ' . $url);
+		$news->write_log('Fail2 : ' . $page_url . ', [' . $href->{'chan_id'} . '], ' . $url);
 		next;
 	}
 
-	my ( $name, $notes, $published_date, $content ) = $news->parse_detail( $mech->content );
+	 
+	($href->{'name'}, $href->{'notes'}, $href->{'published_date'}, $href->{'content'})
+		 = $news->parse_detail( $mech->content );
 
 	# 如果'来源' is null，就要尝试没有‘来源’的解析。
-	if(!defined($name) || $name eq '') {
-		( $name, $published_date, $content ) = $news->parse_detail_without_from( $mech->content );
+	if(!defined($href->{'name'}) || $href->{'name'} eq '') {
+		( $href->{'name'}, $href->{'published_date'}, $href->{'content'} ) 
+			= $news->parse_detail_without_from( $mech->content );
 	}
-	if(!defined($name) || $name eq '') {
-		$news->write_log('Fail3! not to insert: ' . $page_url . ', [' . $chan_id . '], ' . $url);
+	if(!defined($href->{'name'}) || $href->{'name'} eq '') {
+		$news->write_log('Fail3! not to insert: ' . $page_url . ', [' . $href->{'chan_id'} . '], ' . $url);
 		next;
 	}
 
 	#通过了，插入数据库。
 	$num ++;
 
-	#$news->write_log($url); #.', channel name:' . $chan_name);
+	#$news->write_log($url); #.', channel name:' . $href->{'chan_name'});
 
 	#patch
-	$published_date = $news->patch_date($published_date);
-	$content = $news->patch_content($content);
+	#$href->{'published_date'} = $news->patch_date(href->{'$published_date'});
+	$href->{'content'} = $news->patch_content($href->{'content'});
 
 
-	$name = $dbh->quote($name);
-	$notes = $dbh->quote($notes);
-	$content = $dbh->quote($content);
-	$published_date = $dbh->quote($published_date);
-
-	my $sql = qq{ insert ignore into contents
-			(linkname,
-			notes,
-			cate_id,
-			chan_id, 
-			chan_name, 
-			published_date,
-			createdby,
-			created,
-			content
-		) values(
-			$name, 
-			$notes,
-			$cate_id,
-			$chan_id, 
-			$chan_name,
-			$published_date,
-			$createdby,
-			now(),
-			$content
-		)};
+	$href->{'name'} = $dbh->quote($href->{'name'});
+	$href->{'notes'} = $dbh->quote($href->{'notes'});
+	$href->{'content'} = $dbh->quote($href->{'content'});
+	$href->{'published_date'} = $dbh->quote($href->{'published_date'});
 	
-	# $news->write_log($sql, 'insert:'.$num.':');
-	$sth = $dbh->do($sql);
-	
+	if($table) {
+		$news->insert_contexts($href);
+	}
+	else {
+		$news->insert_contents($href);
+	}
+		
 	$mech->back();
 }
 
