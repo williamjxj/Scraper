@@ -20,10 +20,10 @@ sub get_filename {
 
 	# Use of uninitialized value in pattern match (m//) at lib//common.pm line 20.
 	# my ($stripname) = (qx(basename $filename .pl) =~ m"(\w+)");
-
-	my $stripname = qx(basename $filename .pl);
+	my $stripname; #回车换行.
+	($stripname) = (qx(basename $filename .pl) =~ m"(\w+)");
 	$stripname = $self->{app} unless $stripname;
-
+	
 	my ($time, $date);
 	@$time = localtime(time);
 	$date = sprintf ("%02d%02d%02d", ($time->[5]+1900)%100, $time->[4]+1, $time->[3]);
