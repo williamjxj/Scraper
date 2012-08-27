@@ -151,16 +151,8 @@ if ($file) {
 # 第一次从首页开始抓取,以后取'下一页'的链接,继续抓取.
 foreach my $li (@{$queue}) {
 	$chan_id = $li->[0];
-
-	if(defined($li->[2])) {
-		$chan_name = $li->[2];
-		$page_url = BASEURL . $li->[1];
-	}
-	else {
-		$chan_name = '';
-		$page_url = $li->[1];
-	}
-
+	$chan_name = $dbh->quote($li->[2]);
+	$page_url = BASEURL . $li->[1];
 	$num = 0; #将循环计数复位.
 	$news->write_log([$chan_id, $chan_name, $page_url], 'Looping:'.__LINE__.':');	
 
@@ -172,8 +164,6 @@ if(! $mech->success) {
 		$news->write_log('Fail1 : ' . $chan_id . ', [' . $page_url . '], ' . $chan_name);
 		next;
 }
-
-
 
 # 页面的有效链接, 和翻页部分.
 my $links = $news->get_links( $news->parse_list_page_1($mech->content));
@@ -209,7 +199,7 @@ foreach my $url ( @{$links} ) {
 	#通过了，插入数据库。
 	$num ++;
 
-	$news->write_log($url); #.', channel name:' . $chan_name);
+	#$news->write_log($url); #.', channel name:' . $chan_name);
 
 	#patch
 	$published_date = $news->patch_date($published_date);

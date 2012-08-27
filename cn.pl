@@ -43,6 +43,8 @@ my ( $page_url, $next_page )   = ( undef, undef );
 
 my ( $num, $total, $start_time, $end_time, $end_date ) = ( 0, 0, 0, 0, '' );
 
+our $links;
+
 my ($cate_id, $queue, $chan_id, $chan_name) = (3, [], 0, undef);
 
 # 初始化数据库:
@@ -130,31 +132,26 @@ if ($aurl) {
 	exit 10;
 }
 # 对于上次处理失败的case,再次处理一遍。
+#($tid, $turl) = ($_ =~ m /(.*),(.*)/);
 if ($file) {
+	# 这里,file就是channel_id的意思.
+	$chan_id = $file or 0;
+	$page_url = ''; #这样就不会循环了.
 	open FILE, "< ./logs/again.txt" or die $!;
-	my (@ary, $id, $url);
 	while (<FILE>) {
 		chomp;
-		($id, $url) = ($_ =~ m /(.*),(.*)/);
-		push(@ary, [$id, $url]);
+		push(@{$links}, $_);
 	}
 	close(FILE);
-	$queue = \@ary;
+	my $h = {};
+	$dbh->insert_contexts($h);
 }
 
 # 第一次从首页开始抓取,以后取'下一页'的链接,继续抓取.
 foreach my $li (@{$queue}) {
 	$chan_id = $li->[0];
-
-	if(defined($li->[2])) {
-		$chan_name = $li->[2];
-		$page_url = BASEURL . $li->[1];
-	}
-	else {
-		$chan_name = '';
-		$page_url = $li->[1];
-	}
-
+	$chan_name = $dbh->quote($li->[2]);
+	$page_url = BASEURL . $li->[1];
 	$num = 0; #将循环计数复位.
 	$news->write_log([$chan_id, $chan_name, $page_url], 'Looping:'.__LINE__.':');	
 
@@ -164,8 +161,8 @@ $mech->get($page_url);
 #如果失败，不退出，而是继续循环下一个。
 #$mech->success or die $mech->response->status_line;
 if(! $mech->success) {
-		$news->write_log('Fail1 : ' . $chan_id . ', [' . $page_url . '], ' . $chan_name);
-		next;
+	$news->write_log('Fail1 : ' . $chan_id . ', [' . $page_url . '], ' . $chan_name);
+	next;
 }
 
 # 页面的有效链接, 和翻页部分.
@@ -178,7 +175,6 @@ if($next_page) {
 else {
 	$page_url = '';
 }
-
 
 foreach my $url ( @{$links} ) {
 
@@ -287,5 +283,3 @@ Examples:
 HELP
 	exit 3;	
 }
-
-

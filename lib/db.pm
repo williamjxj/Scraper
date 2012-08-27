@@ -75,4 +75,32 @@ sub show_results
 	$sth->finish ();
 }
 
+sub insert_contexts
+{
+	my ($self, $h) = @_;
+	my $sql = qq{ insert ignore into contexts
+		(name,
+		notes,
+		content,
+		cate_id,
+		chan_id, 
+		chan_name, 
+		published_date,
+		createdby,
+		created 
+	) values(
+		$h->{'name'}, 
+		$h->{'notes'},
+		$h->{'content'},
+		$h->{'cate_id'},
+		$h->{'chan_id'},
+		$h->{'chan_name'},
+		$h->{'published_date'},
+		$h->{'createdby'},
+		now()
+	)};
+	
+	$self->{dbh}->do($sql);
+}
+
 1;
