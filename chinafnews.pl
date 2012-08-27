@@ -98,7 +98,7 @@ else {
 }
 
 if($channel) {
-	$queue = $news->select_channel_by_id($channel);
+	push(@{$queue}, $news->select_channel_by_id($channel));
 }
 else {
 	$queue= $news->select_channels();
