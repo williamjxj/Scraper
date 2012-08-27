@@ -102,12 +102,8 @@ else {
 }
 
 if($channel) {
-<<<<<<< HEAD
-	push(@{$queue}, $news->select_channel_by_id($channel));
-=======
 	#$queue = $news->select_channel_by_id($channel);
 	push(@{$queue}, $news->select_channel_by_id($channel));	
->>>>>>> 4e76f8b39983d819cb85f5df8c5f713fc4d8e45b
 }
 else {
 	$queue= $news->select_channels();
