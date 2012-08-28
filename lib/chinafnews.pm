@@ -197,7 +197,7 @@ sub select_channels {
 	my ( $self ) = @_;
 	my $aref = [];
 	$sth =
-		$self->{dbh}->prepare( q{ select mid, url, name from channels where groups=1 and active='Y' order by mid  } );
+		$self->{dbh}->prepare( q{ select mid, url, name from channels where active='Y' order by mid  } );
 	$sth->execute();
 	$aref = $sth->fetchall_arrayref();
 	$sth->finish();

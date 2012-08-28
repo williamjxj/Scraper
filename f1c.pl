@@ -43,7 +43,7 @@ our ( $page_url,  $next_page )   = ( 'http://food.120v.cn/FoodsTypeList.html', u
 
 our ( $num,  $start_time, $end_time, $end_date ) = ( 0,     0,     0, '' );
 
-our ($cate_id, $db_name, $createdby) = (FOOD, DBNAME, '网页自动抓取程序');
+our ($cate_id, $createdby) = (FOOD, '网页自动抓取程序');
 
 my ($name, $item_id, $item_name, $notes, $published_date, $created, $content);
 
