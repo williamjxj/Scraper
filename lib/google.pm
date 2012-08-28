@@ -204,8 +204,8 @@ sub parse_result
 		</li>
     }sgix) {
         my ($t1,$t2,$t3) = ($1,$2,$3);
-        # my $date = $self->trim($t2);
-        # $date =~ s/&lt;/</;
+		$t1 =~ s/^\/url?q=//  if($t1 =~ m/^\/url/);
+		$t1 =~ s/\&sa=.*$//  if($t1 =~ m/\&sa=/);
 		$t2 =~ s/\<em>//g if ($t2=~m/\<em>/);
 		$t2 =~ s/\<\/em>//g if ($t2=~m/\<\/em>/);
 		$t2 =~ s/\<b>\.+\<\/b>//s;

@@ -37,7 +37,7 @@ $start_time = time;
 our ( $mech, $mech1) = ( undef, undef );
 our ( $gpm, $log ) = ( undef, undef );
 our ( $db, $dbh, $sth ) = ( undef, undef, undef );
-my @blacklist = ('yellowpages', 'google', 'wikipedia','facebook');
+my @blacklist = ('google', 'wikipedia');
 
 $db = new db( USER, PASS, DSN.":hostname=".HOST );
 $dbh = $db->{dbh};
