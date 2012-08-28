@@ -177,14 +177,10 @@ foreach my $r (@{$aoh}) {
 	$title = $dbh->quote($garef->[0] );
 	$description = $dbh->quote($garef->[1]);
 	$keywords = $dbh->quote($garef->[2] );
-	$email = $dbh->quote( $detail->[0] );
-	$phone = $dbh->quote( $detail->[1] );
-	$fax = $dbh->quote( $detail->[2] );
-	$zip = $dbh->quote( $detail->[3] );
 
 	$sth = $dbh->do( qq{ insert ignore into foods
-		(google_keywords, meta_description, meta_keywords, title, url, phone, fax, email, zip, summary, fdate, cate_id) 
-		values( '$keyword', $description, $keywords, $title, '$link', $phone, $fax, $email, $zip, $summary, now(), $cate_id)
+		(google_keywords, meta_description, meta_keywords, title, url, summary, fdate, cate_id) 
+		values( '$keyword', $description, $keywords, $title, '$link', $summary, now(), $cate_id)
 	});
 
 	undef( @{$garef} );
