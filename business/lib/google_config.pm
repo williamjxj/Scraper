@@ -6,10 +6,10 @@ require Exporter;
 
 use constant URL => q{http://www.google.com};
 use constant URL1 => q{http://www.google.ca};
-use constant USER => 'biz_google';
-use constant PASS => 'william';
+use constant USER => 'dixitruth';
+use constant PASS => 'dixi123456';
 use constant HOST => 'localhost';
-use constant DSN => 'DBI:mysql:business_db';
+use constant DSN => 'DBI:mysql:dixi';
 use constant LOGDIR => q{./logs/};
 use constant VERSION => '1.0';
 use constant CONTACTS => q{biz_google};
