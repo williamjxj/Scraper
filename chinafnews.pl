@@ -57,7 +57,12 @@ $dbh = $db->{dbh};
 
 # '网页自动抓取程序'加上引号,用于数据库的插入. 也可以直接定义为常量:
 # use constant createdby=>q{'网页自动抓取程序'};
-$href->{'createdby'} = $dbh->quote('网页自动抓取程序');
+#$href->{'createdby'} = $dbh->quote('网页自动抓取程序');
+
+my $t = '';
+($t) = (qx(basename __FILE__  .pl) =~ m"(\w+)");
+$t = q{'网页自动抓取程序'}  unless $t;
+$href->{'createdby'} = $t;
 $href->{'cate_id'} = FOOD;
 
 
@@ -73,8 +78,7 @@ $news->write_log( "[" . __FILE__ . "]: start at: [" . localtime() . "]." );
 
 ##### 判别输入粗参数部分:
 my ($edate, $channel, $keywords, $help, $version) = (undef, undef, undef, undef, undef);
-my ($aurl, $file) = (undef, undef);
-my $table = CONTENTS;
+my ($aurl, $file, $table) = (undef, undef, undef);
 
 usage()
   unless (
