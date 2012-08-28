@@ -19,4 +19,3 @@ use constant FOOD => 3;
 use constant INTERVAL_DATE => 7;
 
 1;
-

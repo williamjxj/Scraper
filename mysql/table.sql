@@ -91,3 +91,22 @@ CREATE TABLE IF NOT EXISTS `contexts` (
   UNIQUE KEY `title_mid` (`name`,`chan_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
+CREATE TABLE IF NOT EXISTS `foods` (
+  `fid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `google_keywords` varchar(128) NOT NULL,
+  `meta_description` varchar(255) NOT NULL,
+  `meta_keywords` varchar(255),
+  `title` varchar(255),
+  `url` varchar(255),
+  `phone` varchar(20),
+  `fax` varchar(20),
+  `email` varchar(50),
+  `zip` varchar(6),
+  `summary` text,
+  `fdate`  date,
+ `cate_id` tinyint(3) unsigned DEFAULT '3',
+  `item_id` int(11) unsigned,
+  `weight` tinyint(3) unsigned DEFAULT '0',
+  PRIMARY KEY (`fid`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+

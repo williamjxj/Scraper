@@ -1,26 +1,20 @@
 package google;
 
-use lib qw(../lib);
-use google_config;
+use config;
 use common;
-use Data::Dumper;
 @ISA = qw(common);
 use strict;
 our ( $sth );
 
-use constant CONTACTS => q{biz_google};
+use constant CONTACTS => q{contexts};
 
 
 sub new {
 	my ( $type, $dbh_handle ) = @_;
 	my $self = {};
 	$self->{dbh} = $dbh_handle;
-	$self->{app} = 'google';
-	$self->{deposits} = [ 'contact', 'about', 'email' ];
-	$self->{web_flag} = 0;  # display purpose.
+	$self->{app} = 'food';
 	$self->{uniq_links} = [];
-	$self->{uniq_emails} = [];
-
 	bless $self, $type;
 }
 
@@ -128,8 +122,7 @@ sub parse_next_page
     }
     return;
 }
-#http://groups.google.com/groups/dir?sel=topic%3D46358.46348%2Ctopic%3D46358.46351&hl=en&
-# (?:</span>|</a>|</td>)
+
 sub parse_page
 {
     my ( $self, $html ) = @_;
@@ -166,13 +159,13 @@ sub get_emails
 	return $email_aref;
 }
 
-# <div\sid=rhs\s
+
 sub strip_result {
 	my ( $self, $html ) = @_;
 
 	my $striped_html = undef;
 	$html =~ m {
-			<div\sid="ires
+			<div\sid=(?:ires|"ires")
 			(.*?)
 			id=(?:nav|"nav")
 	}sgix;
@@ -282,22 +275,6 @@ sub trim
     return $str;
 }
 
-# my $email_aref = [];
-# push( @{$email_aref}, $furl );
-sub get_frameset {
-	my ( $self, $html ) = @_;
-	my $furl;
-	$html =~ m{
-		<frame\s
-		(?:.*?)
-		src=.*?
-		(\s|"|>|\b)
-	}sgix;
-	$furl = $1;
-	$furl =~ s/\"//g if ($furl=~/\"/);
-	return $furl;
-}
-
 sub uniq_links {
 	my ($self, $arr) = @_;
 	undef(@{$self->{uniq_links}});
@@ -313,57 +290,6 @@ sub uniq_links {
 	return $self->{uniq_links};
 }
 
-sub select_cities
-{
-    my $self = shift;
-    my $cref = [];
-	my $sql = q{ select distinct cname from craig.craigslist_city where area2='united states' order by cname desc };
-    $sth = $self->{dbh}->prepare( $sql );
-    $sth->execute();
-    $cref = $sth->fetchall_arrayref();
-    $sth->finish();
-    return $cref;
-}
-
-sub select_kijiji_cities
-{
-    my $self = shift;
-    my $cref = [];
-	my $sql = q{ select distinct cname from kijiji.kijiji_city where area2='us' order by cname };
-    $sth = $self->{dbh}->prepare( $sql );
-    $sth->execute();
-    $cref = $sth->fetchall_arrayref();
-    $sth->finish();
-    return $cref;
-}
-
-# 1,875,343, 9,981
-# my $sql = qq{ SELECT city, concat(region,', ',country_code) region FROM store_finder.ip_country_region_city WHERE country_code='US' or country_code='CA' limit $count, 1000 };
-# my $sql = qq{ SELECT distinct city, concat(region,', ',country_code) region FROM store_finder.ip_country_region_city WHERE (country_code='US' or country_code='CA') and (city is not null and city != '-' ) limit $count, 1000 };
-sub select_store_finder_cities
-{
-    my ($self, $num) = @_;
-	my $count = ($num-1) * 1000;
-    my $cref = [];
-	my $sql = qq{ SELECT distinct city FROM store_finder.ip_country_region_city WHERE (country_code='US' or country_code='CA') and (city is not null and city != '-' ) order by country_code limit $count, 1000 };
-    $sth = $self->{dbh}->prepare( $sql );
-    $sth->execute();
-    $cref = $sth->fetchall_arrayref();
-    $sth->finish();
-    return $cref;
-}
-
-sub get_region_country
-{
-    my ($self, $city) = @_;
-	return unless ($city);
-	my $sql = qq{ SELECT distinct region,country_code FROM store_finder.ip_country_region_city where city='$city' };
-    $sth = $self->{dbh}->prepare( $sql );
-    $sth->execute();
-    my @row = $sth->fetchrow_array();
-    $sth->finish();
-    return \@row;
-}
 
 ################################ yahoo parse.  ################################ 
 # use for yy.pl. yahoo.com can pagnation, google.com can't.

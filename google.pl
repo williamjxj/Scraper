@@ -1,39 +1,45 @@
 #!/opt/lampp/bin/perl -w
+##! /cygdrive/c/Perl/bin/perl.exe -w
+
+use lib qw(./lib/);
+use config;
+use db;
+use google;
 
 use warnings;
 use strict;
+
 use Data::Dumper;
 use FileHandle;
 use WWW::Mechanize;
 use DBI;
 use Getopt::Long;
 
-use lib qw(./lib/);
-use google_config;
-use db;
-use google;
+use constant URL => q{http://www.google.com};
+use constant KEYFILE => q{./keywords.txt};
 
-local ($|) = 1;
-undef $/;
+sub BEGIN
+{
+	$SIG{'INT'}  = 'IGNORE';
+	$SIG{'QUIT'} = 'IGNORE';
+	$SIG{'TERM'} = 'IGNORE';
+	$SIG{'PIPE'} = 'IGNORE';
+	$SIG{'CHLD'} = 'IGNORE';
+	$ENV{'PATH'} = '/usr/bin/:/bin/:.';
+	local ($|) = 1;
+	undef $/;
+}
 
 our ( $start_time, $end_time ) = ( 0, 0 );
 $start_time = time;
 
-####################################################################
-# 2 mech are creatd, 1 for google, 1 for detail website.
-####################################################################
+# 2 mech are created, 1 for google, 1 for detail website.
 our ( $mech, $mech1) = ( undef, undef );
 our ( $gpm, $log ) = ( undef, undef );
 our ( $db, $dbh, $sth ) = ( undef, undef, undef );
-my @blacklist = (
-	'yelp.com', 'yellowpages', 'google', 'wikipedia',
-	'superpages', 'informationpages',
-	'backpage', 'craigslist', 'facebook',
-);
+my @blacklist = ('yellowpages', 'google', 'wikipedia','facebook');
 
-my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
-$dsn .= ":hostname=$host";
-$db = new db( $user, $pass, $dsn );
+$db = new db( USER, PASS, DSN.":hostname=".HOST );
 $dbh = $db->{dbh};
 
 $gpm = new google( $db->{dbh} );
@@ -42,36 +48,20 @@ $log = $gpm->get_filename(__FILE__);
 $gpm->set_log($log);
 $gpm->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
-# kwyword='martial arts studio
-my ( $html, $detail, $web, $reason ) = ( '', [], '', undef, undef );
+my ( $html, $detail, $web ) = ( '', [], undef );
 my ( $all_links, $url ) = ( [], URL );
-my ( $keyword, $kds, $kfile, $ofile, $debug ) = ( undef, undef, undef, undef, 0 );
-my ( $page_url, $all, $city, $region, $country ) = ('', undef, undef, undef, undef );
-my $valid = 'N';
+my ( $keyword, $kfile, $debug ) = ( undef, undef, 0 );
+my ( $page_url, $cate_id ) = ('', 3);
+
 
 $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
 $mech1 = WWW::Mechanize->new( autocheck => 0 ) or die;
 $mech->timeout( 20 );
 $mech1->timeout( 20 );
 
-=comment
-input:
-web: website to debug
-city: city to add into keywords: 'martial arts studio chicago'
-all: list all cities from us/ca craig/kijiji.
-keyword: read from keywords.txt, default is 'martial arts studio'
-ofile: why google can't pagination?
-debug: output flag for intermedia processing.
-sample:
->>google.pl -w http://yahoo.com -k -l -a 1-9 -c 'chicago' -d -o
-=cut
 GetOptions(
 		'web=s' => \$web,
-		'city=s' => \$city,
-		'log' => \$log,
-		'all=s' => \$all,
 		'keyword=s' => \$keyword,
-		'ofile' => \$ofile,
 		'debug' => \$debug,
 	 );
 
@@ -88,26 +78,10 @@ if ($web) {
 	exit 1;
 }
 
-# the $all might be: 1,2,3,4,5,6,7,8,9.
-if ($all) {
-	my $cities = [];
-	if( $all=~m/[0-9]/ ) {
-		$cities = $gpm->select_store_finder_cities($all);
-	}
-	else {
-		die("Please input -a from 1-9.");
-	}
-    foreach my $cy (@$cities) {
-        print $cy->[0]."\n";
-        #print $cy->[0] . ', [' . $cy->[1] . "]\n";
-    }
-    exit 2;
-}
-
 # read keywords.txt first line (without ^#).
 unless ($keyword) {
 	local ($/) = "\n";
-	$kfile = new FileHandle(KEYWORD_FILE, 'r') or die $!;
+	$kfile = new FileHandle(KEYFILE, 'r') or die $!;
 	my @lines = <$kfile>;
 	foreach my $line (@lines) {
 		chomp($line);
@@ -118,24 +92,9 @@ unless ($keyword) {
 	}
 	$kfile->close;
 	die unless ($keyword);
-	undef $/;
 }
-$keyword = KEYWORD unless (defined $keyword && $keyword);
+$keyword = 'china food negative news' unless (defined $keyword && $keyword);
 
-if ($city) {
-	$city = ucfirst(lc($city));
-	$kds = $keyword . ' ' . $city;
-	my $rc = $gpm->get_region_country($city);
-	$region = ucfirst(lc($rc->[0]));
-	$country = uc($rc->[1]);
-}
-else {
-	$kds = $keyword;
-}
-
-if ($ofile) {
-	$ofile = new FileHandle(OFILE, 'w') or die $!;
-}
 
 $mech->get( $url );
 $mech->success or die $mech->response->status_line;
@@ -143,12 +102,9 @@ $mech->success or die $mech->response->status_line;
 
 $mech->submit_form(
     form_name => 'f',
-	fields    => { q => $kds, num => 100 }
+	fields    => { q => $keyword, num => 100 }
 );
 $mech->success or die $mech->response->status_line;
-
-# print $mech->content;
-# print $mech->uri . "\n";
 
 my $paref = $gpm->parse_next_page( $mech->content );
 print Dumper( $paref );
@@ -228,14 +184,9 @@ foreach my $r (@{$aoh}) {
 		$fax = $dbh->quote( $detail->[2] );
 		$zip = $dbh->quote( $detail->[3] );
 
-		$valid = 'Y' if ($detail->[1] && $detail->[2]);
-		$city = '' unless (defined $city);
-		$region = '' unless (defined $region);
-		$country = '' unless (defined $country);
-
-		$sth = $dbh->do( q{ insert ignore into } . CONTACTS . qq{
-			(google_keywords, meta_description, meta_keywords, title, url, phone, fax, email, zip, valid, summary, date, city, region, country) 
-			values( '$keyword', $description, $keywords, $title, '$link', $phone, $fax, $email, $zip, '$valid', $summary, now(), '$city', '$region', '$country' )
+		$sth = $dbh->do( qq{ insert ignore into foods
+			(google_keywords, meta_description, meta_keywords, title, url, phone, fax, email, zip, summary, fdate, cate_id) 
+			values( '$keyword', $description, $keywords, $title, '$link', $phone, $fax, $email, $zip, $summary, now(), $cate_id)
 		});
 	}
 	undef( @{$garef} );
@@ -243,45 +194,10 @@ foreach my $r (@{$aoh}) {
 	$mech1->back;
 }
 
-=comment
-if ($page_url)
-{
-    # not work: $mech->get( $page_url );
-    $mech->follow_link( url => $page_url );
-    $mech->success or die $mech->response->status_line;
-
-    $paref = $gpm->parse_next_page( $mech->content );
-	print Dumper($paref);
-    $page_url = $paref->[1];
-
-	$page_url =~ s/\&amp;/\&/g;
-	$page_url =~ s/search\?/#/ if ($page_url=~m/search\?/);
-	$page_url = $url . $page_url if ($page_url!~m/http/);
-	print "..........: [" . $page_url . "]\n";
-
-	goto LOOP;
-
-    $mech->get( $page_url );
-    # $mech->follow_link( url => $page_url );
-    $mech->success or die $mech->response->status_line;
-
-    $paref = $gpm->parse_next_page( $mech->content );
-	print Dumper($paref);
-
-}
-=cut
-
-if (defined $ofile) {
-	# print $ofile $mech->content;
-	$ofile->close;
-	exit;
-}
-
 $dbh->disconnect();
 
 $end_time = time;
 $gpm->write_log( "Total days' data: [ " . ( $end_time - $start_time ) . " ] seconds used.\n" );
-$gpm->write_log("----------------------------------------------\n");
 $gpm->close_log();
 
 exit 6;

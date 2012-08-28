@@ -1,12 +1,11 @@
 package chinafnews;
 
 use utf8;
-use lib qw(./);
 use config;
 use common;
 @ISA = qw(common);
 use strict;
-our ( $dbh, $sth );
+our ( $sth );
 
 sub new {
 	my ( $type, $dbh_handle ) = @_;

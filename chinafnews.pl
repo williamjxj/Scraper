@@ -1,5 +1,5 @@
 #! /opt/lampp/bin/perl -w
-###! /cygdrive/c/Perl/bin/perl.exe -w
+##! /cygdrive/c/Perl/bin/perl.exe -w
 
 use lib qw(./lib/);
 use config;
