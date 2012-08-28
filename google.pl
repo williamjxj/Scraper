@@ -150,37 +150,17 @@ foreach my $r (@{$aoh}) {
 	# after parse homepage of the website, search email/phone.
 	$detail = $gpm->get_detail( $html );
 
-	unless (ref $detail && $detail->[0]) {
-		my $surl = undef;
-		if ($html =~ m/\<frameset/i) {
-			$surl = $gpm->get_frameset( $html );
-			if ($surl) {
-				$mech1->follow_link( url => $surl );
-				unless ($mech1->success ) {
-					print $mech1->response->status_line . "\n";
-					next;
-				}
-			}
-		}
-		$mech1->follow_link( text_regex => qr/(contact|about)/i );
-		# $mech1->success or die $mech1->response->status_line;
-		unless ($mech1->success ) {
-			print $mech1->response->status_line . "\n";
-			next;
-		}
-		$detail = $gpm->get_detail($mech1->content);
-		$mech1->back;
-	}
-
-
 	print Dumper($detail);
+	next if($detail eq '' );
+	$detail = $dbh->quote($detail);
+	
 	$title = $dbh->quote($garef->[0] );
 	$description = $dbh->quote($garef->[1]);
 	$keywords = $dbh->quote($garef->[2] );
 
 	$sth = $dbh->do( qq{ insert ignore into foods
-		(google_keywords, meta_description, meta_keywords, title, url, summary, fdate, cate_id) 
-		values( '$keyword', $description, $keywords, $title, '$link', $summary, now(), $cate_id)
+		(google_keywords, meta_description, meta_keywords, title, url, summary, fdate, cate_id, detail) 
+		values( '$keyword', $description, $keywords, $title, '$link', $summary, now(), $cate_id, $detail)
 	});
 
 	undef( @{$garef} );
