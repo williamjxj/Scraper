@@ -15,7 +15,7 @@ use WWW::Mechanize;
 use DBI;
 use Getopt::Long;
 
-use constant URL => q{http://www.google.com};
+use constant FURL => q{http://www.google.com};
 use constant KEYFILE => q{./keywords.txt};
 
 sub BEGIN
@@ -49,7 +49,7 @@ $gpm->set_log($log);
 $gpm->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
 my ( $html, $detail, $web ) = ( '', [], undef );
-my ( $all_links, $url ) = ( [], URL );
+my ( $all_links, $url ) = ( [], FURL );
 my ( $keyword, $kfile, $debug ) = ( undef, undef, 0 );
 my ( $page_url, $cate_id ) = ('', 3);
 
@@ -172,23 +172,21 @@ foreach my $r (@{$aoh}) {
 		$mech1->back;
 	}
 
-	# Only the record with email is saved.
-	if ( defined $detail->[0] &&  $detail->[0] ) {
 
-		print Dumper($detail);
-		$title = $dbh->quote($garef->[0] );
-		$description = $dbh->quote($garef->[1]);
-		$keywords = $dbh->quote($garef->[2] );
-		$email = $dbh->quote( $detail->[0] );
-		$phone = $dbh->quote( $detail->[1] );
-		$fax = $dbh->quote( $detail->[2] );
-		$zip = $dbh->quote( $detail->[3] );
+	print Dumper($detail);
+	$title = $dbh->quote($garef->[0] );
+	$description = $dbh->quote($garef->[1]);
+	$keywords = $dbh->quote($garef->[2] );
+	$email = $dbh->quote( $detail->[0] );
+	$phone = $dbh->quote( $detail->[1] );
+	$fax = $dbh->quote( $detail->[2] );
+	$zip = $dbh->quote( $detail->[3] );
 
-		$sth = $dbh->do( qq{ insert ignore into foods
-			(google_keywords, meta_description, meta_keywords, title, url, phone, fax, email, zip, summary, fdate, cate_id) 
-			values( '$keyword', $description, $keywords, $title, '$link', $phone, $fax, $email, $zip, $summary, now(), $cate_id)
-		});
-	}
+	$sth = $dbh->do( qq{ insert ignore into foods
+		(google_keywords, meta_description, meta_keywords, title, url, phone, fax, email, zip, summary, fdate, cate_id) 
+		values( '$keyword', $description, $keywords, $title, '$link', $phone, $fax, $email, $zip, $summary, now(), $cate_id)
+	});
+
 	undef( @{$garef} );
 	undef( @{$detail} );
 	$mech1->back;

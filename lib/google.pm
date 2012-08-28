@@ -20,7 +20,7 @@ sub new {
 
 # mailto:sales@rkymtn.com?subject=Sales%20Request
 # return email, phone, fax, zip.
-sub get_detail {
+sub get_detail1 {
 	my ( $self, $html ) = @_;
 	return unless $html;
 
@@ -206,6 +206,7 @@ sub parse_result
         my ($t1,$t2,$t3) = ($1,$2,$3);
 		$t1 =~ s/^\/url\?q=//  if($t1 =~ m/^\/url/);
 		$t1 =~ s/\&sa=.*$//  if($t1 =~ m/\&sa=/);
+		#$t1 =~ s/^.*\?q=//  if($t1 =~ m/^.*\?q=/);
 		$t2 =~ s/\<em>//g if ($t2=~m/\<em>/);
 		$t2 =~ s/\<\/em>//g if ($t2=~m/\<\/em>/);
 		$t2 =~ s/\<b>\.+\<\/b>//s;
@@ -215,6 +216,20 @@ sub parse_result
         push (@{$aoh}, [$t1,$t2,$t3]);
     }
     return $aoh;
+}
+sub get_detail {
+	my ( $self, $html ) = @_;
+	return unless $html;
+	my $detail = '';
+    while ($html =~ m {
+        <body>
+        (.*)
+        </body>
+    }sgix) {
+    	$detail = $1;
+    	$detail =~ s/<script.*?>.*?<\/script>//sg;
+    }
+    return $detail;
 }
 
 sub parse_url
