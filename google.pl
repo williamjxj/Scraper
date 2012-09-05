@@ -48,7 +48,7 @@ $log = $gpm->get_filename(__FILE__);
 $gpm->set_log($log);
 $gpm->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
-my ( $html, $detail, $web ) = ( '', [], undef );
+my ( $html, $detail, $web ) = ( '', '', undef );
 my ( $all_links, $url ) = ( [], FURL );
 my ( $keyword, $kfile, $debug ) = ( undef, undef, 0 );
 my ( $page_url, $cate_id ) = ('', 3);
@@ -164,7 +164,6 @@ foreach my $r (@{$aoh}) {
 	});
 
 	undef( @{$garef} );
-	undef( @{$detail} );
 	$mech1->back;
 }
 

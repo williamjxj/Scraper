@@ -60,9 +60,9 @@ $dbh = $db->{dbh};
 #$href->{'createdby'} = $dbh->quote('网页自动抓取程序');
 
 my $t = '';
-($t) = (qx(basename __FILE__  .pl) =~ m"(\w+)");
+($t) = (qx(basename $0  .pl) =~ m"(\w+)");
 $t = q{'网页自动抓取程序'}  unless $t;
-$href->{'createdby'} = $t;
+$href->{'createdby'} = $dbh->quote($t);
 $href->{'cate_id'} = FOOD;
 
 

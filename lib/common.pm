@@ -34,7 +34,7 @@ sub get_filename {
 sub set_log
 {
 	my ($self, $logname) = @_;
-	my $log = $logname || LOGDIR.`basename __FILE__`.".log";
+	my $log = $logname || LOGDIR."chinafnews_william.log";
 	my $fh = FileHandle->new($log, RW_MODE);
 	if (defined $fh) {
 		$self->{log} = $fh;
