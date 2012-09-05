@@ -47,3 +47,5 @@ ALTER TABLE lookups CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
 update contents ct, (select iid, name from items) it
  set ct.iid=it.iid
 where it.name=ct.item
+
+SELECT * FROM foo WHERE id>4 ORDER BY id LIMIT 1

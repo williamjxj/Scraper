@@ -96,7 +96,9 @@ if ($keyword) {
 
 $mech = WWW::Mechanize->new( autocheck => 0 );
 
-$createdby = $dbh->quote($createdby);
+my ($t) = (qx(basename $0  .pl) =~ m"(\w+)");
+$t = q{'网页自动抓取程序'}  unless $t;
+$createdby = $dbh->quote($t);
 
 LOOP:
 $mech->get($page_url);
@@ -160,10 +162,12 @@ foreach my $url ( @{$links} ) {
 	#插入关键词
 	foreach my $keyword (@{$keywords})  {
 		$keyword = $dbh->quote($keyword);
-		$sql = qq{ insert ignore into tags(name) values( $keyword ) };
-		$sth = $dbh->do($sql);	
-	}
+		#$sql = qq{ insert ignore into tags(name) values( $keyword ) };
+		#$sth = $dbh->do($sql);	
 	
+		$sql = qq{ insert ignore into keywords(keyword) values( $keyword ) };
+		$sth = $dbh->do($sql);	
+	}		
 	$mech->back();
 }
 
