@@ -52,7 +52,7 @@ sub get_item
     return unless $html;
 	$html =~ m {
 		<item>
-		(?:.*?)
+		(?:.*?)  #回车换行: \cJ
 		<title>
 		(.*?)  #标题部分
 		</title>
