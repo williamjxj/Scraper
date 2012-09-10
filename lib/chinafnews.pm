@@ -89,7 +89,7 @@ sub get_next_page {
 	return '';
 }
 
-# 解析文章网页，提取处标题，出处，日期，内容，插入数据库的contexts表。
+# 解析文章网页，提取处标题，出处，日期，内容，插入数据库的contents表。
 sub parse_detail {
 	my ( $self, $html ) = @_;
 	my @ary = ();
@@ -167,30 +167,39 @@ sub select_category {
 	$sth->finish();
 	return $row[0];
 }
-# 好像没有用到。
+
 sub select_items {
 	my ( $self ) = @_;
 	my $aref = [];
 	$sth =
-	  $self->{dbh}->prepare( q{ select name from items where active='Y' order by weight } );
+	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where active='Y' order by weight } );
 	$sth->execute();
 	$aref = $sth->fetchall_arrayref();
 	$sth->finish();
 	return $aref;
 }
-# 好像没有用到。
 sub select_items_by_cid {
 	my ( $self, $cid ) = @_;
 	my $aref = [];
 	$sth =
-	  $self->{dbh}->prepare( q{ select name from items where cid=$cid } );
+	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where cid=$cid } );
 	$sth->execute();
 	$aref = $sth->fetchall_arrayref();
 	$sth->finish();
 	return $aref;
 }
+sub select_item_by_id {
+	my ( $self, $iid ) = @_;
+	my @row = ();
+	$sth =
+	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where iid=$iid } );
+	$sth->execute();
+	@row = $sth->fetchrow_array();
+	$sth->finish();
+	return \@row;
+}
+
 # 总循环的第一步。
-#$self->{dbh}->prepare( q{ select mid, url, name from channels where groups=1 and active='Y' order by mid desc } );
 #$sth = $self->{dbh}->prepare( q{ select iid, iurl, name from items where groups=3 and active='Y' order by weight } );
 sub select_channels {
 	my ( $self ) = @_;
@@ -218,36 +227,8 @@ sub select_channel_by_id {
 sub select_keywords {
 	my ( $self, $k ) = @_;
 	my $sql =
-	    "select * from contexts where content like '%" . $k . "%'";
+	    "select * from contents where content like '%" . $k . "%'";
 	$self->show_results($sql);
-}
-
-sub insert_contexts
-{
-	my ($self, $h) = @_;
-	my $sql = qq{ insert ignore into contexts
-		(name,
-		notes,
-		content,
-		cate_id,
-		chan_id, 
-		chan_name, 
-		published_date,
-		createdby,
-		created 
-	) values(
-		$h->{'name'}, 
-		$h->{'notes'},
-		$h->{'content'},
-		$h->{'cate_id'},
-		$h->{'chan_id'},
-		$h->{'chan_name'},
-		$h->{'published_date'},
-		$h->{'createdby'},
-		now()
-	)};
-	
-	$self->{dbh}->do($sql);
 }
 
 sub insert_contents
@@ -257,8 +238,8 @@ sub insert_contents
 		(linkname,
 		notes,
 		cate_id,
-		chan_id, 
-		chan_name, 
+		iid, 
+		item, 
 		published_date,
 		createdby,
 		created,
@@ -267,8 +248,8 @@ sub insert_contents
 		$h->{'name'}, 
 		$h->{'notes'},
 		$h->{'cate_id'},
-		$h->{'chan_id'}, 
-		$h->{'chan_name'},
+		$h->{'item_id'}, 
+		$h->{'item_name'},
 		$h->{'published_date'},
 		$h->{'createdby'},
 		now(),

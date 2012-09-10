@@ -203,4 +203,11 @@ sub select_keywords {
 	$self->show_results($sql);
 }
 
+#补丁: 最后执行,将content.iid=NULL 改为items.iid. 回头改正:
+sub update_contents  {
+	my ($self) = @_;
+	my $sql = "update contents c, (select iid,name from items) i set c.iid=i.iid where c.iid is NULL and c.item=i.name";
+	$sth->execute();	
+}
+
 1;

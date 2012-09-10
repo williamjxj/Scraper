@@ -1,4 +1,6 @@
 #! /opt/lampp/bin/perl -w
+# 1. 操作contents 表.
+# 2. issue: 不是全部下载,而是每次更新,只下载更新部分!!
 
 use lib qw(./lib/);
 use config;
@@ -167,7 +169,7 @@ foreach my $url ( @{$links} ) {
 	
 		$sql = qq{ insert ignore into keywords(keyword) values( $keyword ) };
 		$sth = $dbh->do($sql);	
-	}		
+	}
 	$mech->back();
 }
 
@@ -176,6 +178,9 @@ $news->write_log( "There are total [ $num ] records was processed succesfully fo
 goto LOOP if ($page_url);
 
 
+# 2. 只插入item_name,没有item_id,所以,执行之后,还要:
+# update contents c, (select iid,name from items) i set c.iid=i.iid where c.iid is NULL and c.item=i.name
+$news->update_contents();
 
 $dbh->disconnect();
 
