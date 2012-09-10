@@ -81,7 +81,6 @@ while (($key, $val) = each(%{$bd->{'ranks'}})) {
 $dbh->disconnect();
 $end_time = time;
 $bd->write_log( "Total days' data: [ " . ( $end_time - $start_time ) . " ] seconds used.\n" );
-$bd->write_log("----------------------------------------------\n");
 $bd->close_log();
 
 exit 8;

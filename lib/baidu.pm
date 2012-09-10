@@ -99,4 +99,39 @@ sub remove_CDATA
 	return $str;
 }
 
+sub insert_baidu
+{
+	my ($self, $h) = @_;
+	my $sql = qq{ insert ignore into contents
+		(title,
+		url,
+		pubDate,
+		source, 
+		author, 
+		content,
+		category,
+		cate_id,
+		item,
+		item_id,
+		createdby,
+		created
+	) values(
+		$h->{'title'}, 
+		$h->{'url'},
+		$h->{'pubDate'},
+		$h->{'source'}, 
+		$h->{'author'},
+		$h->{'desc'},
+		$h->{'category'},
+		$h->{'cate_id'},
+		$h->{'item'},
+		$h->{'item_id'},
+		$h->{'createdby'},
+		now()
+	)};
+	
+	$self->{dbh}->do($sql);
+}
+
+
 1;

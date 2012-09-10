@@ -47,6 +47,16 @@ $log = $bd->get_filename(__FILE__);
 $bd->set_log($log);
 $bd->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
+my $h = {};
+
+$h->{'category'} = '';
+$h->{'cate_id'} = '';
+$h->{'item'} = '';
+$h->{'item_id'} = '';
+
+my $f = ($stripname) = (qx(basename $filename .pl) =~ m"(\w+)");
+$h->{'createdby'} = q($f);
+
 
 our ($all, $debug, $keyword, $web);
 GetOptions(
@@ -61,7 +71,7 @@ if ($debug) {
 	$bd->{web_flag} = '1';
 }
 
-my ($key, $val);
+my ($key, $val) = ('','');
 my $rp = new XML::RSS::Parser::Lite;
 while (($key, $val) = each(%{$bd->{'ranks'}})) {
 	# print $val.', ', $key."<br/>\n";
@@ -70,12 +80,20 @@ while (($key, $val) = each(%{$bd->{'ranks'}})) {
 	# $rp->parse($xml);
 
 	# $title, $link, $pubDate, $source, $author, $desc
-	my $ary = $bd->get_item($xml);
+	my $aref = $bd->get_item($xml);
 	print Dumper($ary);
 
-	exit;
-}
 
+	$h->{'title'} = $dbh->quote($aref->[0]); 
+	$h->{'url'} = $dbh->quote($aref->[1]);
+	$h->{'pubDate'} = $dbh->quote($aref->[2]);
+	$h->{'source'} = $dbh->quote($aref->[3]); 
+	$h->{'author'} = $dbh->quote($aref->[4]);
+	$h->{'desc'} = $dbh->quote($aref->[5]);
+
+	$news->insert_baidu();
+}
+	
 $dbh->disconnect();
 $end_time = time;
 $bd->write_log( "Total days' data: [ " . ( $end_time - $start_time ) . " ] seconds used.\n" );
