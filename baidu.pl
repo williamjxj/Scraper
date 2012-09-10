@@ -47,12 +47,12 @@ $bd->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
 our ($all, $debug, $keyword, $web);
 GetOptions(
-		'all=s' => \$all,
-		'debug' => \$debug,
-		'keyword=s' => \$keyword,
-		'log' => \$log,
-		'web' => \$web,
-	 );
+	'all=s' => \$all,
+	'debug' => \$debug,
+	'keyword=s' => \$keyword,
+	'log' => \$log,
+	'web' => \$web,
+);
 
 if ($debug) {
 	$bd->{web_flag} = '1';
