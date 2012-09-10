@@ -1,5 +1,8 @@
 #! /opt/lampp/bin/perl -w
 ##! /cygdrive/c/Perl/bin/perl.exe -w
+# 1. 操作contents 表.
+# 2. issue: 不是全部下载,而是每次更新,只下载更新部分!!
+# 3. in cygwin, use $ perl -d $0, TMD:终端显示有问题,没有办法debug.
 
 use lib qw(./lib/);
 use config;
@@ -8,6 +11,7 @@ use chinafnews;
 
 use warnings;
 use strict;
+#如果没有此句，createdby中文显示就不正确。
 use utf8;
 #use DateTime;
 #use feature qw(say);
@@ -59,8 +63,7 @@ $dbh = $db->{dbh};
 # use constant createdby=>q{'网页自动抓取程序'};
 #$href->{'createdby'} = $dbh->quote('网页自动抓取程序');
 
-my $t = '';
-($t) = (qx(basename $0  .pl) =~ m"(\w+)");
+my ($t) = (qx(basename $0  .pl) =~ m"(\w+)");
 $t = q{'网页自动抓取程序'}  unless $t;
 $href->{'createdby'} = $dbh->quote($t);
 $href->{'cate_id'} = FOOD;
@@ -77,8 +80,8 @@ $news->set_log($log);
 $news->write_log( "[" . __FILE__ . "]: start at: [" . localtime() . "]." );
 
 ##### 判别输入粗参数部分:
-my ($edate, $channel, $keywords, $help, $version) = (undef, undef, undef, undef, undef);
-my ($aurl, $file, $table) = (undef, undef, undef);
+my ($edate, $item, $keywords, $help, $version) = (undef, undef, undef, undef, undef);
+my ($aurl, $file) = (undef, undef);
 
 usage()
   unless (
@@ -86,8 +89,7 @@ usage()
 		'aurl=s'	=> \$aurl,
 		'file=s'	=> \$file,
 		'edate=s'   => \$edate,
-		'channel=s'  => \$channel,
-		'table'		=> \$table,
+		'item=s'  => \$item,
 		'keywords=s' => \$keywords,
 		'help|?'     => \$help,
 		'version'    => \$version
@@ -105,17 +107,12 @@ else {
 	$edate =  INTERVAL_DATE;	
 }
 
-if($channel) {
-	#$queue = $news->select_channel_by_id($channel);
-	push(@{$queue}, $news->select_channel_by_id($channel));	
+if($item) {
+	#$queue = $news->select_item_by_id($item);
+	push(@{$queue}, $news->select_item_by_id($item));	
 }
 else {
-	$queue= $news->select_channels();
-}
-
-#插入contents表还是contexts表?缺省是contents表.
-if($table) {
-	$table = CONTEXTS;
+	$queue= $news->select_items();
 }
 
 if ($keywords) {
@@ -164,19 +161,19 @@ if ($file) {
 
 # 第一次从首页开始抓取,以后取'下一页'的链接,继续抓取.
 foreach my $li (@{$queue}) {
-	$href->{'chan_id'} = $li->[0];
-	$href->{'chan_name'} = $dbh->quote($li->[2]);
+	$href->{'item_id'} = $li->[0];
+	$href->{'item_name'} = $dbh->quote($li->[2]);
 	$page_url = BASEURL . $li->[1];
 	$num = 0; #将循环计数复位.
-	$news->write_log([$href->{'chan_id'}, $href->{'chan_name'}, $page_url], 'Looping:'.__LINE__.':');	
+	$news->write_log([$href->{'item_id'}, $href->{'item_name'}, $page_url], 'Looping:'.__LINE__.':');	
 
 LOOP:
 
 $mech->get($page_url);
 #$mech->success or die $mech->response->status_line;
 if(! $mech->success) {
-		$news->write_log('Fail1 : ' . $href->{'chan_id'} . ', [' . $page_url . '], ' . $href->{'chan_name'});
-		next;
+	$news->write_log('Fail1 : ' . $href->{'item_id'} . ', [' . $page_url . '], ' . $href->{'item_name'});
+	next;
 }
 
 # 页面的有效链接, 和翻页部分.
@@ -184,6 +181,8 @@ my $links = $news->get_links( $news->parse_list_page_1($mech->content));
 $next_page = $news->get_next_page( $news->parse_list_page_2($mech->content));
 
 if($next_page) {
+	# 如果到了第三页,就返回,不必执行了.
+	# $next_page='http://www.chinafnews.com/news/puguangtai/2.shtml'
 	# 已经是最后一页了,跳过去.
 	if (defined($current_page) && $next_page eq $current_page) {
 		$page_url = '';
@@ -202,7 +201,7 @@ foreach my $url ( @{$links} ) {
 
 	$mech->follow_link( url => $url );
 	if(! $mech->success) {
-		$news->write_log('Fail2 : ' . $page_url . ', [' . $href->{'chan_id'} . '], ' . $url);
+		$news->write_log('Fail2 : ' . $page_url . ', [' . $href->{'item_id'} . '], ' . $url);
 		next;
 	}
 
@@ -216,14 +215,14 @@ foreach my $url ( @{$links} ) {
 			= $news->parse_detail_without_from( $mech->content );
 	}
 	if(!defined($href->{'name'}) || $href->{'name'} eq '') {
-		$news->write_log('Fail3! not to insert: ' . $page_url . ', [' . $href->{'chan_id'} . '], ' . $url);
+		$news->write_log('Fail3! not to insert: ' . $page_url . ', [' . $href->{'item_id'} . '], ' . $url);
 		next;
 	}
 
 	#通过了，插入数据库。
 	$num ++;
 
-	#$news->write_log($url); #.', channel name:' . $href->{'chan_name'});
+	#$news->write_log($url); #.', item name:' . $href->{'item_name'});
 
 	#patch
 	#$href->{'published_date'} = $news->patch_date(href->{'$published_date'});
@@ -235,12 +234,7 @@ foreach my $url ( @{$links} ) {
 	$href->{'content'} = $dbh->quote($href->{'content'});
 	$href->{'published_date'} = $dbh->quote($href->{'published_date'});
 	
-	if($table) {
-		$news->insert_contexts($href);
-	}
-	else {
-		$news->insert_contents($href);
-	}
+	$news->insert_contents($href);
 		
 	$mech->back();
 }
@@ -268,13 +262,13 @@ sub usage {
 Uage:
       $0
      or:
-      $0 -n channel_name #new channel
+      $0 -n item_name #new item
      or:
       $0 -k keyword
      or:
       $0 -h  [-v]
 Description:
-  -n which channel to scrape?
+  -n which item to scrape?
   -t from what date to download? default it's from 2 days before.
   -k keyword search
   -h this help

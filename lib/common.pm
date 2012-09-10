@@ -34,7 +34,7 @@ sub get_filename {
 sub set_log
 {
 	my ($self, $logname) = @_;
-	my $log = $logname || LOGDIR."chinafnews_william.log";
+	my $log = $logname || LOGDIR.__FILE__.".log";
 	my $fh = FileHandle->new($log, RW_MODE);
 	if (defined $fh) {
 		$self->{log} = $fh;
@@ -117,7 +117,6 @@ sub get_web
 	return $web;
 }
 
-# <img src="http://images.craigslist.org/3n23o33l85V25R05S0a3pba3a8384720810c9.jpg" alt="image 1660711046-1">
 sub get_phone
 {
 	my ($self, $html) = @_;
@@ -137,10 +136,6 @@ sub get_phone
 	return $phone;
 }
 
-
-#-------------------------------
-# Misc 
-#-------------------------------
 
 # $str =~ s/'/\'/g if ($str =~ m/'/);
 sub trim

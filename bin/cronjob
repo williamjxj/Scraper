@@ -1,0 +1,2 @@
+30 0 * * * (cd $HOME/craig/; $HOME/craig/bat.sh);
+0 2 * * * (cd $HOME/kijiji/; $HOME/kijiji/bat.sh);
