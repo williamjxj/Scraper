@@ -40,6 +40,8 @@ $dbh = $db->{dbh};
 
 $bd = new baidu( $db->{dbh} );
 
+$start_time = time;
+
 $log = $bd->get_filename(__FILE__);
 $bd->set_log($log);
 $bd->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
@@ -65,11 +67,16 @@ if ($web) {
 	exit 1;
 }
 
-print Dumper($bd->ranks);
-exit;
-my $url;
-$mech->get( $url );
-$mech->success or die $mech->response->status_line;
+$mech = WWW::Mechanize->new( autocheck => 0 );
+
+my ($key, $val);
+while (($key, $val) = each(%{$bd->{'ranks'}})) {
+	# print $val.', ', $key."<br/>\n";
+	$mech->get( $val );
+	$mech->success or die $mech->response->status_line;
+	print $mech->content;
+	exit;
+}
 
 $dbh->disconnect();
 $end_time = time;
