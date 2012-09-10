@@ -65,7 +65,7 @@ sub get_item
 		(.*?)  #生成日期
 		</pubDate>		
 		(?:.*?)
-		<source>>
+		<source>
 		(.*?)  #资源
 		</source>
 		(?:.*?)
@@ -79,9 +79,24 @@ sub get_item
 		(?:.*?)
 		</item>
     }sgix;
-	my ($title, $link, $pubDate, $source, $author, $desc) = ($1, $2, $3, $4, $5, $6);
+	my ($title, $link, $pubDate, $source, $author, $desc);
+
+	$title = $self->remove_CDATA($1);
+	$link = $self->remove_CDATA($2);
+	$pubDate = $self->remove_CDATA($3);
+	$source = $self->remove_CDATA($4);
+	$author = $self->remove_CDATA($5);
+	$desc = $self->remove_CDATA($6);
 
 	return [ $title, $link, $pubDate, $source, $author, $desc ];
+}
+
+sub remove_CDATA
+{
+	my ($self, $str) = @_;
+	$str =~ s/<!\[CDATA\[//;
+	$str =~ s/\]\]>//;
+	return $str;
 }
 
 1;
