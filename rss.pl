@@ -68,9 +68,11 @@ while (($key, $val) = each(%{$bd->{'ranks'}})) {
 	my $xml = get($val);
 	
 	# $rp->parse($xml);
-	
+
+	# $title, $link, $pubDate, $source, $author, $desc
 	my $ary = $bd->get_item($xml);
 	print Dumper($ary);
+
 	exit;
 }
 
