@@ -46,4 +46,42 @@ sub new {
 	bless $self, $type;
 }
 
+sub get_item
+{
+    my ( $self, $html ) = @_;
+    return unless $html;
+	$html =~ m {
+		<item>
+		(?:.*?)
+		<title>
+		(.*?)  #标题部分
+		</title>
+		(?:.*?)
+		<link>
+		(.*?)  #链接部分
+		</link>
+		(?:.*?)
+		<pubDate>
+		(.*?)  #生成日期
+		</pubDate>		
+		(?:.*?)
+		<source>>
+		(.*?)  #资源
+		</source>
+		(?:.*?)
+		<author>
+		(.*?)  #作者
+		</author>
+		(?:.*?)
+		<description>
+		(.*?)  #正文
+		</description>
+		(?:.*?)
+		</item>
+    }sgix;
+	my ($title, $link, $pubDate, $source, $author, $desc) = ($1, $2, $3, $4, $5, $6);
+
+	return [ $title, $link, $pubDate, $source, $author, $desc ];
+}
+
 1;

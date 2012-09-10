@@ -66,14 +66,11 @@ my $rp = new XML::RSS::Parser::Lite;
 while (($key, $val) = each(%{$bd->{'ranks'}})) {
 	# print $val.', ', $key."<br/>\n";
 	my $xml = get($val);
-	$rp->parse($xml);
 	
-	print $rp->get('title') . " " . $rp->get('url') . " " .  $rp->get('description') . "\n";
-
-	for (my $i = 0; $i < $rp->count(); $i++) {
-		my $it = $rp->get($i);
-		print $it->get('title') .  " " .  $it->get('url') . " " .  $it->get('description') . "\n";
-	}
+	# $rp->parse($xml);
+	
+	my $ary = $bd->get_item($xml);
+	print Dumper($ary);
 	exit;
 }
 
