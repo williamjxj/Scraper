@@ -4,6 +4,7 @@ use config;
 use common;
 @ISA = qw(common);
 use strict;
+use Data::Dumper;
 our ( $sth );
 
 use constant CONTACTS => q{contexts};
@@ -91,6 +92,9 @@ sub get_item
 	return [ $title, $link, $pubDate, $source, $author, $desc ];
 }
 
+# Mon, 10 Sep 12 20:19:06 +0800
+sub get_datetime { }
+
 sub remove_CDATA
 {
 	my ($self, $str) = @_;
@@ -102,7 +106,8 @@ sub remove_CDATA
 sub insert_baidu
 {
 	my ($self, $h) = @_;
-	my $sql = qq{ insert ignore into contents
+	print Dumper($h);
+	my $sql = qq{ insert ignore into t_baidu
 		(title,
 		url,
 		pubDate,

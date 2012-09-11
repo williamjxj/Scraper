@@ -49,13 +49,14 @@ $bd->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
 my $h = {};
 
-$h->{'category'} = '';
-$h->{'cate_id'} = '';
-$h->{'item'} = '';
-$h->{'item_id'} = '';
+$h->{'category'} = '\'\'';
+$h->{'cate_id'} = 0;
+$h->{'item'} = '\'\'';
+$h->{'item_id'} = 0;
 
-my $f = ($stripname) = (qx(basename $filename .pl) =~ m"(\w+)");
-$h->{'createdby'} = q($f);
+my $f1 = __FILE__;
+my ($f) = (qx(basename $f1 .pl) =~ m"(\w+)");
+$h->{'createdby'} = $dbh->quote($f);
 
 
 our ($all, $debug, $keyword, $web);
@@ -81,8 +82,6 @@ while (($key, $val) = each(%{$bd->{'ranks'}})) {
 
 	# $title, $link, $pubDate, $source, $author, $desc
 	my $aref = $bd->get_item($xml);
-	print Dumper($ary);
-
 
 	$h->{'title'} = $dbh->quote($aref->[0]); 
 	$h->{'url'} = $dbh->quote($aref->[1]);
@@ -91,7 +90,7 @@ while (($key, $val) = each(%{$bd->{'ranks'}})) {
 	$h->{'author'} = $dbh->quote($aref->[4]);
 	$h->{'desc'} = $dbh->quote($aref->[5]);
 
-	$news->insert_baidu();
+	$bd->insert_baidu($h);
 }
 	
 $dbh->disconnect();
