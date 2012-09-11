@@ -10,32 +10,32 @@ our ( $sth );
 use constant CONTACTS => q{contexts};
 
 #http://top.baidu.com/rss.php
-our $ranks = {
-	'实时热点排行榜' => 'http://top.baidu.com/rss_xml.php?p=top10',
-	'七日关注排行榜' => 'http://top.baidu.com/rss_xml.php?p=weekhotspot',
-	'今日热门搜索排行榜' => 'http://top.baidu.com/rss_xml.php?p=top_keyword',
-	'世说新词排行榜' => 'http://top.baidu.com/rss_xml.php?p=shishuoxinci',
-	'最近事件排行榜' => 'http://top.baidu.com/rss_xml.php?p=shijian',
-	'上周事件排行榜' => 'http://top.baidu.com/rss_xml.php?p=shijian_lastweek',
-	'上月事件排行榜' => 'http://top.baidu.com/rss_xml.php?p=shijian_lastmonth',
-	'今日热点人物排行榜' => 'http://top.baidu.com/rss_xml.php?p=hotman',
-	'今日美女排行榜' => 'http://top.baidu.com/rss_xml.php?p=girls',
-	'今日帅哥排行榜' => 'http://top.baidu.com/rss_xml.php?p=boys',
-	'今日女演员排行榜' => 'http://top.baidu.com/rss_xml.php?p=FStar',
-	'今日男演员排行榜' => 'http://top.baidu.com/rss_xml.php?p=MStar',
-	'今日女歌手排行榜' => 'http://top.baidu.com/rss_xml.php?p=ygeshou',
-	'今日男歌手排行榜' => 'http://top.baidu.com/rss_xml.php?p=ngeshou',
-	'今日体坛人物排行榜' => 'http://top.baidu.com/rss_xml.php?p=titan',
-	'今日互联网人物排行榜' => 'http://top.baidu.com/rss_xml.php?p=internet',
-	'今日名家人物排行榜' => 'http://top.baidu.com/rss_xml.php?p=mingjia',
-	'今日财经人物排行榜' => 'http://top.baidu.com/rss_xml.php?p=caijing',
-	'今日富豪排行榜' => 'http://top.baidu.com/rss_xml.php?p=rich',
-	'今日政坛人物排行榜' => 'http://top.baidu.com/rss_xml.php?p=zhengtan',
-	'今日历史人物排行榜' => 'http://top.baidu.com/rss_xml.php?p=lishiren',
-	'今日人物关系排行榜' => 'http://top.baidu.com/rss_xml.php?p=relation',
-	'今日慈善组织排行榜' => 'http://top.baidu.com/rss_xml.php?p=cishan',
-	'今日房产企业排行榜' =>'http://top.baidu.com/rss_xml.php?p=fangchanqy',
-};
+our @ranks = (
+	( '实时热点排行榜', '实时热点排行榜', 'http://top.baidu.com/rss_xml.php?p=top10', '新闻' ),
+	( '七日关注排行榜', '七日关注排行榜', 'http://top.baidu.com/rss_xml.php?p=weekhotspot', '事件' ),
+	( '今日热门搜索排行榜', 'http://top.baidu.com/rss_xml.php?p=top_keyword', '事件'),
+	( '世说新词排行榜', 'http://top.baidu.com/rss_xml.php?p=shishuoxinci', '事件' ),
+	( '最近事件排行榜', 'http://top.baidu.com/rss_xml.php?p=shijian', '事件' ),
+	( '上周事件排行榜', 'http://top.baidu.com/rss_xml.php?p=shijian_lastweek', '事件' ),
+	( '上月事件排行榜', 'http://top.baidu.com/rss_xml.php?p=shijian_lastmonth', '事件' ),
+	( '今日热点人物排行榜', 'http://top.baidu.com/rss_xml.php?p=hotman', '人物' ),
+	( '今日美女排行榜', '今日美女排行榜', 'http://top.baidu.com/rss_xml.php?p=girls', '人物' ),
+	( '今日帅哥排行榜', '今日帅哥排行榜', 'http://top.baidu.com/rss_xml.php?p=boys', '人物' ),
+	( '今日女演员排行榜', '今日女演员排行榜', 'http://top.baidu.com/rss_xml.php?p=FStar', '明星' ),
+	( '今日男演员排行榜', '今日男演员排行榜', 'http://top.baidu.com/rss_xml.php?p=MStar', '明星' ),
+	( '今日女歌手排行榜', '今日女歌手排行榜', 'http://top.baidu.com/rss_xml.php?p=ygeshou', '明星' ),
+	( '今日男歌手排行榜', '今日男歌手排行榜', 'http://top.baidu.com/rss_xml.php?p=ngeshou', '明星' ),
+	( '今日体坛人物排行榜', '今日体坛人物排行榜', 'http://top.baidu.com/rss_xml.php?p=titan', '明星' ),
+	( '今日互联网人物排行榜', '今日互联网人物排行榜', 'http://top.baidu.com/rss_xml.php?p=internet', '明星' ),
+	( '今日名家人物排行榜', '今日名家人物排行榜', 'http://top.baidu.com/rss_xml.php?p=mingjia', '明星' ),
+	( '今日财经人物排行榜', '今日财经人物排行榜', 'http://top.baidu.com/rss_xml.php?p=caijing', '明星' ),
+	( '今日富豪排行榜', '今日富豪排行榜', 'http://top.baidu.com/rss_xml.php?p=rich', '人物' ),
+	( '今日政坛人物排行榜', '今日政坛人物排行榜', 'http://top.baidu.com/rss_xml.php?p=zhengtan', '人物' ),
+	( '今日历史人物排行榜', '今日历史人物排行榜', 'http://top.baidu.com/rss_xml.php?p=lishiren', '人物' ),
+	( '今日人物关系排行榜', '今日人物关系排行榜', 'http://top.baidu.com/rss_xml.php?p=relation', '人物' ),
+	( '今日慈善组织排行榜', '今日慈善组织排行榜', 'http://top.baidu.com/rss_xml.php?p=cishan', '公益' ),
+	( '今日房产企业排行榜', '今日房产企业排行榜', 'http://top.baidu.com/rss_xml.php?p=fangchanqy', '房地产' ),
+);
 
 our @focus = (
 	( '国内焦点', "http://news.baidu.com/n?cmd=1&class=civilnews&tn=rss", '国内', 16, '国内动态', 21 ),
@@ -266,7 +266,7 @@ sub new {
 	my $self = {};
 	$self->{dbh} = $dbh_handle;
 	$self->{app} = 'baidu_rss';
-	$self->{ranks} = $ranks;
+	$self->{ranks} = \@ranks;
 	$self->{focus} = \@focus;
 	$self->{latest} = \@latest;
 	bless $self, $type;
@@ -363,5 +363,35 @@ sub insert_baidu
 	$self->{dbh}->do($sql);
 }
 
+sub select_category {
+	my ( $self, $name ) = @_;
+	my @row = ();
+	$sth =
+	  $self->{dbh}->prepare( q{ select cid from categories where name=$name } );
+	$sth->execute();
+	@row = $sth->fetchrow_array();
+	$sth->finish();
+	return $row[0];
+}
+sub select_items_by_cid {
+	my ( $self, $cid ) = @_;
+	my $aref = [];
+	$sth =
+	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where cid=$cid } );
+	$sth->execute();
+	$aref = $sth->fetchall_arrayref();
+	$sth->finish();
+	return $aref;
+}
+sub select_item {
+	my ( $self, $iid ) = @_;
+	my @row = ();
+	$sth =
+	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where iid=$iid } );
+	$sth->execute();
+	@row = $sth->fetchrow_array();
+	$sth->finish();
+	return \@row;
+}
 
 1;
