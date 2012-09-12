@@ -164,7 +164,7 @@ sub get_keywords {
 sub select_category {
 	my ( $self ) = @_;
 	my @row = ();
-	$sth = $self->{dbh}->prepare( q{ select name from categories where name=? } );
+	$sth = $self->{dbh}->prepare( q{ select cid from categories where name=? } );
 	$sth->execute(FOOD);
 	@row = $sth->fetchrow_array();
 	$sth->finish();

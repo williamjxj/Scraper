@@ -14,6 +14,7 @@ use Getopt::Long;
 use feature qw(say);
 #use DateTime;
 #use constant CATEGORY => q/食品/;
+use constant START_URL => q{http://food.120v.cn/FoodsTypeList.html};
 
 use lib qw(./lib/);
 use config;
@@ -42,7 +43,7 @@ our ( $mech, $db, $news, $log ) = ( undef, undef );
 #数据库句柄。
 our ( $dbh, $sth );
 
-our ( $page_url,  $next_page )   = ( 'http://food.120v.cn/FoodsTypeList.html', undef );
+our ( $page_url,  $next_page )   = ( START_URL, undef );
 
 our ( $num,  $start_time, $end_time, $end_date ) = ( 0,     0,     0, '' );
 
@@ -88,20 +89,20 @@ if($item) {
 	print Dumper($news->select_item_by_id($item));
 	exit 1;
 }
+=comment
 else {
 	my $items= $news->select_items();
 	$news->write_log($items);
 }
-
+=cut
 if ($keyword) {
 	$news->select_keywords(utf8::encode($keyword));
 }
 
-
-########### 正式 抓取
-
+########### 正式 抓取 ###########
 $mech = WWW::Mechanize->new( autocheck => 0 );
 
+# 从START_URL: 'http://food.120v.cn/FoodsTypeList.html'开始:
 LOOP:
 $mech->get($page_url);
 $mech->success or die $mech->response->status_line;
