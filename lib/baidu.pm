@@ -331,34 +331,38 @@ sub remove_CDATA
 
 sub insert_baidu
 {
-	my ($self, $h) = @_;
-	print Dumper($h);
-	my $sql = qq{ insert ignore into t_baidu
+	my ($self, $h, $rank) = @_;
+	# foreach my $key (keys %{$h}) { print $h->{$key}  . ", " if ($key ne 'desc'); }
+
+	my $category = $self->{dbh}->quote($rank->[2]);
+	my $item = $self->{dbh}->quote($rank->[0]);
+
+	my $sql = qq{ insert into t_baidu
 		(title,
 		url,
 		pubDate,
 		source, 
 		author, 
-		content,
 		category,
 		cate_id,
 		item,
 		item_id,
 		createdby,
-		created
+		created,
+		content
 	) values(
 		$h->{'title'}, 
 		$h->{'url'},
 		$h->{'pubDate'},
 		$h->{'source'}, 
 		$h->{'author'},
-		$h->{'desc'},
-		$h->{'category'},
+		$category,
 		$h->{'cate_id'},
-		$h->{'item'},
+		$item,
 		$h->{'item_id'},
 		$h->{'createdby'},
-		now()
+		now(),
+		$h->{'desc'}
 	)
 	on duplicate key update
 		content = $h->{'desc'},
@@ -371,32 +375,43 @@ sub insert_baidu
 sub select_category {
 	my ( $self, $name ) = @_;
 	my @row = ();
-	$sth =
-	  $self->{dbh}->prepare( q{ select cid from categories where name=$name } );
+	$name = $self->{dbh}->quote($name);
+	$sth = $self->{dbh}->prepare( qq{ select cid from categories where name=$name } );
 	$sth->execute();
 	@row = $sth->fetchrow_array();
 	$sth->finish();
 	return $row[0];
 }
+sub select_item {
+	my ( $self, $rank, $cid, $createdby) = @_;
+	my @row = ();
+	my $item = $self->{dbh}->quote($rank->[0]);
+	$sth = $self->{dbh}->prepare( qq{ select iid from items where name=$item } );
+	$sth->execute();
+	@row = $sth->fetchrow_array();
+	$sth->finish();
+
+	if(! $row[0]) {
+		my $url = $self->{dbh}->quote($rank->[1]);
+		my $category = $self->{dbh}->quote($rank->[2]);
+		my $sql = qq{ insert into items(name, iurl, category, cid, description, createdby, created) values(
+			$item, $url, $category, $cid, $item, $createdby, now())
+		};
+
+		$self->{dbh}->do($sql);
+		return $self->{dbh}->last_insert_id(undef, undef, 'items', undef);
+	}
+
+	return $row[0];
+}
 sub select_items_by_cid {
 	my ( $self, $cid ) = @_;
 	my $aref = [];
-	$sth =
-	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where cid=$cid } );
+	$sth = $self->{dbh}->prepare( q{ select iid, name, iurl from items where cid=$cid } );
 	$sth->execute();
 	$aref = $sth->fetchall_arrayref();
 	$sth->finish();
 	return $aref;
-}
-sub select_item {
-	my ( $self, $iid ) = @_;
-	my @row = ();
-	$sth =
-	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where iid=$iid } );
-	$sth->execute();
-	@row = $sth->fetchrow_array();
-	$sth->finish();
-	return \@row;
 }
 
 1;
