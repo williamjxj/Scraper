@@ -2,12 +2,15 @@
 
 use warnings;
 use strict;
+use utf8;
+use encoding 'utf8';
 use Data::Dumper;
 use FileHandle;
 use XML::RSS::Parser::Lite;
 use LWP::Simple;
 use DBI;
 use Getopt::Long;
+use Encode;
 
 use lib qw(./lib/);
 use config;
@@ -49,13 +52,14 @@ $bd->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
 my $h = {};
 
-$h->{'category'} = '';
-$h->{'cate_id'} = '';
-$h->{'item'} = '';
-$h->{'item_id'} = '';
+$h->{'category'} = '\'\'';
+$h->{'cate_id'} = 0;
+$h->{'item'} = '\'\'';
+$h->{'item_id'} = 0;
 
-my $f = ($stripname) = (qx(basename $filename .pl) =~ m"(\w+)");
-$h->{'createdby'} = q($f);
+my $f1 = __FILE__;
+my ($f) = (qx(basename $f1 .pl) =~ m"(\w+)");
+$h->{'createdby'} = $dbh->quote($f);
 
 
 our ($all, $debug, $keyword, $web);
@@ -71,27 +75,39 @@ if ($debug) {
 	$bd->{web_flag} = '1';
 }
 
-my ($key, $val) = ('','');
+my ($xml, $rd, $category, $url) = (undef);
 my $rp = new XML::RSS::Parser::Lite;
-while (($key, $val) = each(%{$bd->{'ranks'}})) {
-	# print $val.', ', $key."<br/>\n";
-	my $xml = get($val);
-	
-	# $rp->parse($xml);
 
+foreach $rd (@{$bd->{'focus'}}) {
+	$url = $rd->[1];
+	$category = $rd->[2];
+
+	$h->{'cate_id'} = $bd->select_category($category);
+	$h->{'item_id'} = $bd->select_item($rd, $h->{'cate_id'}, $h->{'createdby'});
+	$h->{'category'} = $dbh->quote($category);
+	$h->{'item'} = $dbh->quote($rd->[0]);
+
+	$xml = get($url);
+	
 	# $title, $link, $pubDate, $source, $author, $desc
 	my $aref = $bd->get_item($xml);
-	print Dumper($ary);
 
+	#$h->{'title'} = encode("utf-8", decode("gb2312", $aref->[0])); 
 
-	$h->{'title'} = $dbh->quote($aref->[0]); 
+	$h->{'title'} = encode("utf-8", $aref->[0], Encode::FB_CROAK); 
+
+	# if (is_utf8($h->{'title'}, Encode::FB_CROAK)) { print "UTF-8\n"; }
+
+	# $h->{'title'} = encode_utf8(decode("gb2312", $aref->[0]));
+	# $h->{'title'} = $dbh->quote($aref->[0]); 
+	$h->{'title'} = $dbh->quote($h->{'title'}); 
 	$h->{'url'} = $dbh->quote($aref->[1]);
 	$h->{'pubDate'} = $dbh->quote($aref->[2]);
 	$h->{'source'} = $dbh->quote($aref->[3]); 
 	$h->{'author'} = $dbh->quote($aref->[4]);
 	$h->{'desc'} = $dbh->quote($aref->[5]);
 
-	$news->insert_baidu();
+	$bd->insert_baidu($h, $rd);
 }
 	
 $dbh->disconnect();
