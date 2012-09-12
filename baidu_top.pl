@@ -3,6 +3,7 @@
 use warnings;
 use strict;
 use utf8;
+use encoding 'utf8';
 use Data::Dumper;
 use FileHandle;
 use XML::RSS::Parser::Lite;

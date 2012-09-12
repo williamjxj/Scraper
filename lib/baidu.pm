@@ -8,6 +8,9 @@ use strict;
 use Data::Dumper;
 our ( $sth );
 
+use utf8;
+use encoding 'utf8';
+
 use constant CONTACTS => q{contexts};
 
 #http://top.baidu.com/rss.php
@@ -368,7 +371,6 @@ sub insert_baidu
 		content = $h->{'desc'},
 		pubDate = $h->{'pubDate'}
 	};
-	
 	$self->{dbh}->do($sql);
 }
 
@@ -401,7 +403,6 @@ sub select_item {
 		$self->{dbh}->do($sql);
 		return $self->{dbh}->last_insert_id(undef, undef, 'items', undef);
 	}
-
 	return $row[0];
 }
 sub select_items_by_cid {

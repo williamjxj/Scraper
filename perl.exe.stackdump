@@ -1,7 +1,0 @@
-Exception: STATUS_ACCESS_VIOLATION at eip=713944A8
-eax=00000007 ebx=800282F0 ecx=8002D9D8 edx=00000001 esi=00080000 edi=522B5F90
-ebp=8002D9D8 esp=00289420 program=C:\cygwin\bin\perl.exe, pid 33780, thread main
-cs=0023 ds=002B es=002B fs=0053 gs=002B ss=002B
-Stack trace:
-Frame     Function  Args
-End of stack trace

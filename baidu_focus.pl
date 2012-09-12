@@ -2,15 +2,15 @@
 
 use warnings;
 use strict;
-use utf8;
-use encoding 'utf8';
+#use utf8;
+#use encoding 'utf8';
 use Data::Dumper;
 use FileHandle;
 use XML::RSS::Parser::Lite;
 use LWP::Simple;
 use DBI;
 use Getopt::Long;
-use Encode;
+use Encode qw(from_to encode decode);
 
 use lib qw(./lib/);
 use config;
@@ -91,21 +91,26 @@ foreach $rd (@{$bd->{'focus'}}) {
 	
 	# $title, $link, $pubDate, $source, $author, $desc
 	my $aref = $bd->get_item($xml);
+	my ($t1, $t2, $t3, $t4, $t5, $t6) = @{$aref};
 
-	#$h->{'title'} = encode("utf-8", decode("gb2312", $aref->[0])); 
+	$t1 = decode("euc-cn", "$t1");
+	$t4 = decode("euc-cn", "$t4");
+	$t5 = decode("euc-cn", "$t5");
+	$t6 = decode("euc-cn", "$t6");
 
-	$h->{'title'} = encode("utf-8", $aref->[0], Encode::FB_CROAK); 
-
+	# $h->{'title'} = encode("utf-8", decode("gb2312", $aref->[0])); 
 	# if (is_utf8($h->{'title'}, Encode::FB_CROAK)) { print "UTF-8\n"; }
-
 	# $h->{'title'} = encode_utf8(decode("gb2312", $aref->[0]));
-	# $h->{'title'} = $dbh->quote($aref->[0]); 
-	$h->{'title'} = $dbh->quote($h->{'title'}); 
-	$h->{'url'} = $dbh->quote($aref->[1]);
-	$h->{'pubDate'} = $dbh->quote($aref->[2]);
-	$h->{'source'} = $dbh->quote($aref->[3]); 
-	$h->{'author'} = $dbh->quote($aref->[4]);
-	$h->{'desc'} = $dbh->quote($aref->[5]);
+	# $t3 = from_to($t3, 'gb2312', 'utf8');
+	# $h->{'source'} = $dbh->quote($aref->[3]); 
+	# $h->{'author'} = $dbh->quote($aref->[4]);
+
+	$h->{'title'} = $dbh->quote($t1); 
+	$h->{'url'} = $dbh->quote($t2);
+	$h->{'pubDate'} = $dbh->quote($t3);
+	$h->{'source'} = $dbh->quote($t4);
+	$h->{'author'} = $dbh->quote($t5);
+	$h->{'desc'} = $dbh->quote($t6);
 
 	$bd->insert_baidu($h, $rd);
 }
