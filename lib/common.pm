@@ -31,6 +31,13 @@ sub get_filename {
 	return LOGDIR.$stripname.'_'.$date.'.log';
 }
 
+# 网页抓取程序的名称.
+sub get_createdby {
+	my ($self, $filename) = @_;
+	my ($stripname) = (qx(basename $filename .pl) =~ m"(\w+)");
+	return $stripname;
+}
+
 sub set_log
 {
 	my ($self, $logname) = @_;

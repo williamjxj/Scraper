@@ -161,14 +161,12 @@ sub get_keywords {
 	return $aoh;
 }
 
-
-# 好像没有用到。
 sub select_category {
-	my ( $self, $cid ) = @_;
+	my ( $self, $name ) = @_;
 	my @row = ();
-	$sth =
-	  $self->{dbh}->prepare( q{ select name from categories where cid=$cid } );
-	$sth->execute();
+	$name = $self->{dbh}->quote($name);
+	$sth = $self->{dbh}->prepare( q{ select name from categories where name=? } );
+	$sth->execute($name);
 	@row = $sth->fetchrow_array();
 	$sth->finish();
 	return $row[0];
@@ -178,8 +176,8 @@ sub select_items {
 	my ( $self ) = @_;
 	my $aref = [];
 	$sth =
-	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where active='Y' order by weight } );
-	$sth->execute();
+	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where category=? and active='Y' order by weight } );
+	$sth->execute(FOOD);
 	$aref = $sth->fetchall_arrayref();
 	$sth->finish();
 	return $aref;

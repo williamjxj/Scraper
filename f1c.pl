@@ -2,21 +2,23 @@
 # 1. 操作contents 表.
 # 2. issue: 不是全部下载,而是每次更新,只下载更新部分!!
 
-use lib qw(./lib/);
-use config;
-use db;
-use food_120v_cn;
-
 use warnings;
 use strict;
 use utf8;
-#use DateTime;
+use encoding 'utf8';
 use Data::Dumper;
 use FileHandle;
 use WWW::Mechanize;
 use DBI;
 use Getopt::Long;
-#use feature qw(say);
+use feature qw(say);
+#use DateTime;
+#use constant CATEGORY => q/食品/;
+
+use lib qw(./lib/);
+use config;
+use db;
+use food_120v_cn;
 
 sub BEGIN
 {
@@ -35,7 +37,6 @@ sub BEGIN
 #-----------------------------------
 # 0. initialize:
 #-----------------------------------
-
 our ( $mech, $db, $news, $log ) = ( undef, undef );
 
 #数据库句柄。
@@ -44,10 +45,6 @@ our ( $dbh, $sth );
 our ( $page_url,  $next_page )   = ( 'http://food.120v.cn/FoodsTypeList.html', undef );
 
 our ( $num,  $start_time, $end_time, $end_date ) = ( 0,     0,     0, '' );
-
-our ($cate_id, $createdby) = (FOOD, '网页自动抓取程序');
-
-my ($name, $item_id, $item_name, $notes, $published_date, $created, $content);
 
 # 初始化数据库:
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
@@ -64,7 +61,13 @@ $start_time = time;
 $log = $news->get_filename(__FILE__);
 $news->set_log($log);
 $news->write_log( "[" . __FILE__ . "]: start at: [" . localtime() . "]." );
-# print  qx(basename __FILE__) ;
+
+my $h = {};
+$h->{'category'} = $dbh->quote(FOOD);
+$h->{'cate_id'} = 0;
+$h->{'item'} = '\'\'';
+$h->{'item_id'} = 0;
+$h->{'createdby'} = $dbh->quote($news->get_createdby());
 
 ##### 判别输入粗参数部分:
 my ( $item, $keyword, $help ) = ( undef, undef, undef );
@@ -98,10 +101,6 @@ if ($keyword) {
 
 $mech = WWW::Mechanize->new( autocheck => 0 );
 
-my ($t) = (qx(basename $0  .pl) =~ m"(\w+)");
-$t = q{'网页自动抓取程序'}  unless $t;
-$createdby = $dbh->quote($t);
-
 LOOP:
 $mech->get($page_url);
 $mech->success or die $mech->response->status_line;
@@ -121,23 +120,59 @@ else {
 $news->write_log($links);
 $news->write_log($next_page, 'next page:'.__LINE__.":");
 
+$h->{'cate_id'} = $news->select_category(FOOD);
+$h->{'item_id'} = $news->select_item();
+
 foreach my $url ( @{$links} ) {
 
 	$mech->follow_link( url => $url );
 	$mech->success or next;
 
+	$h->{'source'} = $dbh->quote($url);
+	$h->{'author'} = $dbh->quote($url);
+	
 	# print $mech->content;
 
 	$num ++;
 	
-	( $name, $item_name, $notes, $published_date, $content ) = $news->parse_detail( $mech->content );
+	#( $name, $item_name, $notes, $published_date, $content ) = $news->parse_detail( $mech->content );
+	my ($t1, $t2, $t3, $t4, $t5) = $news->parse_detail( $mech->content );
+	
+	$h->{'linkname'} = $dbh->quote($t1);
+	$h->{'item_name'} = $dbh->quote($t2);
+	$h->{'url'} = $dbh->quote($t3);
+	$h->{'pubdate'} = $dbh->quote($t4);
+	$h->{'content'} = $dbh->quote($t5);
 
-	$name = $dbh->quote($name);
-	$notes = $dbh->quote($notes);
-	$content = $dbh->quote($content);
-	$item_name = $dbh->quote($item_name);
-	$published_date = $dbh->quote($published_date);
+	my $sql = qq{ insert ignore into contexts
+		(linkname,
+		url,
+		pubdate,
+		author, 
+		source,
+		category,
+		cate_id,
+		item,
+		iid,
+		createdby,
+		created,
+		content
+	) values(
+		$h->{'linkname'}, 
+		$h->{'url'},
+		$h->{'pubdate'},
+		$h->{'source'}, 
+		$h->{'author'},
+		$h->{'category'},
+		$h->{'cate_id'},
+		$item,
+		$h->{'item_id'},
+		$h->{'createdby'},
+		now(),
+		$h->{'content'}
+	)};
 
+=comment		
 	my $sql = qq{ insert ignore into contents
 			(linkname,
 			notes,
@@ -157,7 +192,7 @@ foreach my $url ( @{$links} ) {
 			$createdby,
 			now()
 		)};
-	
+=cut	
 	$sth = $dbh->do($sql);
 	
 	my $keywords = $news->get_keywords($news->parse_keywords_list($mech->content));
@@ -173,14 +208,14 @@ foreach my $url ( @{$links} ) {
 	$mech->back();
 }
 
-$news->write_log( "There are total [ $num ] records was processed succesfully for $page_url, $item_name !\n");
+$news->write_log( "There are total [ $num ] records was processed succesfully for $page_url, $h->{'item_name'} !\n");
 
 goto LOOP if ($page_url);
 
 
 # 2. 只插入item_name,没有item_id,所以,执行之后,还要:
 # update contents c, (select iid,name from items) i set c.iid=i.iid where c.iid is NULL and c.item=i.name
-$news->update_contents();
+# $news->update_contents();
 
 $dbh->disconnect();
 

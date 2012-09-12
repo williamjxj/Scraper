@@ -15,7 +15,7 @@ use constant ITEM => q{items};
 use constant CHANNEL => q{channels};
 use constant CONTENTS => q{contents};
 use constant CONTEXTS => q{contexts};
-use constant FOOD => 3;
+use constant FOOD => q{食品};
 use constant INTERVAL_DATE => 7;
 
 1;

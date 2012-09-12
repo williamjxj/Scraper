@@ -344,7 +344,6 @@ sub insert_baidu
 {
 	my ($self, $h, $rank) = @_;
 
-	#从 baidu网站上取得的数组信息.
 	my $category = $self->{dbh}->quote($rank->[2]);
 	my $item = $self->{dbh}->quote($rank->[0]);
 
@@ -439,8 +438,8 @@ sub select_item {
 	my ( $self, $rank, $cid, $createdby) = @_;
 	my @row = ();
 	my $item = $self->{dbh}->quote($rank->[0]);
-	$sth = $self->{dbh}->prepare( qq{ select iid from items where name=$item } );
-	$sth->execute();
+	$sth = $self->{dbh}->prepare( qq{ select iid from items where name=? } );
+	$sth->execute($item);
 	@row = $sth->fetchrow_array();
 	$sth->finish();
 
