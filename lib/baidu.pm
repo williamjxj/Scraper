@@ -427,9 +427,8 @@ sub insert_baidu_old
 sub select_category {
 	my ( $self, $name ) = @_;
 	my @row = ();
-	$sth = $self->{dbh}->prepare(qq{select cid from categories where name = $name});
-	#$sth = $self->{dbh}->prepare( "select cid from categories where name = ?" );
-	#$sth->bind_param(1, $name); # $sth->execute($name);
+	$sth = $self->{dbh}->prepare( "select cid from categories where name = ?" );
+	$sth->bind_param(1, $name); # $sth->execute($name);
 	$sth->execute();
 	@row = $sth->fetchrow_array();
 	$sth->finish();
@@ -438,9 +437,9 @@ sub select_category {
 sub select_item {
 	my ( $self, $rank, $h) = @_;
 	my @row = ();
-	my $item = $h->{'item'};
-	$sth = $self->{dbh}->prepare( qq{ select iid from items where name=$item } );
-	$sth->execute();
+	my $item = $rank->[0];
+	$sth = $self->{dbh}->prepare( qq{ select iid from items where name=? } );
+	$sth->execute($item);
 	@row = $sth->fetchrow_array();
 	$sth->finish();
 

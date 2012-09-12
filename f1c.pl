@@ -62,12 +62,13 @@ $log = $news->get_filename(__FILE__);
 $news->set_log($log);
 $news->write_log( "[" . __FILE__ . "]: start at: [" . localtime() . "]." );
 
-my $h = {};
-$h->{'category'} = $dbh->quote(FOOD);
-$h->{'cate_id'} = 0;
-$h->{'item'} = '\'\'';
-$h->{'item_id'} = 0;
-$h->{'createdby'} = $dbh->quote($news->get_createdby());
+my $h = {
+	'category' => $dbh->quote(FOOD),
+	'cate_id' => 0,
+	'item' => '',
+	'item_id' => 0,
+	'createdby' => $dbh->quote($news->get_createdby(__FILE__)),
+};
 
 ##### 判别输入粗参数部分:
 my ( $item, $keyword, $help ) = ( undef, undef, undef );
@@ -89,7 +90,7 @@ if($item) {
 }
 else {
 	my $items= $news->select_items();
-	print Dumper($items);
+	$news->write_log($items);
 }
 
 if ($keyword) {
@@ -120,7 +121,7 @@ else {
 $news->write_log($links);
 $news->write_log($next_page, 'next page:'.__LINE__.":");
 
-$h->{'cate_id'} = $news->select_category(FOOD);
+$h->{'cate_id'} = $news->select_category();
 $h->{'item_id'} = $news->select_item();
 
 foreach my $url ( @{$links} ) {

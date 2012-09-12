@@ -69,7 +69,7 @@ $rp = new XML::RSS::Parser::Lite;
 foreach $rd (@{$bd->{'latest'}}) {
 	$bd->{'url'} = $rd->[1];
 	$h->{'category'} = $dbh->quote($rd->[2]);
-	$h->{'cate_id'} = $bd->select_category($h->{'category'});
+	$h->{'cate_id'} = $bd->select_category($rd->[2]);
 	$h->{'item'} = $dbh->quote($rd->[0]);
 	$h->{'item_id'} = $bd->select_item($rd, $h);
 
