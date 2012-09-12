@@ -367,7 +367,7 @@ sub select_category {
 	my ( $self, $name ) = @_;
 	my @row = ();
 	$sth =
-	  $self->{dbh}->prepare( q{ select cid from categories where name=$name } );
+	  $self->{dbh}->prepare( q{ select cid from categories where name='$name' } );
 	$sth->execute();
 	@row = $sth->fetchrow_array();
 	$sth->finish();
