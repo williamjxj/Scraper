@@ -32,9 +32,9 @@ sub BEGIN
 our ( $start_time, $end_time ) = ( 0, 0 );
 $start_time = time;
 
-our ( $bd, $dbh, $sth ) = ( undef, undef, undef );
+our ( $db, $dbh ) = ( undef, undef );
 
-our ( $db, $news, $log ) = ( undef, undef );
+our ( $bd, $log ) = ( undef, undef );
 
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
 $dsn .= ":hostname=$host";
@@ -49,39 +49,37 @@ $log = $bd->get_filename(__FILE__);
 $bd->set_log($log);
 $bd->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
-my $h = {};
+my ($num) = (0);
 
-$h->{'category'} = '\'\'';
-$h->{'cate_id'} = 0;
-$h->{'item'} = '\'\'';
-$h->{'item_id'} = 0;
+# Never insert without the following info.
+my $h = {
+	'category' => '',
+	'cate_id' => 0,
+	'item' => '',
+	'item_id' => 0,
+};
 
-my $f1 = __FILE__;
-my ($f) = (qx(basename $f1 .pl) =~ m"(\w+)");
-$h->{'createdby'} = $dbh->quote($f);
+$h->{'createdby'} = $dbh->quote($bd->get_createdby(__FILE__));
 
+GetOptions( 'log' => \$log );
 
-our ($all, $keyword, $web);
-GetOptions(
-		'all=s' => \$all,
-		'keyword=s' => \$keyword,
-		'log' => \$log,
-		'web' => \$web,
-	 );
-
-my ($xml, $rd, $category) = (undef);
-my $rp = new XML::RSS::Parser::Lite;
+my ($xml, $rd, $rp) = (undef);
+$rp = new XML::RSS::Parser::Lite;
 
 foreach $rd (@{$bd->{'latest'}}) {
 	$bd->{'url'} = $rd->[1];
-	$category = $rd->[2];
-
-	$h->{'cate_id'} = $bd->select_category($category);
-	$h->{'item_id'} = $bd->select_item($rd, $h->{'cate_id'}, $h->{'createdby'});
-	$h->{'category'} = $dbh->quote($category);
+	$h->{'category'} = $dbh->quote($rd->[2]);
+	$h->{'cate_id'} = $bd->select_category($h->{'category'});
 	$h->{'item'} = $dbh->quote($rd->[0]);
+	$h->{'item_id'} = $bd->select_item($rd, $h);
 
 	$xml = get($bd->{'url'});
+	if(!defined($xml) || $xml eq '') {
+		$bd->write_log('Fail!'.$bd->{'url'}.', '.$h->{'item_id'}.', '.$h->{'cate_id'});
+		next;
+	}
+
+	$num ++;
 
 	# $title, $link, $pubDate, $source, $author, $desc
 	my $aref = $bd->get_item($xml);
@@ -95,17 +93,16 @@ foreach $rd (@{$bd->{'latest'}}) {
 	$h->{'title'} = $dbh->quote($t1); 
 	$h->{'url'} = $dbh->quote($t2);
 	$h->{'pubDate'} = $dbh->quote($t3);
-	$h->{'source'} = $dbh->quote($t4);
+	$h->{'source'} = $dbh->quote($bd->{'url'}.'->'.$t4);
 	$h->{'author'} = $dbh->quote($t5);
 	$h->{'desc'} = $dbh->quote($t6);
-
 
 	$bd->insert_baidu($h, $rd);
 }
 	
 $dbh->disconnect();
 $end_time = time;
-$bd->write_log( "Total days' data: [ " . ( $end_time - $start_time ) . " ] seconds used.\n" );
+$bd->write_log( "Total total data: [ " . $num . "], " . ( $end_time - $start_time ) . " ] seconds used.\n" );
 $bd->write_log("----------------------------------------------\n");
 $bd->close_log();
 
