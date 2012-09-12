@@ -8,6 +8,7 @@ use strict;
 use Data::Dumper;
 our ( $sth );
 
+# 不然$category和$item 为乱码.
 use utf8;
 use encoding 'utf8';
 

@@ -88,7 +88,7 @@ foreach $rd (@{$bd->{'focus'}}) {
 	$h->{'item'} = $dbh->quote($rd->[0]);
 
 	$xml = get($url);
-	
+
 	# $title, $link, $pubDate, $source, $author, $desc
 	my $aref = $bd->get_item($xml);
 	my ($t1, $t2, $t3, $t4, $t5, $t6) = @{$aref};

@@ -8,7 +8,7 @@ use XML::RSS::Parser::Lite;
 use LWP::Simple;
 use DBI;
 use Getopt::Long;
-use Encode;
+use Encode qw(encode decode);
 
 use lib qw(./lib/);
 use config;
@@ -86,20 +86,23 @@ foreach $rd (@{$bd->{'latest'}}) {
 	$h->{'item'} = $dbh->quote($rd->[0]);
 
 	$xml = get($url);
-print $xml;
-exit;
+
 	# $title, $link, $pubDate, $source, $author, $desc
 	my $aref = $bd->get_item($xml);
+	my ($t1, $t2, $t3, $t4, $t5, $t6) = @{$aref};
 
-	$h->{'title'} = decode("utf-8", decode("gb2312", $aref->[0])); 
-	$h->{'title'} = decode_utf8(decode("gb2312", $aref->[0]));
-	#$h->{'title'} = $dbh->quote($aref->[0]); 
-	$h->{'title'} = $dbh->quote($h->{'title'}); 
-	$h->{'url'} = $dbh->quote($aref->[1]);
-	$h->{'pubDate'} = $dbh->quote($aref->[2]);
-	$h->{'source'} = $dbh->quote($aref->[3]); 
-	$h->{'author'} = $dbh->quote($aref->[4]);
-	$h->{'desc'} = $dbh->quote($aref->[5]);
+	$t1 = decode("euc-cn", "$t1");
+	$t4 = decode("euc-cn", "$t4");
+	$t5 = decode("euc-cn", "$t5");
+	$t6 = decode("euc-cn", "$t6");
+
+	$h->{'title'} = $dbh->quote($t1); 
+	$h->{'url'} = $dbh->quote($t2);
+	$h->{'pubDate'} = $dbh->quote($t3);
+	$h->{'source'} = $dbh->quote($t4);
+	$h->{'author'} = $dbh->quote($t5);
+	$h->{'desc'} = $dbh->quote($t6);
+
 
 	$bd->insert_baidu($h, $rd);
 }
