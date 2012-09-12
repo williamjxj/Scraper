@@ -236,19 +236,19 @@ SET time_zone = "+00:00";
 
 -- 在使用了百度RSS之后,对表的修改.
 -- source放百度RSS, author放original resource, createdby放perl的页面抓取程序名称, 
-CREATE TABLE IF NOT EXISTS `contents` (
+CREATE TABLE IF NOT EXISTS `contexts` (
   `cid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `linkname` varchar(255) NOT NULL,
   `url` varchar(255) DEFAULT NULL,
-  `pubdate` varchar(3) DEFAULT NULL,
+  `pubdate` varchar(30) DEFAULT NULL,
   `author` varchar(255) NOT NULL,
   `source` varchar(255) DEFAULT NULL,
   `clicks` int unsigned NOT NULL default 0,
   `content` text NOT NULL,
-  `category` varchar(128) DEFAULT '食品',
-  `cate_id` tinyint(3) unsigned DEFAULT '3',
+  `category` varchar(128),
+  `cate_id` tinyint(3) unsigned,
   `item` varchar(128) DEFAULT NULL,
-  `iid` int(11) DEFAULT NULL,
+  `iid` int(11) DEFAULT 0,
   `language` varchar(10) DEFAULT '中文',
   `tags` TEXT,
   `likes` int unsigned DEFAULT 0,
@@ -257,7 +257,7 @@ CREATE TABLE IF NOT EXISTS `contents` (
   `created` timestamp,
   PRIMARY KEY (`cid`),
   KEY `linkname` (`linkname`),
-  uniq `linkname_iit` (`linkname`, `iid`)
+  unique `linkname_iid` (`linkname`, `iid`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,6 +1,8 @@
 package chinafnews;
 
 use utf8;
+use encoding 'utf8';
+
 use config;
 use common;
 @ISA = qw(common);
@@ -229,6 +231,39 @@ sub select_keywords {
 	my $sql =
 	    "select * from contents where content like '%" . $k . "%'";
 	$self->show_results($sql);
+}
+
+sub insert_contexts
+{
+	my ($self, $h) = @_;
+	my $sql = qq{ insert ignore into contexts
+		(linkname,
+		url,
+		pubdate,
+		author, 
+		source,
+		category,
+		cate_id,
+		item,
+		iid,
+		createdby,
+		created,
+		content
+	) values(
+		$h->{'title'}, 
+		$h->{'url'},
+		$h->{'pubdate'},
+		$h->{'author'},
+		$h->{'source'},
+		$h->{'category'},
+		$h->{'cate_id'},
+		$h->{'item'},
+		$h->{'item_id'},
+		$h->{'createdby'},
+		now(),
+		$h->{'content'}
+	)};
+	$self->{dbh}->do($sql);
 }
 
 sub insert_contents
