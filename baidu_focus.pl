@@ -62,18 +62,13 @@ my ($f) = (qx(basename $f1 .pl) =~ m"(\w+)");
 $h->{'createdby'} = $dbh->quote($f);
 
 
-our ($all, $debug, $keyword, $web);
+our ($all, $keyword, $web);
 GetOptions(
 		'all=s' => \$all,
-		'debug' => \$debug,
 		'keyword=s' => \$keyword,
 		'log' => \$log,
 		'web' => \$web,
 	 );
-
-if ($debug) {
-	$bd->{web_flag} = '1';
-}
 
 my ($xml, $rd, $category, $url) = (undef);
 my $rp = new XML::RSS::Parser::Lite;

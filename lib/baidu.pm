@@ -336,6 +336,49 @@ sub remove_CDATA
 sub insert_baidu
 {
 	my ($self, $h, $rank) = @_;
+
+	#从 baidu网站上取得的数组信息.
+	my $category = $self->{dbh}->quote($rank->[2]);
+	my $item = $self->{dbh}->quote($rank->[0]);
+
+	my $sql = qq{ insert into contexts
+		(linkname,
+		url,
+		pubdate,
+		author, 
+		source,
+		category,
+		cate_id,
+		item,
+		iid,
+		createdby,
+		created,
+		content
+	) values(
+		$h->{'title'}, 
+		$h->{'url'},
+		$h->{'pubDate'},
+		$h->{'author'},
+		$h->{'source'},
+		$category,
+		$h->{'cate_id'},
+		$item,
+		$h->{'item_id'},
+		$h->{'createdby'},
+		now(),
+		$h->{'desc'}
+	)
+	on duplicate key update
+		content = $h->{'desc'},
+		pubDate = $h->{'pubDate'}
+	};
+	$self->{dbh}->do($sql);
+}
+
+#t_baidu
+sub insert_baidu_old
+{
+	my ($self, $h, $rank) = @_;
 	# foreach my $key (keys %{$h}) { print $h->{$key}  . ", " if ($key ne 'desc'); }
 
 	my $category = $self->{dbh}->quote($rank->[2]);
