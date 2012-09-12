@@ -322,14 +322,21 @@ sub get_item
 	return [ $title, $link, $pubDate, $source, $author, $desc ];
 }
 
-# Mon, 10 Sep 12 20:19:06 +0800
+# Mon, 10 Sep 12 20:19:06 +0800, reserved for future improvement.
 sub get_datetime { }
 
+# Use of uninitialized value $str in substitution (s///) at lib//baidu.pm line 331
 sub remove_CDATA
 {
 	my ($self, $str) = @_;
-	$str =~ s/<!\[CDATA\[//;
-	$str =~ s/\]\]>//;
+	if (! $str && $self->{'url'}) {
+		$self->write_log( "Download NULL problem: " . $self->{'url'} );
+		$str = '';
+	}
+	else {
+		$str =~ s/<!\[CDATA\[//;
+		$str =~ s/\]\]>//;
+	}
 	return $str;
 }
 

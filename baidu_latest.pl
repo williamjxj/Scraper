@@ -69,11 +69,11 @@ GetOptions(
 		'web' => \$web,
 	 );
 
-my ($xml, $rd, $category, $url) = (undef);
+my ($xml, $rd, $category) = (undef);
 my $rp = new XML::RSS::Parser::Lite;
 
 foreach $rd (@{$bd->{'latest'}}) {
-	$url = $rd->[1];
+	$bd->{'url'} = $rd->[1];
 	$category = $rd->[2];
 
 	$h->{'cate_id'} = $bd->select_category($category);
@@ -81,7 +81,7 @@ foreach $rd (@{$bd->{'latest'}}) {
 	$h->{'category'} = $dbh->quote($category);
 	$h->{'item'} = $dbh->quote($rd->[0]);
 
-	$xml = get($url);
+	$xml = get($bd->{'url'});
 
 	# $title, $link, $pubDate, $source, $author, $desc
 	my $aref = $bd->get_item($xml);
