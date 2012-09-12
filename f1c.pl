@@ -65,7 +65,7 @@ $news->write_log( "[" . __FILE__ . "]: start at: [" . localtime() . "]." );
 my $h = {
 	'category' => $dbh->quote(FOOD),
 	'cate_id' => 0,
-	'item' => '',
+	'item' => '\'\'',
 	'item_id' => 0,
 	'createdby' => $dbh->quote($news->get_createdby(__FILE__)),
 };
@@ -169,7 +169,7 @@ foreach my $url ( @{$links} ) {
 		$h->{'author'},
 		$h->{'category'},
 		$h->{'cate_id'},
-		$item,
+		$h->{'item'},
 		$h->{'item_id'},
 		$h->{'createdby'},
 		now(),
