@@ -36,10 +36,10 @@ sub BEGIN
 #-----------------------------------
 # 0. initialize:
 #-----------------------------------
-our ( $mech, $db, $news, $log ) = ( undef, undef );
+our ( $mech, $news, $log ) = ( undef, undef );
 
 #数据库句柄.
-our ( $dbh, $sth ) = ( undef, undef );
+our ( $db, $dbh ) = ( undef, undef );
 
 #当前页, 翻页变量.
 my ( $page_url,  $next_page, $current_page ) = ( undef, undef, undef );
@@ -49,7 +49,7 @@ my ( $num, $total, $start_time, $end_time, $end_date ) = ( 0, 0, 0, 0, undef );
 
 # 该程序归类:食品, 通道的id,名称 (under '食品'),和创建日期.
 # 存放所有要插入数据库的标量。
-my ($h, $queue) = ({}, []);
+my ($queue) = ([]);
 
 # 初始化数据库:
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
@@ -70,11 +70,14 @@ $news->write_log( "[" . __FILE__ . "]: start at: [" . localtime() . "]." );
 # '网页自动抓取程序'加上引号,用于数据库的插入. 也可以直接定义为常量:
 # use constant createdby=>q{'网页自动抓取程序'};
 #$h->{'createdby'} = $dbh->quote('网页自动抓取程序');
-$h->{'category'} = $dbh->quote(FOOD);
-$h->{'cate_id'} = 0;
-$h->{'item'} = '\'\'';
-$h->{'item_id'} = 0;
-$h->{'createdby'} = $dbh->quote($news->get_createdby());
+
+my $h = {
+	'category' => $dbh->quote(FOOD),
+	'cate_id' => 0,
+	'item' => '',
+	'item_id' => 0,
+	'createdby' => $dbh->quote($news->get_createdby(__FILE__)),
+};
 
 ##### 判别输入粗参数部分:
 my ($edate, $item, $keywords, $help, $version) = (undef, undef, undef, undef, undef);

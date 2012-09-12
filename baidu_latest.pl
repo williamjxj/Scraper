@@ -57,9 +57,8 @@ my $h = {
 	'cate_id' => 0,
 	'item' => '',
 	'item_id' => 0,
+	'createdby' => $dbh->quote($bd->get_createdby(__FILE__)),
 };
-
-$h->{'createdby'} = $dbh->quote($bd->get_createdby(__FILE__));
 
 GetOptions( 'log' => \$log );
 
@@ -107,4 +106,3 @@ $bd->write_log("----------------------------------------------\n");
 $bd->close_log();
 
 exit 8;
-

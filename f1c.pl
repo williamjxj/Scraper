@@ -122,12 +122,15 @@ $news->write_log($links);
 $news->write_log($next_page, 'next page:'.__LINE__.":");
 
 $h->{'cate_id'} = $news->select_category();
-$h->{'item_id'} = $news->select_item();
+#$h->{'item_id'} = $news->select_item();
 
 foreach my $url ( @{$links} ) {
 
 	$mech->follow_link( url => $url );
-	$mech->success or next;
+	if(! $mech->success) {
+		$news->write_log('Fail : ' . $page_url . ', [' . $h->{'item_id'} . '], ' . $url);
+		next;
+	}
 
 	$h->{'source'} = $dbh->quote($url);
 	$h->{'author'} = $dbh->quote($url);
