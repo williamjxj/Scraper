@@ -9,7 +9,6 @@ use FileHandle;
 use LWP::Simple;
 use DBI;
 use Getopt::Long;
-use Encode;
 
 use lib qw(./lib/);
 use config;
@@ -48,7 +47,7 @@ $log = $bd->get_filename(__FILE__) unless $log;
 $bd->set_log($log);
 $bd->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
-my ($num, $url, $html, $aref, $rss) = (0, BAIDU_RSS, '', []);
+my ($num, $url, $html, $rss) = (0, BAIDU_RSS, '', '');
 
 $html = get $url;
 die "Couldn't get $url" unless defined $html;
@@ -60,21 +59,58 @@ $html =~ m {
 }sgix;
 $rss = $1;
 
+# 一大堆的解析,将html转化为纯内容的 '名字'->'链接地址' pair.
 #$rss =~ s/(^|\n)[\n\s]*/$1/g;
 #$rss =~ tr/\n//s;
 $rss =~ s/^\s*\n+//mg; 
 
+# 去掉html tags.
 $rss =~ s/^\s*(<div>|<\/div>|<li>|<\/li>|<ul>|<\/ul>)\s*\n+//mg; 
 
+# 去掉<span>前后缀.
 $rss =~ s/<span(?:.*?)>//mg; 
 $rss =~ s/<\/span>//mg; 
 
+# 去掉<input tag,只是得到value=""中的值.
 $rss =~ s/<input(?:.*?)value="//mg; 
 $rss =~ s/">\s*$//mg; 
 
-print $rss;
-exit;
+# 去掉 <ul><li> tag.
+$rss =~ s/^\s*<\/ul>\s*<\/li>\s*\n+//mg; 
+$rss =~ s/^\s*<\/li>\s*<li>\s*\n+//mg; 
 
+# 去掉 剩余的不需要的 tag.
+$rss =~ s/^\s*<strong>.*$//mg;
+$rss =~ s/^\s*<sup>.*$//mg;
+$rss =~ s/^\s*<ul.*\n+//mg;
+$rss =~ s/^\s*<div.*\n+//mg;
+
+# 去掉 只包含 tag的行.
+$rss =~ s/^\s*(<\/li>|<li|<ul|<\/ul>|<div|<\/div>).*\n+//mg; 
+
+# 关键: 将两行合并成一行: 对于^M 结尾的行， 去掉^M回车换行, 合并两行成一行。
+$rss =~ s/\s+\n+//mg;
+
+# 前移，去掉前导空格。
+$rss =~ s/^\s+//mg;
+
+my ($name, $link, $sql) = ('','','');
+while($rss =~ m/([^\s]*?)\s+([^\s]*?)$/mg) {
+	print '['. $1 . "]: [" . $2 . "];\n";
+	$name = $dbh->quote($1);
+	$link = $dbh->quote($2);
+	$sql = qq{ insert ignore into baidu_rss(
+		name,
+		url,
+		dt) 
+	values(
+		$name,
+		$link,
+		now()
+	)};
+	$bd->write_log($sql);
+	$dbh->do($sql);	
+}
 
 
 $dbh->disconnect();

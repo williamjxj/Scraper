@@ -72,7 +72,9 @@ CREATE TABLE IF NOT EXISTS `baidu_rss` (
   `category` varchar(128),
   primary key (`bid`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
+alter table baidu_rss add column dt timestamp;
+ALTER TABLE  `baidu_rss` ADD UNIQUE ( `url` );
+alter table baidu_rss add column active enum('Y','N') default 'Y' after category;
 -------------------------
 drop table if exists tbl_lookup;
 CREATE TABLE tbl_lookup
