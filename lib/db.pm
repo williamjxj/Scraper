@@ -42,6 +42,13 @@ sub get_routine_date
 	return $row[0];
 }
 
+
+sub get_baidu_rss {
+	my $self = shift;
+	my $sql = qq{ select name, url from baidu_rss };
+	$self->show_results($sql);
+}
+
 sub show_results
 {
 	my ($self, $sql) = @_;

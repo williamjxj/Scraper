@@ -41,7 +41,12 @@ our ($dbh, $bd);
 $dbh = new db( $user, $pass, $dsn );
 $bd = new common();
 
-GetOptions( 'log' => \$log );
+my $show = '';
+GetOptions( 'log' => \$log, 'show' => \$show );
+if($show) {
+	$dbh->get_baidu_rss();
+	exit;
+}
 
 $log = $bd->get_filename(__FILE__) unless $log;
 $bd->set_log($log);
