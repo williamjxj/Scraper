@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd $HOME/scraper
+
+git add .
+git commit -a -m"update from server at `date`"
+git pull origin master

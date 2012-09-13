@@ -3,7 +3,7 @@
 cd $HOME/scraper
 
 git add .
-git commit -a -m"update at `date`"
+git commit -a -m"update from server at `date`"
 git push origin master
 
 cd -
