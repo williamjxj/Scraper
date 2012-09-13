@@ -96,7 +96,7 @@ $rss =~ s/^\s+//mg;
 
 my ($name, $link, $sql) = ('','','');
 while($rss =~ m/([^\s]*?)\s+([^\s]*?)$/mg) {
-	print '['. $1 . "]: [" . $2 . "];\n";
+	#print '['. $1 . "]: [" . $2 . "];\n";
 	$name = $dbh->quote($1);
 	$link = $dbh->quote($2);
 	$sql = qq{ insert ignore into baidu_rss(
