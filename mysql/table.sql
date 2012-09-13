@@ -260,6 +260,56 @@ CREATE TABLE IF NOT EXISTS `contexts` (
   unique `linkname_iid` (`linkname`, `iid`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- phpMyAdmin SQL Dump
+-- version 3.5.2
+-- http://www.phpmyadmin.net
+--
+-- Host: localhost
+-- Generation Time: Sep 13, 2012 at 06:07 AM
+-- Server version: 5.5.25a
+-- PHP Version: 5.4.4
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+--
+-- Database: `dixi`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contexts`
+--
+
+CREATE TABLE IF NOT EXISTS `contexts` (
+  `cid` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `linkname` varchar(255) NOT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `pubdate` varchar(30) DEFAULT NULL,
+  `author` varchar(255) NOT NULL,
+  `source` varchar(255) DEFAULT NULL,
+  `clicks` int(10) unsigned NOT NULL DEFAULT '0',
+  `content` text NOT NULL,
+  `category` varchar(128) DEFAULT NULL,
+  `cate_id` tinyint(3) unsigned DEFAULT NULL,
+  `item` varchar(128) DEFAULT NULL,
+  `iid` int(11) DEFAULT '0',
+  `language` varchar(10) DEFAULT '中文',
+  `tags` text,
+  `likes` int(10) unsigned DEFAULT '0',
+  `active` enum('Y','N') DEFAULT 'Y',
+  `createdby` varchar(50) DEFAULT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`cid`),
+  UNIQUE KEY `linkname_iid` (`linkname`,`iid`),
+  KEY `linkname` (`linkname`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+
