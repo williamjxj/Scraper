@@ -1,19 +1,16 @@
 #! /bin/bash
-# UPDATE `biz_us_contact` set accessible = 'N' WHERE web = 'www.altousa.net'
-# UPDATE `biz_us_contact` set accessible = 'N' WHERE web = 'www.covingtonelectric.net'
 
-cd $HOME/business
+cd $HOME/scraper
 
-MYSQL="mysql -u biz_us -pwilliam -D business_db"
+sql='SELECT iid, name, iurl FROM items WHERE cid =3 AND groups =2 ORDER BY iid'
 
-if [ $# -ne 1 ]; then
-    echo "Which website to make un-accessible? ";
-    exit;
-fi
-web=$1
-sql="UPDATE biz_us_contact set accessible = 'N' WHERE web like '%$web%'";
-echo $sql
+MYSQL='/opt/lampp/bin/mysql -u dixitruth -p"dixi123456" -D dixi -h localhost'
 
-# $MYSQL << $sql;
-echo $sql | $MYSQL;
+cmd="$HOME/scraper/chinafnews.pl -c "
 
+for i in `echo $sql | MYSQL`
+do
+	$cmd $i
+done
+
+cd -
