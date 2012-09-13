@@ -39,10 +39,7 @@ sub BEGIN
 #-----------------------------------
 # 0. initialize:
 #-----------------------------------
-our ( $mech, $db, $news, $log ) = ( undef, undef );
-
-#数据库句柄。
-our ( $dbh, $sth );
+our ( $mech, $sth, $news, $log ) = ( undef, undef );
 
 our ( $page_url,  $next_page )   = ( START_URL, undef );
 
@@ -51,11 +48,12 @@ our ( $num,  $start_time, $end_time, $end_date ) = ( 0,     0,     0, '' );
 # 初始化数据库:
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
 $dsn .= ":hostname=$host";
-$db = new db( $user, $pass, $dsn );
-$dbh = $db->{dbh};
+
+#数据库句柄。
+our $dbh = new db( $user, $pass, $dsn );
 
 # 初始化页面抓取模块:
-$news = new food_120v_cn( $db->{dbh} ) or die;
+$news = new food_120v_cn( $dbh ) or die;
 
 # 日志文件:
 $start_time = time;
@@ -64,13 +62,12 @@ $log = $news->get_filename(__FILE__);
 $news->set_log($log);
 $news->write_log( "[" . __FILE__ . "]: start at: [" . localtime() . "]." );
 
-# 'createdby' => $dbh->quote('food.120v.cn��ҳ�Hȥ���� : f1c.pl'),
 my $h = {
 	'category' => $dbh->quote(FOOD),
 	'cate_id' => 3,
 	'item' => '\'\'',
 	'item_id' => 0,
-	'createdby' => $dbh->quote($news->get_createdby(__FILE__)),
+	'createdby' => $dbh->quote($news->get_os_stripname(__FILE__)),
 };
 
 ##### 判别输入粗参数部分:
@@ -89,6 +86,7 @@ $help && usage();
 # 判断是否有输入参数?
 if($item) {
 	print Dumper($news->select_item_by_id($item));
+	#$dbh->show_results($sql);
 	exit 1;
 }
 =comment

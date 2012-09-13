@@ -5,7 +5,6 @@ use warnings;
 use strict;
 use Data::Dumper;
 use FileHandle;
-use XML::RSS::Parser::Lite;
 use LWP::Simple;
 use DBI;
 use Getopt::Long;
@@ -32,16 +31,13 @@ sub BEGIN
 our ( $start_time, $end_time ) = ( 0, 0 );
 $start_time = time;
 
-our ( $db, $dbh ) = ( undef, undef );
-
 our ( $bd, $log ) = ( undef, undef );
 
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
 $dsn .= ":hostname=$host";
-$db = new db( $user, $pass, $dsn );
-$dbh = $db->{dbh};
+our $dbh = new db( $user, $pass, $dsn );
 
-$bd = new baidu( $db->{dbh} );
+$bd = new baidu( $dbh );
 
 $start_time = time;
 
@@ -57,14 +53,12 @@ my $h = {
 	'cate_id' => 0,
 	'item' => '',
 	'item_id' => 0,
-	'createdby' => $dbh->quote($bd->get_createdby(__FILE__)),
+	'createdby' => $dbh->quote($bd->get_os_stripname(__FILE__)),
 };
 
 GetOptions( 'log' => \$log );
 
-my ($xml, $rd, $rp) = (undef);
-$rp = new XML::RSS::Parser::Lite;
-
+my ($xml, $rd) = (undef);
 foreach $rd (@{$bd->{'latest'}}) {
 	$bd->{'url'} = $rd->[1];
 	$h->{'category'} = $dbh->quote($rd->[2]);

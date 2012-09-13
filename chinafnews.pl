@@ -76,7 +76,7 @@ my $h = {
 	'cate_id' => 3,
 	'item' => '',
 	'item_id' => 0,
-	'createdby' => $dbh->quote($news->get_createdby(__FILE__)),
+	'createdby' => $dbh->quote($news->get_os_stripname(__FILE__)),
 };
 
 ##### 判别输入粗参数部分:

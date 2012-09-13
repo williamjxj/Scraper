@@ -1,41 +1,41 @@
 package common;
 
+use strict;
 use FileHandle;
 use Data::Dumper;
-use strict;
 
 use constant LOGDIR => q{./logs/};
 use constant RW_MODE => "a";
 
 sub new
 {
-    my ($type, $app) = @_;
+    my ($type) = @_;
     my $self = {};
-	$self->{app} = $app;
 	bless $self, $type;
+}
+
+# Use of uninitialized value in pattern match (m//) at lib//common.pm line 20.
+# $^O; #MSWin32,Linux
+sub get_os_stripname {
+	my ($self, $filename) = @_;
+	my $stripname; #回车换行.
+	if ($^O eq 'MSWin32') {
+		$stripname = (defined $filename)?$filename:$self->{osname};		
+	}
+	else {
+		($stripname) = (qx(basename $filename .pl) =~ m"(\w+)");		
+	}
+	return $stripname;	
 }
 
 sub get_filename {
 	my ($self, $filename) = @_;
-
-	# Use of uninitialized value in pattern match (m//) at lib//common.pm line 20.
-	# my ($stripname) = (qx(basename $filename .pl) =~ m"(\w+)");
-	my $stripname; #回车换行.
-	($stripname) = (qx(basename $filename .pl) =~ m"(\w+)");
-	$stripname = $self->{app} unless $stripname;
-	
 	my ($time, $date);
 	@$time = localtime(time);
+	my $sn = $self->get_os_stripname($filename);	
 	$date = sprintf ("%02d%02d%02d", ($time->[5]+1900)%100, $time->[4]+1, $time->[3]);
 
-	return LOGDIR.$stripname.'_'.$date.'.log';
-}
-
-# 网页抓取程序的名称.
-sub get_createdby {
-	my ($self, $filename) = @_;
-	my ($stripname) = (qx(basename $filename .pl) =~ m"(\w+)");
-	return $stripname;
+	return LOGDIR.$sn.'_'.$date.'.log';
 }
 
 sub set_log

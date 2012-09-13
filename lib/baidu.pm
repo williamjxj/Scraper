@@ -1,10 +1,11 @@
 package baidu;
+# http://news.baidu.com/newscode.html
 
 # 不然$category和$item 为乱码.
 use utf8;
 use encoding 'utf8';
 
-# http://news.baidu.com/newscode.html
+use lib qw(./);
 use config;
 use common;
 @ISA = qw(common);
@@ -167,8 +168,6 @@ our @latest = (
 	[ '维修养护最新', "http://news.baidu.com/n?cmd=4&class=weixiu&tn=rss", '汽车' ],
 	[ '体育最新', "http://news.baidu.com/n?cmd=4&class=sportnews&tn=rss", '体育' ],
 	[ 'NBA最新', "http://news.baidu.com/n?cmd=4&class=nba&tn=rss", '体育' ],
-	[ '姚明-火箭最新', "http://news.baidu.com/n?cmd=4&class=yaoming&tn=rss", '体育' ],
-	[ '易建联-篮网最新', "http://news.baidu.com/n?cmd=4&class=yijianlian&tn=rss", '体育' ],
 	[ '国际足球最新', "http://news.baidu.com/n?cmd=4&class=worldsoccer&tn=rss", '体育' ],
 	[ '英超最新', "http://news.baidu.com/n?cmd=4&class=Yingchao&tn=rss", '体育' ],
 	[ '意甲最新', "http://news.baidu.com/n?cmd=4&class=Yijia&tn=rss", '体育' ],
@@ -330,7 +329,7 @@ sub remove_CDATA
 {
 	my ($self, $str) = @_;
 	if (! $str && $self->{'url'}) {
-		$self->write_log( "Download NULL problem: " . $self->{'url'} );
+		$self->write_log( "Download NULL problem[".__FILE__.",".__LINE__."]: ".$self->{'url'} );
 		$str = '';
 	}
 	else {

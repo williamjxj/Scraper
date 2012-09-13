@@ -44,53 +44,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   KEY `FK_item_category` (`cid`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=1 ;
 
-/*
- *  alter table channels add cid tinyint unsigned default 1 after name;
- *  alter table channels add cname varchar(128) default '食品'  after cid;
- *  alter table channels add iid int unsigned after name;
- *  alter table channels add iname varchar(128)  after iid;
- * 
- */
-CREATE TABLE IF NOT EXISTS `channels` (
-  `mid` int unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `cid` tinyint(3) unsigned NOT NULL,
-  `cname` varchar(128) COLLATE utf8_general_ci NOT NULL,
-  `iid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `iname` varchar(128) COLLATE utf8_general_ci NOT NULL,
-  `url` varchar(255) NOT NULL,
-  `weight` tinyint(3) unsigned DEFAULT '1',
-  `groups` tinyint(3) unsigned DEFAULT '1',
-  `description` text,
-  `active` enum('Y','N') DEFAULT 'Y',
-  `createdby` varchar(50) DEFAULT NULL,
-  `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `updatedby` varchar(50) DEFAULT NULL,
-  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`mid`),
-  UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
-
-CREATE TABLE IF NOT EXISTS `contexts` (
-  `cid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `notes` varchar(255) NOT NULL,
-  `content` text NOT NULL,
-  `cate_id` tinyint(3) unsigned DEFAULT '3',
-  `item_id` int(11) unsigned,
-  `chan_id` int unsigned NOT NULL,
-  `chan_name` varchar(255),
-  `weight` tinyint(3) unsigned DEFAULT '0',
-  `active` enum('Y','N') DEFAULT 'Y',
-  `createdby` varchar(50) DEFAULT NULL,
-  `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `updatedby` varchar(50) DEFAULT NULL,
-  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`cid`),
-  UNIQUE KEY `title_mid` (`name`,`chan_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
+-- 英语版.
 CREATE TABLE IF NOT EXISTS `foods` (
   `fid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `google_keywords` varchar(128) NOT NULL,
@@ -108,19 +62,16 @@ CREATE TABLE IF NOT EXISTS `foods` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 update foods set title=concat(google_keywords,',',url) where title is NULL;
-insert into contents(
-	linkname,
-	notes,
-	author, 
-	content,
-	published_date,
-	language,
-	category,
-	cate_id,
-	item,
-	iid
-)
-select title, meta_description, url, detail, fdate, 'English', '食品', 3, 'China Food Negative News', 100 from foods
+
+
+-------http://www.baidu.com/search/rss.html-------------
+CREATE TABLE IF NOT EXISTS `baidu_rss` (
+  `bid` smallint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) NOT NULL,
+  `url` varchar(255) NOT NULL,
+  `category` varchar(128),
+  primary key (`bid`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -------------------------
 drop table if exists tbl_lookup;
@@ -200,31 +151,6 @@ INSERT INTO tbl_tag (name) VALUES ('yii');
 INSERT INTO tbl_tag (name) VALUES ('blog');
 INSERT INTO tbl_tag (name) VALUES ('test');
 
-
--- phpMyAdmin SQL Dump
--- version 3.5.2
--- http://www.phpmyadmin.net
---
--- Host: localhost
--- Generation Time: Sep 12, 2012 at 06:04 PM
--- Server version: 5.5.25a
--- PHP Version: 5.4.4
-
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
---
--- Database: `dixi`
---
-
--- --------------------------------------------------------
-
 --
 -- Table structure for table `contents`
 -- 2012-09-12: 删除 site_id, sname, mname, mid, 添加:clicks, source, weight, updatedby, updated
@@ -236,57 +162,6 @@ SET time_zone = "+00:00";
 
 -- 在使用了百度RSS之后,对表的修改.
 -- source放百度RSS, author放original resource, createdby放perl的页面抓取程序名称, 
-CREATE TABLE IF NOT EXISTS `contexts` (
-  `cid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `linkname` varchar(255) NOT NULL,
-  `url` varchar(255) DEFAULT NULL,
-  `pubdate` varchar(30) DEFAULT NULL,
-  `author` varchar(255) NOT NULL,
-  `source` varchar(255) DEFAULT NULL,
-  `clicks` int unsigned NOT NULL default 0,
-  `content` text NOT NULL,
-  `category` varchar(128),
-  `cate_id` tinyint(3) unsigned,
-  `item` varchar(128) DEFAULT NULL,
-  `iid` int(11) DEFAULT 0,
-  `language` varchar(10) DEFAULT '中文',
-  `tags` TEXT,
-  `likes` int unsigned DEFAULT 0,
-  `active` enum('Y','N') DEFAULT 'Y',
-  `createdby` varchar(50) DEFAULT NULL,
-  `created` timestamp,
-  PRIMARY KEY (`cid`),
-  KEY `linkname` (`linkname`),
-  unique `linkname_iid` (`linkname`, `iid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
--- phpMyAdmin SQL Dump
--- version 3.5.2
--- http://www.phpmyadmin.net
---
--- Host: localhost
--- Generation Time: Sep 13, 2012 at 06:07 AM
--- Server version: 5.5.25a
--- PHP Version: 5.4.4
-
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
---
--- Database: `dixi`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `contexts`
---
 
 CREATE TABLE IF NOT EXISTS `contexts` (
   `cid` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -311,5 +186,4 @@ CREATE TABLE IF NOT EXISTS `contexts` (
   UNIQUE KEY `linkname_iid` (`linkname`,`iid`),
   KEY `linkname` (`linkname`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
 

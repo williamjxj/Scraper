@@ -14,6 +14,7 @@ sub new
 	# mysql_query("SET CHARACTER SET UTF8");
 	# mysql_query("SET CHARACTER_SET_RESULTS='UTF8'");
 	bless $self, $type;
+	return $self->{dbh};
 }
 
 # Thu 25 Mar
@@ -74,6 +75,5 @@ sub show_results
 	}
 	$sth->finish ();
 }
-
 
 1;
