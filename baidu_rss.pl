@@ -48,21 +48,32 @@ $log = $bd->get_filename(__FILE__) unless $log;
 $bd->set_log($log);
 $bd->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
-my ($num, $url, $html, $aref) = (0, BAIDU_RSS, '', []);
+my ($num, $url, $html, $aref, $rss) = (0, BAIDU_RSS, '', []);
 
 $html = get $url;
 die "Couldn't get $url" unless defined $html;
 
-while (
-	$html =~ m {
-	<div\sclass="n_txt2"
-	(.*)
-	</ul>
-	(?:.*?)
-	<div\sclass="pagination">
-}sgix) {
-	return $1;
-}
+$html =~ m {
+	<div\sid="feeds">
+	(.*?)
+	<script
+}sgix;
+$rss = $1;
+
+#$rss =~ s/(^|\n)[\n\s]*/$1/g;
+#$rss =~ tr/\n//s;
+$rss =~ s/^\s*\n+//mg; 
+
+$rss =~ s/^\s*(<div>|<\/div>|<li>|<\/li>|<ul>|<\/ul>)\s*\n+//mg; 
+
+$rss =~ s/<span(?:.*?)>//mg; 
+$rss =~ s/<\/span>//mg; 
+
+$rss =~ s/<input(?:.*?)value="//mg; 
+$rss =~ s/">\s*$//mg; 
+
+print $rss;
+exit;
 
 
 
