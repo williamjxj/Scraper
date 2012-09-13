@@ -119,7 +119,7 @@ else {
 	$page_url = '';
 }
 
-$news->write_log($links);
+#$news->write_log($links);
 $news->write_log($next_page, 'next page:'.__LINE__.":");
 
 $h->{'cate_id'} = $news->select_category();

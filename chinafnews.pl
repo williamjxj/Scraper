@@ -109,8 +109,7 @@ else {
 
 if($item) {
 	push(@{$queue}, $news->select_item_by_id($item));
-	print Dumper($queue);
-	exit;
+	#print Dumper($queue);
 }
 else {
 	$queue= $news->select_items();
@@ -221,8 +220,6 @@ foreach my $url ( @{$links} ) {
 
 	#通过了，插入数据库。
 	$num ++;
-
-	#$news->write_log($url); #.', item name:' . $h->{'item'});
 
 	#patch
 	#$h->{'pubdate'} = $news->patch_date(h->{'$pubdate'});
