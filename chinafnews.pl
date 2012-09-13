@@ -73,7 +73,7 @@ $news->write_log( "[" . __FILE__ . "]: start at: [" . localtime() . "]." );
 
 my $h = {
 	'category' => $dbh->quote(FOOD),
-	'cate_id' => 0,
+	'cate_id' => 3,
 	'item' => '',
 	'item_id' => 0,
 	'createdby' => $dbh->quote($news->get_createdby(__FILE__)),
@@ -108,8 +108,9 @@ else {
 }
 
 if($item) {
-	#$queue = $news->select_item_by_id($item);
-	push(@{$queue}, $news->select_item_by_id($item));	
+	push(@{$queue}, $news->select_item_by_id($item));
+	print Dumper($queue);
+	exit;
 }
 else {
 	$queue= $news->select_items();
@@ -162,17 +163,17 @@ if ($file) {
 # 第一次从首页开始抓取,以后取'下一页'的链接,继续抓取.
 foreach my $li (@{$queue}) {
 	$h->{'item_id'} = $li->[0];
-	$h->{'item_name'} = $dbh->quote($li->[2]);
-	$page_url = BASEURL . $li->[1];
+	$h->{'item'} = $dbh->quote($li->[1]);
+	$page_url = BASEURL . $li->[2];
 	$num = 0; #将循环计数复位.
-	$news->write_log([$h->{'item_id'}, $h->{'item_name'}, $page_url], 'Looping:'.__LINE__.':');	
+	$news->write_log([$h->{'item_id'}, $h->{'item'}, $page_url], 'Looping:'.__LINE__.':');	
 
 LOOP:
 
 $mech->get($page_url);
 #$mech->success or die $mech->response->status_line;
 if(! $mech->success) {
-	$news->write_log('Fail1 : ' . $h->{'item_id'} . ', [' . $page_url . '], ' . $h->{'item_name'});
+	$news->write_log('Fail1 : ' . $h->{'item_id'} . ', [' . $page_url . '], ' . $h->{'item'});
 	next;
 }
 
@@ -205,10 +206,7 @@ foreach my $url ( @{$links} ) {
 		next;
 	}
 
-	$h->{'source'} = $dbh->quote($url);
-	$h->{'author'} = $dbh->quote($url);
-	 
-	($h->{'linkname'}, $h->{'url'}, $h->{'pubdate'}, $h->{'content'})
+	($h->{'linkname'}, $h->{'source'}, $h->{'pubdate'}, $h->{'content'})
 		 = $news->parse_detail( $mech->content );
 
 	# 如果'来源' is null，就要尝试没有‘来源’的解析。
@@ -224,15 +222,18 @@ foreach my $url ( @{$links} ) {
 	#通过了，插入数据库。
 	$num ++;
 
-	#$news->write_log($url); #.', item name:' . $h->{'item_name'});
+	#$news->write_log($url); #.', item name:' . $h->{'item'});
 
 	#patch
 	#$h->{'pubdate'} = $news->patch_date(h->{'$pubdate'});
 	$h->{'content'} = $news->patch_content($h->{'content'});
 
+	$h->{'url'} = $dbh->quote($url);
+	$h->{'author'} = $dbh->quote($url);
+	 
 
 	$h->{'linkname'} = $dbh->quote($h->{'linkname'});
-	$h->{'url'} = $dbh->quote($h->{'url'});
+	$h->{'source'} = $dbh->quote($h->{'source'}); # probably NULL.
 	$h->{'content'} = $dbh->quote($h->{'content'});
 	$h->{'pubdate'} = $dbh->quote($h->{'pubdate'});
 	
@@ -265,7 +266,7 @@ sub usage {
 Uage:
       $0
      or:
-      $0 -n item_name #new item
+      $0 -n item #new item
      or:
       $0 -k keyword
      or:

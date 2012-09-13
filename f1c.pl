@@ -15,6 +15,7 @@ use feature qw(say);
 #use DateTime;
 #use constant CATEGORY => q/é£Ÿå“/;
 use constant START_URL => q{http://food.120v.cn/FoodsTypeList.html};
+use constant ROOT_URL => q{http://food.120v.cn/};
 
 use lib qw(./lib/);
 use config;
@@ -63,10 +64,11 @@ $log = $news->get_filename(__FILE__);
 $news->set_log($log);
 $news->write_log( "[" . __FILE__ . "]: start at: [" . localtime() . "]." );
 
+# 'createdby' => $dbh->quote('food.120v.cnÍøÒ³šHÈ¥³ÌÐò£º : f1c.pl'),
 my $h = {
 	'category' => $dbh->quote(FOOD),
-	'cate_id' => 0,
-	'item' => '',
+	'cate_id' => 3,
+	'item' => '\'\'',
 	'item_id' => 0,
 	'createdby' => $dbh->quote($news->get_createdby(__FILE__)),
 };
@@ -123,7 +125,6 @@ $news->write_log($links);
 $news->write_log($next_page, 'next page:'.__LINE__.":");
 
 $h->{'cate_id'} = $news->select_category();
-#$h->{'item_id'} = $news->select_item();
 
 foreach my $url ( @{$links} ) {
 
@@ -132,23 +133,21 @@ foreach my $url ( @{$links} ) {
 		$news->write_log('Fail : ' . $page_url . ', [' . $h->{'item_id'} . '], ' . $url);
 		next;
 	}
-
-	$h->{'source'} = $dbh->quote($url);
-	$h->{'author'} = $dbh->quote($url);
-	
-	# print $mech->content;
-
 	$num ++;
 	
 	#( $name, $item_name, $notes, $published_date, $content ) = $news->parse_detail( $mech->content );
 	my ($t1, $t2, $t3, $t4, $t5) = $news->parse_detail( $mech->content );
 	
 	$h->{'linkname'} = $dbh->quote($t1);
-	$h->{'item_name'} = $dbh->quote($t2);
-	$h->{'url'} = $dbh->quote($t3);
+	$h->{'item'} = $dbh->quote($t2);
+	$h->{'item_id'} = $news->select_item_by_name($t2);
 	$h->{'pubdate'} = $dbh->quote($t4);
 	$h->{'content'} = $dbh->quote($t5);
 
+	$h->{'url'} = $dbh->quote(ROOT_URL.$url);
+	$h->{'source'} = $dbh->quote($url);
+	$h->{'author'} = $dbh->quote($t3);
+	
 	my $sql = qq{ insert ignore into contexts
 		(linkname,
 		url,
@@ -170,7 +169,7 @@ foreach my $url ( @{$links} ) {
 		$h->{'author'},
 		$h->{'category'},
 		$h->{'cate_id'},
-		$item,
+		$h->{'item'},
 		$h->{'item_id'},
 		$h->{'createdby'},
 		now(),
@@ -213,7 +212,7 @@ foreach my $url ( @{$links} ) {
 	$mech->back();
 }
 
-$news->write_log( "There are total [ $num ] records was processed succesfully for $page_url, $h->{'item_name'} !\n");
+$news->write_log( "There are total [ $num ] records was processed succesfully for $page_url, $h->{'item'} !\n");
 
 goto LOOP if ($page_url);
 
