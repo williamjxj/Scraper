@@ -160,11 +160,10 @@ sub patch_content {
 
 # 好像没有用到。
 sub select_category {
-	my ( $self, $cid ) = @_;
+	my ( $self ) = @_;
 	my @row = ();
-	$sth =
-	  $self->{dbh}->prepare( q{ select name from categories where cid=$cid } );
-	$sth->execute();
+	$sth = $self->{dbh}->prepare( q{ select cid from categories where name=? } );
+	$sth->execute(FOOD);
 	@row = $sth->fetchrow_array();
 	$sth->finish();
 	return $row[0];
@@ -173,19 +172,19 @@ sub select_category {
 sub select_items {
 	my ( $self ) = @_;
 	my $aref = [];
-	$sth =
-	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where active='Y' order by weight } );
-	$sth->execute();
+	$sth = $self->{dbh}->prepare( q{ select iid, name, iurl from items where category=? and groups=2 order by weight } );
+	$sth->execute(FOOD);
 	$aref = $sth->fetchall_arrayref();
 	$sth->finish();
 	return $aref;
 }
+# 总循环的第一步。
+# Only for chinafnews: cid=3 and groups=2
 sub select_items_by_cid {
 	my ( $self, $cid ) = @_;
 	my $aref = [];
-	$sth =
-	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where cid=$cid } );
-	$sth->execute();
+	$sth = $self->{dbh}->prepare( q{ select iid, name, iurl from items where cid=? and groups=2 order by iid } );
+	$sth->execute($cid);
 	$aref = $sth->fetchall_arrayref();
 	$sth->finish();
 	return $aref;
@@ -193,33 +192,29 @@ sub select_items_by_cid {
 sub select_item_by_id {
 	my ( $self, $iid ) = @_;
 	my @row = ();
-	$sth =
-	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where iid=$iid } );
-	$sth->execute();
+	$sth = $self->{dbh}->prepare( q{ select iid, name, iurl from items where iid=? } );
+	$sth->execute($iid);
 	@row = $sth->fetchrow_array();
 	$sth->finish();
 	return \@row;
 }
 
-# 总循环的第一步。
-#$sth = $self->{dbh}->prepare( q{ select iid, iurl, name from items where groups=3 and active='Y' order by weight } );
-sub select_channels {
-	my ( $self ) = @_;
-	my $aref = [];
-	$sth =
-		$self->{dbh}->prepare( q{ select mid, url, name from channels where active='Y' order by mid desc } );
-	$sth->execute();
-	$aref = $sth->fetchall_arrayref();
+sub select_item_by_name {
+	my ( $self, $name ) = @_;
+	my @row = ();
+	$sth = $self->{dbh}->prepare( q{ select iid from items where name=? } );
+	$sth->execute($name);
+	@row = $sth->fetchrow_array();
 	$sth->finish();
-	return $aref;
+	return $row[0];
 }
+
 # 好像没有用到。
 sub select_channel_by_id {
 	my ( $self, $mid ) = @_;
 	my $sql = qq{ select mid, url, name from channels where mid=$mid };
 	my @row = ();
-	$sth =
-	  $self->{dbh}->prepare( $sql );
+	$sth = $self->{dbh}->prepare( $sql );
 	$sth->execute();
 	@row = $sth->fetchrow_array();
 	$sth->finish();
@@ -228,8 +223,7 @@ sub select_channel_by_id {
 
 sub select_keywords {
 	my ( $self, $k ) = @_;
-	my $sql =
-	    "select * from contents where content like '%" . $k . "%'";
+	my $sql = "select * from contents where content like '%" . $k . "%'";
 	$self->show_results($sql);
 }
 
@@ -250,7 +244,7 @@ sub insert_contexts
 		created,
 		content
 	) values(
-		$h->{'title'}, 
+		$h->{'linkname'}, 
 		$h->{'url'},
 		$h->{'pubdate'},
 		$h->{'author'},

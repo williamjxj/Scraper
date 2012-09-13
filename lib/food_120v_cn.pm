@@ -174,7 +174,7 @@ sub select_category {
 sub select_items {
 	my ( $self ) = @_;
 	my $aref = [];
-	$sth = $self->{dbh}->prepare( q{ select iid, name, iurl from items where category=? and active='Y' order by weight } );
+	$sth = $self->{dbh}->prepare( q{ select iid, name, iurl from items where category=? and groups=1 order by weight } );
 	$sth->execute(FOOD);
 	$aref = $sth->fetchall_arrayref();
 	$sth->finish();
@@ -184,12 +184,21 @@ sub select_items {
 sub select_item_by_id {
 	my ( $self, $iid ) = @_;
 	my @row = ();
-	$sth =
-	  $self->{dbh}->prepare( q{ select iid, name, iurl from items where iid=$iid } );
-	$sth->execute();
+	$sth = $self->{dbh}->prepare( q{ select iid, name, iurl from items where iid=? } );
+	$sth->execute($iid);
 	@row = $sth->fetchrow_array();
 	$sth->finish();
 	return \@row;
+}
+
+sub select_item_by_name {
+	my ( $self, $name ) = @_;
+	my @row = ();
+	$sth = $self->{dbh}->prepare( q{ select iid from items where name=? } );
+	$sth->execute($name);
+	@row = $sth->fetchrow_array();
+	$sth->finish();
+	return $row[0];
 }
 
 sub select_keywords {
