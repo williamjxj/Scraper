@@ -1,5 +1,6 @@
 package food_120v_cn;
 
+use lib qw(../lib);
 use config;
 use common;
 @ISA = qw(common);

@@ -6,7 +6,7 @@ use strict;
 use utf8;
 use encoding 'utf8';
 
-use lib qw(./lib/);
+use lib qw(../lib/);
 use config;
 use db;
 use common;
