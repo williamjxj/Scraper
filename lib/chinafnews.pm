@@ -228,10 +228,10 @@ sub select_keywords {
 	$self->show_results($sql);
 }
 
-sub insert_contexts
+sub insert_contents
 {
 	my ($self, $h) = @_;
-	my $sql = qq{ insert ignore into contexts
+	my $sql = qq{ insert ignore into contents
 		(linkname,
 		url,
 		pubdate,
@@ -260,35 +260,6 @@ sub insert_contexts
 	)};
 	$self->{dbh}->do($sql);
 }
-
-sub insert_contents
-{
-	my ($self, $h) = @_;
-	my $sql = qq{ insert ignore into contents
-		(linkname,
-		notes,
-		cate_id,
-		iid, 
-		item, 
-		published_date,
-		createdby,
-		created,
-		content
-	) values(
-		$h->{'name'}, 
-		$h->{'notes'},
-		$h->{'cate_id'},
-		$h->{'item_id'}, 
-		$h->{'item_name'},
-		$h->{'published_date'},
-		$h->{'createdby'},
-		now(),
-		$h->{'content'}
-	)};
-	
-	$self->{dbh}->do($sql);
-}
-
 
 # 有用的参考：
 sub strip_dixi_userbody {

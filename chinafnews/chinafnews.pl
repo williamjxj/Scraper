@@ -54,11 +54,10 @@ my ($queue) = ([]);
 # 初始化数据库:
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
 $dsn .= ":hostname=$host";
-$db = new db( $user, $pass, $dsn );
-$dbh = $db->{dbh};
+$dbh = new db( $user, $pass, $dsn );
 
 # 初始化页面抓取模块:
-$news = new chinafnews( $db->{dbh} ) or die;
+$news = new chinafnews( $dbh ) or die;
 
 # 日志文件:
 $start_time = time;
@@ -234,9 +233,7 @@ foreach my $url ( @{$links} ) {
 	$h->{'content'} = $dbh->quote($h->{'content'});
 	$h->{'pubdate'} = $dbh->quote($h->{'pubdate'});
 	
-	#$news->insert_contents($h);
-	$news->insert_contexts($h);
-		
+	$news->insert_contents($h);
 	$mech->back();
 }
 
