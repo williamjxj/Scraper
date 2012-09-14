@@ -365,8 +365,8 @@ sub select_item {
 	my ( $self, $rank, $h) = @_;
 	my @row = ();
 	my $item = $rank->[0];
-	$sth = $self->{dbh}->prepare( qq{ select iid from items where name=? } );
-	$sth->execute($item);
+	$sth = $self->{dbh}->prepare( qq{ select iid from items where name=? and cid=? } );
+	$sth->execute($item, $h->{'cate_id'});
 	@row = $sth->fetchrow_array();
 	$sth->finish();
 
