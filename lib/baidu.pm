@@ -373,7 +373,7 @@ sub select_item {
 	if(! $row[0]) {
 		my $url = $self->{dbh}->quote($rank->[1]);
 		my $sql = qq{ insert into items(name, iurl, category, cid, description, createdby, created) values(
-			$item, $url, $h->{'category'}, $h->{'cate_id'}, $item, $h->{'createdby'}, now())
+			$h->{'item'}, $url, $h->{'category'}, $h->{'cate_id'}, $h->{'item'}, $h->{'createdby'}, now())
 		};
 
 		$self->{dbh}->do($sql);
