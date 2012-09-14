@@ -105,9 +105,9 @@ exit 8;
 
 __DATA__
 实时热点排行榜,http://top.baidu.com/rss_xml.php?p=top10,新闻
-七日关注排行榜,http://top.baidu.com/rss_xml.php?p=weekhotspot,事件
-今日热门搜索排行榜,http://top.baidu.com/rss_xml.php?p=top_keyword,事件
-世说新词排行榜,http://top.baidu.com/rss_xml.php?p=shishuoxinci,事件
+七日关注排行榜,http://top.baidu.com/rss_xml.php?p=weekhotspot,新闻
+今日热门搜索排行榜,http://top.baidu.com/rss_xml.php?p=top_keyword,新闻
+世说新词排行榜,http://top.baidu.com/rss_xml.php?p=shishuoxinci,新闻
 最近事件排行榜,http://top.baidu.com/rss_xml.php?p=shijian,事件
 上周事件排行榜,http://top.baidu.com/rss_xml.php?p=shijian_lastweek,事件
 上月事件排行榜,http://top.baidu.com/rss_xml.php?p=shijian_lastmonth,事件
