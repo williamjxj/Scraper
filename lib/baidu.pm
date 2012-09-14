@@ -13,33 +13,6 @@ use strict;
 use Data::Dumper;
 my ( $sth );
 
-#http://top.baidu.com/rss.php
-our @ranks = (
-	[ '实时热点排行榜', 'http://top.baidu.com/rss_xml.php?p=top10', '新闻' ],
-	[ '七日关注排行榜', 'http://top.baidu.com/rss_xml.php?p=weekhotspot', '事件' ],
-	[ '今日热门搜索排行榜', 'http://top.baidu.com/rss_xml.php?p=top_keyword', '事件' ],
-	[ '世说新词排行榜', 'http://top.baidu.com/rss_xml.php?p=shishuoxinci', '事件' ],
-	[ '最近事件排行榜', 'http://top.baidu.com/rss_xml.php?p=shijian', '事件' ],
-	[ '上周事件排行榜', 'http://top.baidu.com/rss_xml.php?p=shijian_lastweek', '事件' ],
-	[ '上月事件排行榜', 'http://top.baidu.com/rss_xml.php?p=shijian_lastmonth', '事件' ],
-	[ '今日热点人物排行榜', 'http://top.baidu.com/rss_xml.php?p=hotman', '人物' ],
-	[ '今日美女排行榜', 'http://top.baidu.com/rss_xml.php?p=girls', '人物' ],
-	[ '今日帅哥排行榜', 'http://top.baidu.com/rss_xml.php?p=boys', '人物' ],
-	[ '今日女演员排行榜', 'http://top.baidu.com/rss_xml.php?p=FStar', '明星' ],
-	[ '今日男演员排行榜', 'http://top.baidu.com/rss_xml.php?p=MStar', '明星' ],
-	[ '今日女歌手排行榜', 'http://top.baidu.com/rss_xml.php?p=ygeshou', '明星' ],
-	[ '今日男歌手排行榜', 'http://top.baidu.com/rss_xml.php?p=ngeshou', '明星' ],
-	[ '今日体坛人物排行榜', 'http://top.baidu.com/rss_xml.php?p=titan', '明星' ],
-	[ '今日互联网人物排行榜', 'http://top.baidu.com/rss_xml.php?p=internet', '明星' ],
-	[ '今日名家人物排行榜', 'http://top.baidu.com/rss_xml.php?p=mingjia', '明星' ],
-	[ '今日财经人物排行榜', 'http://top.baidu.com/rss_xml.php?p=caijing', '明星' ],
-	[ '今日富豪排行榜', 'http://top.baidu.com/rss_xml.php?p=rich', '人物' ],
-	[ '今日政坛人物排行榜', 'http://top.baidu.com/rss_xml.php?p=zhengtan', '人物' ],
-	[ '今日历史人物排行榜', 'http://top.baidu.com/rss_xml.php?p=lishiren', '人物' ],
-	[ '今日人物关系排行榜', 'http://top.baidu.com/rss_xml.php?p=relation', '人物' ],
-	[ '今日慈善组织排行榜', 'http://top.baidu.com/rss_xml.php?p=cishan', '公益' ],
-	[ '今日房产企业排行榜', 'http://top.baidu.com/rss_xml.php?p=fangchanqy', '房地产' ],
-);
 
 our @focus = (
 	[ '国内焦点', "http://news.baidu.com/n?cmd=1&class=civilnews&tn=rss", '国内' ],
@@ -268,7 +241,6 @@ sub new {
 	my $self = {};
 	$self->{dbh} = $dbh_handle;
 	$self->{app} = 'baidu_rss';
-	$self->{ranks} = \@ranks;
 	$self->{focus} = \@focus;
 	$self->{latest} = \@latest;
 	bless $self, $type;
