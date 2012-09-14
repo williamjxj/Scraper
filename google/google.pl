@@ -1,7 +1,7 @@
 #!/opt/lampp/bin/perl -w
 ##! /cygdrive/c/Perl/bin/perl.exe -w
 
-use lib qw(./lib/);
+use lib qw(../lib/);
 use config;
 use db;
 use google;

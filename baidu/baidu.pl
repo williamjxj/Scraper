@@ -6,14 +6,18 @@ use utf8;
 use encoding 'utf8';
 use WWW::Mechanize;
 use Data::Dumper;
-use LWP::Simple;
 use DBI;
-use Getopt::Long;
 
 use lib qw(../lib/);
 use config;
 use db;
 use baidu;
+
+use constant SEARCH_URL => 'http://baidu.com';
+
+die "usage: $0 keyword" if ($#ARGV < 1);
+
+our $keyword = $ARGV[1]; 
 
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
 $dsn .= ":hostname=$host";
@@ -49,7 +53,7 @@ $mech->success or die $mech->response->status_line;
 
 $mech->submit_form(
     'form_name' => 'f',
-	'fields'    => { q => $keyword, num => 100 }
+	'fields'    => { wd => $keyword, num => 100 }
 );
 $mech->success or die $mech->response->status_line;
 
@@ -107,8 +111,9 @@ foreach my $r (@{$aoh}) {
 	$description = $dbh->quote($garef->[1]);
 	$keywords = $dbh->quote($garef->[2] );
 
-	my $category = $self->{dbh}->quote($rank->[2]);
-	my $item = $self->{dbh}->quote($rank->[0]);
+	my $rank = {};
+	my $category = $dbh->quote($rank->[2]);
+	my $item = $dbh->quote($rank->[0]);
 
 	my $sql = qq{ insert into t_baidu
 		(title,
@@ -141,7 +146,7 @@ foreach my $r (@{$aoh}) {
 		content = $h->{'desc'},
 		pubDate = $h->{'pubDate'}
 	};
-	$self->{dbh}->do($sql);
+	$dbh->do($sql);
 
 	undef( @{$garef} );
 	$mech1->back;
