@@ -11,13 +11,13 @@ use DBI;
 use lib qw(../lib/);
 use config;
 use db;
-use baidu;
+use common;
 
-use constant SEARCH_URL => 'http://baidu.com';
+use constant SEARCH_URL => 'http://www.baidu.com';
 
-die "usage: $0 keyword" if ($#ARGV < 1);
+die "usage: $0 keyword" if ($#ARGV != 0);
 
-our $keyword = $ARGV[1]; 
+our $keyword = $ARGV[0];
 
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
 $dsn .= ":hostname=$host";
@@ -28,7 +28,7 @@ my @blacklist = ('google', 'wikipedia');
 
 our ( $mech, $mech1) = ( undef, undef );
 
-our ($bd, $url) = ();
+our $bd = new common() or die $!;
 
 my $h = {
 	'category' => '',
@@ -38,24 +38,25 @@ my $h = {
 	'createdby' => $dbh->quote($bd->get_os_stripname(__FILE__)),
 };
 
-
-$bd = new baidu($dbh);
-
 $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
 $mech1 = WWW::Mechanize->new( autocheck => 0 ) or die;
 $mech->timeout( 20 );
 $mech1->timeout( 20 );
 
 
-$mech->get( $url );
+$mech->get( SEARCH_URL );
 $mech->success or die $mech->response->status_line;
 # print $mech->uri . "\n";
 
+# 'fields'    => { wd => $keyword, rn => 100, ie=>"utf-8" }
 $mech->submit_form(
     'form_name' => 'f',
-	'fields'    => { wd => $keyword, num => 100 }
+	'fields'    => { wd => $keyword }
 );
 $mech->success or die $mech->response->status_line;
+
+print $mech->content;
+exit;
 
 my($page_url, $paref);
 
@@ -66,7 +67,7 @@ $page_url = $paref->[1];
 # very imporant.
 $page_url =~ s/\&amp;/\&/g if ($page_url=~m/&amp;/);
 # $page_url =~ s/search\?/#/;
-$page_url = $url . $page_url;
+$page_url = SEARCH_URL . $page_url;
 
 my $garef = [];
 my ($description, $keywords, $title, $summary, $email, $phone, $fax, $link, $zip);
