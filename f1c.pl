@@ -146,7 +146,7 @@ foreach my $url ( @{$links} ) {
 	$h->{'source'} = $dbh->quote($url);
 	$h->{'author'} = $dbh->quote($t3);
 	
-	my $sql = qq{ insert ignore into contexts
+	my $sql = qq{ insert ignore into contents
 		(linkname,
 		url,
 		pubdate,
@@ -174,27 +174,6 @@ foreach my $url ( @{$links} ) {
 		$h->{'content'}
 	)};
 
-=comment		
-	my $sql = qq{ insert ignore into contents
-			(linkname,
-			notes,
-			content,
-			cate_id,
-			item,
-			published_date, 
-			createdby,
-			created 
-		) values(
-			$name, 
-			$notes,
-			$content,
-			$cate_id,
-			$item_name,
-			$published_date,
-			$createdby,
-			now()
-		)};
-=cut	
 	$sth = $dbh->do($sql);
 	
 	my $keywords = $news->get_keywords($news->parse_keywords_list($mech->content));

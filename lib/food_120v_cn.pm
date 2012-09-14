@@ -204,7 +204,7 @@ sub select_item_by_name {
 sub select_keywords {
 	my ( $self, $k ) = @_;
 	my $sql =
-	    "select * from contexts where content like '%" . $k . "%'";
+	    "select * from contents where content like '%" . $k . "%'";
 	$self->show_results($sql);
 }
 

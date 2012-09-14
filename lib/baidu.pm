@@ -13,8 +13,6 @@ use strict;
 use Data::Dumper;
 my ( $sth );
 
-use constant CONTACTS => q{contexts};
-
 #http://top.baidu.com/rss.php
 our @ranks = (
 	[ '实时热点排行榜', 'http://top.baidu.com/rss_xml.php?p=top10', '新闻' ],
@@ -343,10 +341,11 @@ sub insert_baidu
 {
 	my ($self, $h, $rank) = @_;
 
+	# foreach my $key (keys %{$h}) { print $h->{$key}  . ", " if ($key ne 'desc'); }
 	my $category = $self->{dbh}->quote($rank->[2]);
 	my $item = $self->{dbh}->quote($rank->[0]);
 
-	my $sql = qq{ insert into contexts
+	my $sql = qq{ insert into contents
 		(linkname,
 		url,
 		pubdate,
@@ -365,49 +364,6 @@ sub insert_baidu
 		$h->{'pubDate'},
 		$h->{'author'},
 		$h->{'source'},
-		$category,
-		$h->{'cate_id'},
-		$item,
-		$h->{'item_id'},
-		$h->{'createdby'},
-		now(),
-		$h->{'desc'}
-	)
-	on duplicate key update
-		content = $h->{'desc'},
-		pubDate = $h->{'pubDate'}
-	};
-	$self->{dbh}->do($sql);
-}
-
-#t_baidu
-sub insert_baidu_old
-{
-	my ($self, $h, $rank) = @_;
-	# foreach my $key (keys %{$h}) { print $h->{$key}  . ", " if ($key ne 'desc'); }
-
-	my $category = $self->{dbh}->quote($rank->[2]);
-	my $item = $self->{dbh}->quote($rank->[0]);
-
-	my $sql = qq{ insert into t_baidu
-		(title,
-		url,
-		pubDate,
-		source, 
-		author, 
-		category,
-		cate_id,
-		item,
-		item_id,
-		createdby,
-		created,
-		content
-	) values(
-		$h->{'title'}, 
-		$h->{'url'},
-		$h->{'pubDate'},
-		$h->{'source'}, 
-		$h->{'author'},
 		$category,
 		$h->{'cate_id'},
 		$item,

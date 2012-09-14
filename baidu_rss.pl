@@ -4,16 +4,17 @@ use warnings;
 use strict;
 use utf8;
 use encoding 'utf8';
-use Data::Dumper;
-use FileHandle;
-use LWP::Simple;
-use DBI;
-use Getopt::Long;
 
 use lib qw(./lib/);
 use config;
 use db;
 use common;
+
+use Data::Dumper;
+use FileHandle;
+use LWP::Simple;
+use DBI;
+use Getopt::Long;
 
 use constant BAIDU_RSS => 'http://www.baidu.com/search/rss.html';
 
@@ -43,8 +44,10 @@ $bd = new common();
 
 my $show = '';
 GetOptions( 'log' => \$log, 'show' => \$show );
+
 if($show) {
-	$dbh->get_baidu_rss();
+	# print db::get_routine_date('2');
+	db::get_baidu_rss();
 	exit;
 }
 

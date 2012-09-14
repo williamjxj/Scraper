@@ -35,7 +35,8 @@ sub get_routine_date
 {
 	my ($self,$todate) = @_;
 
-	my $sth = $self->{dbh}->prepare(qq{ select date_format(date_sub(now(), interval }. $todate.  qq{ day), '%d-%b-%y') });
+	$todate = $self->{dbh}->quote($todate);
+	my $sth = $self->{dbh}->prepare(qq{ select date_format(date_sub(now(), interval $todate  day), '%d-%b-%y') });
 	$sth->execute();
 	my @row = $sth->fetchrow_array();
 	$sth->finish();
