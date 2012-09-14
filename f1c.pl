@@ -1,6 +1,8 @@
 #! /opt/lampp/bin/perl -w
 # 1. 操作contents 表.
 # 2. issue: 不是全部下载,而是每次更新,只下载更新部分!!
+#use DateTime;
+#use constant CATEGORY => q/食品/;
 
 use warnings;
 use strict;
@@ -12,8 +14,6 @@ use WWW::Mechanize;
 use DBI;
 use Getopt::Long;
 use feature qw(say);
-#use DateTime;
-#use constant CATEGORY => q/食品/;
 use constant START_URL => q{http://food.120v.cn/FoodsTypeList.html};
 use constant ROOT_URL => q{http://food.120v.cn/};
 
