@@ -7,8 +7,10 @@ use encoding 'utf8';
 use WWW::Mechanize;
 use Data::Dumper;
 use DBI;
+use Encode qw(decode encode);
 
-use lib qw(../lib/);
+#use lib qq{$ENV{HOME}/scraper/lib/};
+use lib qq{/home/williamjxj/scraper/lib/};
 use config;
 use db;
 use common;
@@ -18,6 +20,8 @@ use constant SEARCH_URL => 'http://www.baidu.com';
 die "usage: $0 keyword" if ($#ARGV != 0);
 
 our $keyword = $ARGV[0];
+
+$keyword = decode("utf-8", $keyword);
 
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
 $dsn .= ":hostname=$host";

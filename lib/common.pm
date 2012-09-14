@@ -4,7 +4,8 @@ use strict;
 use FileHandle;
 use Data::Dumper;
 
-use constant LOGDIR => qq{$ENV{HOME}/scraper/logs/};
+#use constant LOGDIR => qq{$ENV{HOME}/scraper/logs/};
+use constant LOGDIR => qq{/home/williamjxj/scraper/logs/};
 use constant RW_MODE => "a";
 
 sub new
