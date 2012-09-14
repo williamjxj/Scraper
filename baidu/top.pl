@@ -67,6 +67,7 @@ my ($xml, $rank, $data) = (undef);
 # while (($key, $val) = each(%{$bd->{'ranks'}}))
 foreach $data (<DATA>) {
 	@{$rank} = split(/,/, $data);
+	chomp $rank->[2];
 	$bd->{'url'} = $rank->[1];
 	$h->{'cate_id'} = $bd->select_category($rank->[2]);
 	$h->{'category'} = $dbh->quote($rank->[2]);
