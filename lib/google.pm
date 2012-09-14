@@ -8,7 +8,6 @@ our ( $sth );
 
 use constant CONTACTS => q{contexts};
 
-
 sub new {
 	my ( $type, $dbh_handle ) = @_;
 	my $self = {};
