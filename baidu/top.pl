@@ -27,7 +27,7 @@ sub BEGIN
 	$SIG{'CHLD'} = 'IGNORE';
 	$ENV{'PATH'} = '/usr/bin/:/bin/:.';
 	local ($|) = 1;
-	undef $/;
+	#undef $/;
 }
 
 
@@ -62,15 +62,14 @@ my $h = {
 
 GetOptions( 'log' => \$log );
 
-my ($xml, $rank) = (undef);
-# my $rp = new XML::RSS::Parser::Lite;
+my ($xml, $rank, $data) = (undef);
 
 # while (($key, $val) = each(%{$bd->{'ranks'}}))
-foreach $rank (<DATA>) {
-	$rank = split(', ', $rank);
+foreach $data (<DATA>) {
+	@{$rank} = split(/,/, $data);
 	$bd->{'url'} = $rank->[1];
-	$h->{'category'} = $dbh->quote($rank->[2]);
 	$h->{'cate_id'} = $bd->select_category($rank->[2]);
+	$h->{'category'} = $dbh->quote($rank->[2]);
 	$h->{'item'} = $dbh->quote($rank->[0]);
 	$h->{'item_id'} = $bd->select_item($rank, $h);
 
@@ -104,28 +103,28 @@ $bd->close_log();
 exit 8;
 
 __DATA__
-'实时热点排行榜', 'http://top.baidu.com/rss_xml.php?p=top10', '新闻'$
-'七日关注排行榜', 'http://top.baidu.com/rss_xml.php?p=weekhotspot', '事件'$
-'今日热门搜索排行榜', 'http://top.baidu.com/rss_xml.php?p=top_keyword', '事件'$
-'世说新词排行榜', 'http://top.baidu.com/rss_xml.php?p=shishuoxinci', '事件'$
-'最近事件排行榜', 'http://top.baidu.com/rss_xml.php?p=shijian', '事件'$
-'上周事件排行榜', 'http://top.baidu.com/rss_xml.php?p=shijian_lastweek', '事件'$
-'上月事件排行榜', 'http://top.baidu.com/rss_xml.php?p=shijian_lastmonth', '事件'$
-'今日热点人物排行榜', 'http://top.baidu.com/rss_xml.php?p=hotman', '人物'$
-'今日美女排行榜', 'http://top.baidu.com/rss_xml.php?p=girls', '人物'$
-'今日帅哥排行榜', 'http://top.baidu.com/rss_xml.php?p=boys', '人物'$
-'今日女演员排行榜', 'http://top.baidu.com/rss_xml.php?p=FStar', '明星'$
-'今日男演员排行榜', 'http://top.baidu.com/rss_xml.php?p=MStar', '明星'$
-'今日女歌手排行榜', 'http://top.baidu.com/rss_xml.php?p=ygeshou', '明星'$
-'今日男歌手排行榜', 'http://top.baidu.com/rss_xml.php?p=ngeshou', '明星'$
-'今日体坛人物排行榜', 'http://top.baidu.com/rss_xml.php?p=titan', '明星'$
-'今日互联网人物排行榜', 'http://top.baidu.com/rss_xml.php?p=internet', '明星'$
-'今日名家人物排行榜', 'http://top.baidu.com/rss_xml.php?p=mingjia', '明星'$
-'今日财经人物排行榜', 'http://top.baidu.com/rss_xml.php?p=caijing', '明星'$
-'今日富豪排行榜', 'http://top.baidu.com/rss_xml.php?p=rich', '人物'$
-'今日政坛人物排行榜', 'http://top.baidu.com/rss_xml.php?p=zhengtan', '人物'$
-'今日历史人物排行榜', 'http://top.baidu.com/rss_xml.php?p=lishiren', '人物'$
-'今日人物关系排行榜', 'http://top.baidu.com/rss_xml.php?p=relation', '人物'$
-'今日慈善组织排行榜', 'http://top.baidu.com/rss_xml.php?p=cishan', '公益'$
-'今日房产企业排行榜', 'http://top.baidu.com/rss_xml.php?p=fangchanqy', '房地产'$
+实时热点排行榜,http://top.baidu.com/rss_xml.php?p=top10,新闻
+七日关注排行榜,http://top.baidu.com/rss_xml.php?p=weekhotspot,事件
+今日热门搜索排行榜,http://top.baidu.com/rss_xml.php?p=top_keyword,事件
+世说新词排行榜,http://top.baidu.com/rss_xml.php?p=shishuoxinci,事件
+最近事件排行榜,http://top.baidu.com/rss_xml.php?p=shijian,事件
+上周事件排行榜,http://top.baidu.com/rss_xml.php?p=shijian_lastweek,事件
+上月事件排行榜,http://top.baidu.com/rss_xml.php?p=shijian_lastmonth,事件
+今日热点人物排行榜,http://top.baidu.com/rss_xml.php?p=hotman,人物
+今日美女排行榜,http://top.baidu.com/rss_xml.php?p=girls,人物
+今日帅哥排行榜,http://top.baidu.com/rss_xml.php?p=boys,人物
+今日女演员排行榜,http://top.baidu.com/rss_xml.php?p=FStar,明星
+今日男演员排行榜,http://top.baidu.com/rss_xml.php?p=MStar,明星
+今日女歌手排行榜,http://top.baidu.com/rss_xml.php?p=ygeshou,明星
+今日男歌手排行榜,http://top.baidu.com/rss_xml.php?p=ngeshou,明星
+今日体坛人物排行榜,http://top.baidu.com/rss_xml.php?p=titan,明星
+今日互联网人物排行榜,http://top.baidu.com/rss_xml.php?p=internet,明星
+今日名家人物排行榜,http://top.baidu.com/rss_xml.php?p=mingjia,明星
+今日财经人物排行榜,http://top.baidu.com/rss_xml.php?p=caijing,明星
+今日富豪排行榜,http://top.baidu.com/rss_xml.php?p=rich,人物
+今日政坛人物排行榜,http://top.baidu.com/rss_xml.php?p=zhengtan,人物
+今日历史人物排行榜,http://top.baidu.com/rss_xml.php?p=lishiren,人物
+今日人物关系排行榜,http://top.baidu.com/rss_xml.php?p=relation,人物
+今日慈善组织排行榜,http://top.baidu.com/rss_xml.php?p=cishan,公益
+今日房产企业排行榜,http://top.baidu.com/rss_xml.php?p=fangchanqy,房地产
 
