@@ -34,7 +34,7 @@ my @blacklist = ('google', 'wikipedia');
 our $bd = new common() or die $!;
 
 my $h = {
-	'createdby' => $dbh->quote('百度 - ' . $bd->get_os_stripname(__FILE__)),
+	'createdby' => $dbh->quote('靠 - ' . $bd->get_os_stripname(__FILE__)),
 };
 
 my $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
@@ -75,7 +75,7 @@ foreach my $r (@{$aoh}) {
 
 	$h->{'pubDate'} = $dbh->quote($bd->get_time('2'));
 	$h->{'tag'} = $dbh->quote($keyword);
-	$h->{'source'} = $dbh->quote('百度查询程序');
+	$h->{'source'} = $dbh->quote('靠靠靠');
 
 	my $sql = qq{ insert into search
 		(linkname,
