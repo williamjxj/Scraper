@@ -34,9 +34,9 @@ my @blacklist = ('google', 'wikipedia');
 our $bd = new common() or die $!;
 
 my $h = {
-	'cate_id' => 0;
+	'cate_id' => 0,
 	'iid' => 0,
-	'createdby' => $dbh->quote('¿¿ -'. $bd->get_os_stripname(__FILE__)),
+	'createdby' => $dbh->quote('baidu_' . $bd->get_os_stripname(__FILE__)),
 };
 
 my $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
@@ -73,9 +73,10 @@ foreach my $r (@{$aoh}) {
 
 	$h->{'date'} = $dbh->quote($bd->get_time('2'));
 	$h->{'tag'} = $dbh->quote($keyword);
-	$h->{'source'} = $dbh->quote('¿¿¿¿¿¿');
+	$h->{'source'} = $dbh->quote('°Ù¶ÈËÑË÷³ÌÐò');
+	#$h->{'source'} = $dbh->quote($keyword);
 
-	my $sql = qq{ insert ignore into search
+	my $sql = qq{ insert ignore into contents
 		(linkname,
 		url,
 		pubdate,
@@ -101,8 +102,6 @@ foreach my $r (@{$aoh}) {
 	$dbh->do($sql);
 }
 
-
-$dbh->do(qq{ update keyword});
 $dbh->disconnect();
 exit 8;
 
