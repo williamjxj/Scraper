@@ -34,6 +34,8 @@ my @blacklist = ('google', 'wikipedia');
 our $bd = new common() or die $!;
 
 my $h = {
+	'cate_id' => 0;
+	'iid' => 0,
 	'createdby' => $dbh->quote('真 - ' . $bd->get_os_stripname(__FILE__)),
 };
 
@@ -50,17 +52,13 @@ $mech->submit_form(
 	'fields'    => { wd => $keyword }
 );
 $mech->success or die $mech->response->status_line;
-
 #write_file('bd1.html', $mech->content);
 
 my $t = strip_result( $mech->content );
-
 #write_file('bd2.html', $t);
 
 my $aoh = parse_result($t);
-
 #write_file('bd3.html', $aoh);
-
 #print Dumper($aoh);
 
 foreach my $r (@{$aoh}) {
@@ -73,37 +71,34 @@ foreach my $r (@{$aoh}) {
 	$h->{'linkname'} = $dbh->quote(strip_tag($p->[1]));
 	$h->{'desc'} = $dbh->quote(strip_tag($p->[2]));
 
-	$h->{'pubDate'} = $dbh->quote($bd->get_time('2'));
+	$h->{'date'} = $dbh->quote($bd->get_time('2'));
 	$h->{'tag'} = $dbh->quote($keyword);
 	$h->{'source'} = $dbh->quote('真真真');
 
-	my $sql = qq{ insert into search
+	my $sql = qq{ insert ignore into search
 		(linkname,
 		url,
 		pubdate,
-		source,
-		author,
 		tags,
+		source,
+		cate_id,
+		iid,
 		createdby,
 		created,
 		content
 	) values(
-		$h->{'linkname'}, 
+		$h->{'linkname'},
 		$h->{'url'},
-		$h->{'pubDate'},
-		$h->{'source'}, 
+		$h->{'date'},
 		$h->{'tag'},
-		$h->{'tag'}, 
+		$h->{'source'},
+		$h->{'cate_id'},
+		$h->{'iid'},
 		$h->{'createdby'},
 		now(),
 		$h->{'desc'}
-	)
-	on duplicate key update
-		content = $h->{'desc'},
-		pubDate = $h->{'pubDate'}
-	};
+	)};
 	$dbh->do($sql);
-
 }
 
 $dbh->disconnect();
@@ -162,6 +157,7 @@ sub strip_tag
 
 	$str =~ s/<(?:.*?)>//g if ($str=~m"<");
 	$str =~ s/<\/.*?>//g if ($str=~m"</");
+	$str =~ s/<script.*?>.*?<\/script>//sg if ($str=~"<script");
 	return $str;
 }
 
@@ -187,73 +183,3 @@ sub parse_result
     }
     return $aoh;
 }
-sub get_detail {
-	my ( $self, $html ) = @_;
-	return unless $html;
-	my $detail = '';
-    while ($html =~ m {
-        <body>
-        (.*)
-        </body>
-    }sgix) {
-    	$detail = $1;
-    	$detail =~ s/<script.*?>.*?<\/script>//sg;
-    }
-    return $detail;
-}
-
-
-sub parse_page
-{
-    my ( $self, $html ) = @_;
-    return unless $html;
-	$html =~ m {
-		Result\sPage:
-		(?:.*?)
-		<font\scolor="\#a90a08">
-		(.*?)
-		</font>
-		(?:.*?)
-		<a(?:.*?)href="(.*?)"
-		(?:.*?)
-		>
-		(.*?)			# current page.
-		</span>
-    }sgix;
-	my ($cur, $alink, $next_page) = ($1, $2, $3);
-	$next_page =~ s/\<.*?>//g if ($next_page);
-	return [ $cur, $alink, $next_page ];
-}
-sub parse_next_page
-{
-   my ( $self, $html ) = @_;
-    return unless $html;
-    while (
-        $html =~ m {
-        id=(?:nav|"nav")
-        (?:.*)
-	<b>(.*?)</b>			# current page.
-		(?:.*?)
-        <td>
-		(?:.*?)
-		<a(?:.*?)\shref="(.*?)"
-		(?:.*?)
-		</span>
-		(.*?)			# next page.
-		(?:</a>|</td>)
-    }sgix) {
-		my ($cur_page, $alink, $next_page) = ($1, $2, $3);
-		$cur_page =~ s/\<span.*?>//g;
-		$cur_page =~ s/\<\/span>//g;
-		$next_page =~ s/\<span.*?>//g;
-		$next_page =~ s/\<\/span>//g;
-        return [ $cur_page, $alink, $next_page ];
-    }
-    return;	
-}
-
-sub insert_contents
-{
-	
-}
-
