@@ -36,7 +36,7 @@ our $bd = new common() or die $!;
 my $h = {
 	'cate_id' => 0;
 	'iid' => 0,
-	'createdby' => $dbh->quote('¿¿ - ' . $bd->get_os_stripname(__FILE__)),
+	'createdby' => $dbh->quote('¿¿ -'. $bd->get_os_stripname(__FILE__)),
 };
 
 my $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
@@ -101,6 +101,8 @@ foreach my $r (@{$aoh}) {
 	$dbh->do($sql);
 }
 
+
+$dbh->do(qq{ update keyword});
 $dbh->disconnect();
 exit 8;
 
