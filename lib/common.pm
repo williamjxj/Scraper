@@ -60,7 +60,7 @@ sub get_time
 	@$time = localtime(time);
 
 	my $nowtime = sprintf (" %02d:%02d:%02d", $time->[2], $time->[1], $time->[0]);
-	my $nowdate = sprintf ("%4d%-02d%-02d", $time->[5]+1900, $time->[4]+1, $time->[3]);
+	my $nowdate = sprintf ("%4d-%02d-%02d", $time->[5]+1900, $time->[4]+1, $time->[3]);
 
 	return $nowdate if ($choice eq '1');
 	return $nowdate . $nowtime if ($choice eq '2');
