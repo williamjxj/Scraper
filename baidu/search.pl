@@ -47,7 +47,6 @@ $mech1 = WWW::Mechanize->new( autocheck => 0 ) or die;
 $mech->timeout( 20 );
 $mech1->timeout( 20 );
 
-
 $mech->get( SEARCH_URL );
 $mech->success or die $mech->response->status_line;
 # print $mech->uri . "\n";
@@ -60,30 +59,13 @@ $mech->submit_form(
 $mech->success or die $mech->response->status_line;
 
 print $mech->content;
-exit;
-
-my($page_url, $paref);
-
-$paref = $bd->parse_next_page( $mech->content );
-print Dumper( $paref );
-$page_url = $paref->[1];
-
-# very imporant.
-$page_url =~ s/\&amp;/\&/g if ($page_url=~m/&amp;/);
-# $page_url =~ s/search\?/#/;
-$page_url = SEARCH_URL . $page_url;
-
-my $garef = [];
-my ($description, $keywords, $title, $summary, $email, $phone, $fax, $link, $zip);
-
-LOOP:
-
-$mech->get( $page_url );
-$mech->success or die $mech->response->status_line;
 
 my $t = $bd->strip_result( $mech->content );
 my $aoh = $bd->parse_result($t);
-#print Dumper($aoh);
+
+print Dumper($aoh);
+
+exit;
 
 foreach my $r (@{$aoh}) {
 
@@ -163,26 +145,12 @@ exit 8;
 ########################
 sub strip_result {
 	my ( $self, $html ) = @_;
-
-	my $striped_html = undef;
 	$html =~ m {
-			<div\sid=(?:ires|"ires")
+			<div\sid="container"
 			(.*?)
-			id=(?:nav|"nav")
+			id="page">
 	}sgix;
-	$striped_html = $1;
-	if ($striped_html) {
-		return $self->trim( $striped_html );
-	}
-	else {
-		$html =~ m {
-				id=(?:rso|"rso")
-				(.*?)
-				id=(?:nav|"nav")
-		}sgix;
-		$striped_html = $1;
-		return $self->trim( $striped_html );
-	}
+	return $1;
 }
 
 sub parse_result
@@ -191,29 +159,25 @@ sub parse_result
     my $aoh = [];
 
     while ($html =~ m {
-        <li\sclass=(?:g|"g")>
-        <h3(?:.*?)
-		<a\s
+    	<table
+		(?:.*?)
+        class="(?:result-op|result)"
+        (?:.*?)>
+        <h3\sclass="t">
+		<a(?".*?)
 		href="(.*?)"	#url
-        (?:.*?)
+		(?:.*?)
 		>
 		(.*?)			#title
 		</a>
-		</h3>
-        <div\sclass=(?:s|"s")>
+		(?:.*?)
+		<(?:td\sclass="f"|font\ssize="-1")>
         (.*?)			#content
-		</li>
+		</td>
+		(?:.*?)
+		</table>
     }sgix) {
         my ($t1,$t2,$t3) = ($1,$2,$3);
-		$t1 =~ s/^\/url\?q=//  if($t1 =~ m/^\/url/);
-		$t1 =~ s/\&sa=.*$//  if($t1 =~ m/\&sa=/);
-		#$t1 =~ s/^.*\?q=//  if($t1 =~ m/^.*\?q=/);
-		$t2 =~ s/\<em>//g if ($t2=~m/\<em>/);
-		$t2 =~ s/\<\/em>//g if ($t2=~m/\<\/em>/);
-		$t2 =~ s/\<b>\.+\<\/b>//s;
-		$t3 =~ s/\<br>.*$//sg;
-		$t3 =~ s/\<b>\.\.\.\<\/b>/.../sg;
-		$t3 =~ s/\<.*?>//sg;
         push (@{$aoh}, [$t1,$t2,$t3]);
     }
     return $aoh;
