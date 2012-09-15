@@ -8,6 +8,7 @@ use WWW::Mechanize;
 use Data::Dumper;
 use DBI;
 use Encode qw(decode encode);
+use FileHandle;
 
 #use lib qq{$ENV{HOME}/scraper/lib/};
 use lib qq{/home/williamjxj/scraper/lib/};
@@ -33,11 +34,7 @@ my @blacklist = ('google', 'wikipedia');
 our $bd = new common() or die $!;
 
 my $h = {
-	'category' => '',
-	'cate_id' => 0,
-	'item' => '',
-	'item_id' => 0,
-	'createdby' => $dbh->quote($bd->get_os_stripname(__FILE__)),
+	'createdby' => $dbh->quote('百度 - ' . $bd->get_os_stripname(__FILE__)),
 };
 
 my $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
@@ -54,44 +51,49 @@ $mech->submit_form(
 );
 $mech->success or die $mech->response->status_line;
 
-# print $mech->content;
+#write_file('bd1.html', $mech->content);
 
 my $t = strip_result( $mech->content );
+
+#write_file('bd2.html', $t);
+
 my $aoh = parse_result($t);
 
-print Dumper($aoh);
+#write_file('bd3.html', $aoh);
 
-exit;
+#print Dumper($aoh);
 
 foreach my $r (@{$aoh}) {
 
-	my $rank = {};
-	my $category = $dbh->quote($rank->[2]);
-	my $item = $dbh->quote($rank->[0]);
+	my $p = parse_item($r);
+	# print Dumper($p);
+	next unless defined($p->[1]);
 
-	my $sql = qq{ insert into contents
-		(title,
+	$h->{'url'} = $dbh->quote($p->[0]);
+	$h->{'linkname'} = $dbh->quote(strip_tag($p->[1]));
+	$h->{'desc'} = $dbh->quote(strip_tag($p->[2]));
+
+	$h->{'pubDate'} = $dbh->quote($bd->get_time('2'));
+	$h->{'tag'} = $dbh->quote($keyword);
+	$h->{'source'} = $dbh->quote('百度查询程序');
+
+	my $sql = qq{ insert into search
+		(linkname,
 		url,
-		pubDate,
-		source, 
-		author, 
-		category,
-		cate_id,
-		item,
-		item_id,
+		pubdate,
+		source,
+		author,
+		tags,
 		createdby,
 		created,
 		content
 	) values(
-		$h->{'title'}, 
+		$h->{'linkname'}, 
 		$h->{'url'},
 		$h->{'pubDate'},
 		$h->{'source'}, 
-		$h->{'author'},
-		$category,
-		$h->{'cate_id'},
-		$item,
-		$h->{'item_id'},
+		$h->{'tag'},
+		$h->{'tag'}, 
 		$h->{'createdby'},
 		now(),
 		$h->{'desc'}
@@ -108,14 +110,59 @@ $dbh->disconnect();
 exit 8;
 
 ########################
+sub write_file
+{
+	my ($file, $html) = @_;
+	$file = '/tmp/' . $file;
+	my $fh = FileHandle->new($file, "w");
+	die unless (defined $fh);
+	if(ref $html) {
+		print $fh Dumper($html);
+	}
+	else {
+		print $fh $html;
+	}
+	$fh->autoflush(1);
+	$fh->close();
+}
 sub strip_result {
 	my ( $html ) = @_;
 	$html =~ m {
-			<div\sid="container"
+			<div\sid="container">
 			(.*?)
-			id="page">
+			<p\sid="page">
 	}sgix;
 	return $1;
+}
+sub parse_item {
+	my $html = shift;
+	my $aoh = [];
+    $html =~ m {
+        <h3\sclass=(?:"t"|t)
+        (?:.*?)>
+		<a
+		(?:.*?)
+		href="(.*?)"	#url
+		(?:.*?)
+		>
+		(.*?)			#title
+		</a>
+		(?:.*?)
+		<font\ssize=(?:"-1"|-1)>
+        (.*)			#content
+    }sgix;
+    my ($t1,$t2,$t3) = ($1,$2,$3);
+    push (@{$aoh}, $t1,$t2,$t3);
+	return $aoh;
+}
+sub strip_tag
+{
+	my $str = shift;
+	return '' unless $str;
+
+	$str =~ s/<(?:.*?)>//g if ($str=~m"<");
+	$str =~ s/<\/.*?>//g if ($str=~m"</");
+	return $str;
 }
 
 sub parse_result
@@ -128,24 +175,15 @@ sub parse_result
 		(?:.*?)
         class="(?:result-op|result)"
         (?:.*?)>
-        <h3\sclass="t">
-        (?:.*?)>
-		<a(?:.*?)
-		href="(.*?)"	#url
+		<td\sclass=(?:"f"|f)
 		(?:.*?)
 		>
-		(.*?)			#title
-		</a>
-		(?:.*?)
-		<(?:td\sclass="f"|font\ssize="-1")>
         (.*?)			#content
 		</td>
 		(?:.*?)
 		</table>
-		(?:.*?)
     }sgix) {
-        my ($t1,$t2,$t3) = ($1,$2,$3);
-        push (@{$aoh}, [$t1,$t2,$t3]);
+       push (@{$aoh}, $1);
     }
     return $aoh;
 }
@@ -218,3 +256,4 @@ sub insert_contents
 {
 	
 }
+
