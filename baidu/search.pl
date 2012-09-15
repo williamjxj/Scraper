@@ -30,8 +30,6 @@ our $dbh = new db( $user, $pass, $dsn );
 
 my @blacklist = ('google', 'wikipedia');
 
-our ( $mech, $mech1) = ( undef, undef );
-
 our $bd = new common() or die $!;
 
 my $h = {
@@ -42,10 +40,8 @@ my $h = {
 	'createdby' => $dbh->quote($bd->get_os_stripname(__FILE__)),
 };
 
-$mech = WWW::Mechanize->new( autocheck => 0 ) or die;
-$mech1 = WWW::Mechanize->new( autocheck => 0 ) or die;
+my $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
 $mech->timeout( 20 );
-$mech1->timeout( 20 );
 
 $mech->get( SEARCH_URL );
 $mech->success or die $mech->response->status_line;
@@ -58,10 +54,10 @@ $mech->submit_form(
 );
 $mech->success or die $mech->response->status_line;
 
-print $mech->content;
+# print $mech->content;
 
-my $t = $bd->strip_result( $mech->content );
-my $aoh = $bd->parse_result($t);
+my $t = strip_result( $mech->content );
+my $aoh = parse_result($t);
 
 print Dumper($aoh);
 
@@ -69,40 +65,11 @@ exit;
 
 foreach my $r (@{$aoh}) {
 
-	$link = $r->[0];
-	$summary = $r->[1] . ': ' . $r->[2];
-	$summary = $dbh->quote( $summary );
-	print "-------------------------\n";
-	print $link . "\n";
-
-	if (grep{ $link =~ m{$_}i } @blacklist) {
-		next;
-	}
-
-	$mech1->get( $link );
-	$mech1->success or next;
-
-	$garef = $bd->parse_url( $mech1->content );
-
-	my ($html, $detail, $title, $sth);
-	$html = $mech1->content;
-
-	# after parse homepage of the website, search email/phone.
-	$detail = $bd->get_detail( $html );
-
-	print Dumper($detail);
-	next if($detail eq '' );
-	$detail = $dbh->quote($detail);
-	
-	$title = $dbh->quote($garef->[0] );
-	$description = $dbh->quote($garef->[1]);
-	$keywords = $dbh->quote($garef->[2] );
-
 	my $rank = {};
 	my $category = $dbh->quote($rank->[2]);
 	my $item = $dbh->quote($rank->[0]);
 
-	my $sql = qq{ insert into t_baidu
+	my $sql = qq{ insert into contents
 		(title,
 		url,
 		pubDate,
@@ -135,8 +102,6 @@ foreach my $r (@{$aoh}) {
 	};
 	$dbh->do($sql);
 
-	undef( @{$garef} );
-	$mech1->back;
 }
 
 $dbh->disconnect();
@@ -144,7 +109,7 @@ exit 8;
 
 ########################
 sub strip_result {
-	my ( $self, $html ) = @_;
+	my ( $html ) = @_;
 	$html =~ m {
 			<div\sid="container"
 			(.*?)
@@ -155,7 +120,7 @@ sub strip_result {
 
 sub parse_result
 {
-    my ($self, $html) = @_;
+    my ($html) = @_;
     my $aoh = [];
 
     while ($html =~ m {
@@ -164,7 +129,8 @@ sub parse_result
         class="(?:result-op|result)"
         (?:.*?)>
         <h3\sclass="t">
-		<a(?".*?)
+        (?:.*?)>
+		<a(?:.*?)
 		href="(.*?)"	#url
 		(?:.*?)
 		>
@@ -176,6 +142,7 @@ sub parse_result
 		</td>
 		(?:.*?)
 		</table>
+		(?:.*?)
     }sgix) {
         my ($t1,$t2,$t3) = ($1,$2,$3);
         push (@{$aoh}, [$t1,$t2,$t3]);
