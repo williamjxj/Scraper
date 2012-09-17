@@ -65,13 +65,10 @@ if ($web) {
 	exit 1;
 }
 
-my ($xml, $rd) = (undef);
+my ($xml, $rd, $aref) = (undef, [], {});
+
 foreach $rd (@{$bd->{'latest'}}) {
 	$bd->{'url'} = $rd->[1];
-	$h->{'category'} = $dbh->quote($rd->[2]);
-	$h->{'cate_id'} = $bd->select_category($rd->[2]);
-	$h->{'item'} = $dbh->quote($rd->[0]);
-	$h->{'item_id'} = $bd->select_item($rd, $h);
 
 	$xml = get($bd->{'url'});
 	if(!defined($xml) || $xml eq '') {
@@ -81,8 +78,11 @@ foreach $rd (@{$bd->{'latest'}}) {
 
 	$num ++;
 
-	# $title, $link, $pubDate, $source, $author, $desc
-	my $aref;
+	$h->{'category'} = $dbh->quote($rd->[2]);
+	$h->{'cate_id'} = $bd->select_category($rd->[2]);
+	$h->{'item'} = $dbh->quote($rd->[0]);
+	$h->{'item_id'} = $bd->select_item($rd, $h);
+
 	my ($t) = ($bd->{'url'} =~ m/class=(.*?)&/);
 	
 	if ($t && grep /$t/, @non_rss) {
@@ -93,6 +93,7 @@ foreach $rd (@{$bd->{'latest'}}) {
 	}
 
 	foreach my $rss (@$aref) {
+		# $title, $link, $pubDate, $source, $author, $desc
 		my ($t1, $t2, $t3, $t4, $t5, $t6) = @{$rss};
 	
 		$t1 = decode("euc-cn", "$t1");
