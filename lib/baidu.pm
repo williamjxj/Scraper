@@ -89,6 +89,8 @@ our @focus = (
 );
 
 our @latest = (	
+	[ '爆料最新', "http://news.baidu.com/n?cmd=4&class=star_chuanwen&pn=1", '明星' ],
+
 	[ '国内最新', "http://news.baidu.com/n?cmd=4&class=civilnews&tn=rss", '国内' ],
 	[ '时政要闻最新', "http://news.baidu.com/n?cmd=4&class=shizheng&tn=rss", '国内' ],
 	[ '高层动态最新', "http://news.baidu.com/n?cmd=4&class=gaoceng&tn=rss", '国内' ],
@@ -320,6 +322,7 @@ sub get_item
 		$title = $self->remove_CDATA($1);
 		$link = $self->remove_CDATA($2);
 		$pubDate = $self->remove_CDATA($3);
+		$pubDate =~ s/T.*$//;
 		$source = $self->remove_CDATA($4);
 		$author = $self->remove_CDATA($5);
 		$desc = $self->remove_CDATA($6);
