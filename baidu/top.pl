@@ -69,6 +69,8 @@ foreach $data (<DATA>) {
 	@{$rank} = split(/,/, $data);
 	chomp $rank->[2];
 	$bd->{'url'} = $rank->[1];
+	my ($channel) = ($bd->{'url'} =~ m/class=(.*?)&/);
+	
 	$h->{'cate_id'} = $bd->select_category($rank->[2]);
 	$h->{'category'} = $dbh->quote($rank->[2]);
 	$h->{'item'} = $dbh->quote($rank->[0]);
@@ -88,9 +90,15 @@ foreach $data (<DATA>) {
 	$h->{'title'} = $dbh->quote($aref->[0]); 
 	$h->{'url'} = $dbh->quote($aref->[1]);
 	$h->{'pubDate'} = $dbh->quote($aref->[2]);
-	$h->{'author'} = $dbh->quote($aref->[3]);
-	$h->{'source'} = $dbh->quote($bd->{'url'}.'->'.$aref->[4]); 
+	$h->{'author'} = $dbh->quote($channel);
 	$h->{'desc'} = $dbh->quote($aref->[5]);
+
+	if($aref->[3]) {
+		$h->{'source'} = $dbh->quote($aref->[3]);
+	}
+	elsif($aref->[4]) {
+		$h->{'source'} = $dbh->quote($aref->[4]);		
+	} 
 
 	$bd->insert_baidu($h, $rank);
 }

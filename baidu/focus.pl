@@ -61,6 +61,7 @@ GetOptions( 'log' => \$log );
 my ($xml, $rd) = (undef);
 foreach $rd (@{$bd->{'focus'}}) {
 	$bd->{'url'} = $rd->[1];
+	my ($channel) = ($bd->{'url'} =~ m/class=(.*?)&/);
 
 	$xml = get($bd->{'url'});
 	if(!defined($xml) || $xml eq '') {
@@ -74,6 +75,7 @@ foreach $rd (@{$bd->{'focus'}}) {
 	$h->{'cate_id'} = $bd->select_category($rd->[2]);
 	$h->{'item'} = $dbh->quote($rd->[0]);
 	$h->{'item_id'} = $bd->select_item($rd, $h);
+	$h->{'author'} = $dbh->quote($channel);
 
 	# $title, $link, $pubDate, $source, $author, $desc
 	my $aref = $bd->get_item($xml);
@@ -102,7 +104,7 @@ foreach $rd (@{$bd->{'focus'}}) {
 		if ($t4) {
 			$h->{'source'} = $dbh->quote($t4);
 		} 
-		elseif($t5)  {
+		elsif($t5)  {
 			$h->{'source'} = $dbh->quote($t5);
 		}
 
