@@ -11,7 +11,7 @@ use DBI;
 use Getopt::Long;
 use Encode qw(from_to encode decode);
 
-use lib qw(./lib/);
+use lib qw(../lib/);
 use config;
 use db;
 use baidu;
@@ -54,7 +54,7 @@ my $h = {
 	'cate_id' => 0,
 	'item' => '',
 	'item_id' => 0,
-	'createdby' => $dbh->quote($bd->get_os_stripname(__FILE__)),
+	'createdby' => $dbh->quote('baidu_' . $bd->get_os_stripname(__FILE__)),
 };
 
 
