@@ -70,6 +70,8 @@ my ($xml, $rd, $aref, $flg) = (undef, [], {}, 1);
 foreach $rd (@{$bd->{'latest'}}) {
 	$bd->{'url'} = $rd->[1];
 
+	my ($channel) = ($bd->{'url'} =~ m/class=(.*?)&/);
+
 	$xml = get($bd->{'url'});
 	if(!defined($xml) || $xml eq '') {
 		$bd->write_log('Fail!'.$bd->{'url'}.', '.$h->{'item_id'}.', '.$h->{'cate_id'});
@@ -82,9 +84,8 @@ foreach $rd (@{$bd->{'latest'}}) {
 	$h->{'cate_id'} = $bd->select_category($rd->[2]);
 	$h->{'item'} = $dbh->quote($rd->[0]);
 	$h->{'item_id'} = $bd->select_item($rd, $h);
+	$h->{'author'} = $dbh->quote($channel);
 
-	my ($channel) = ($bd->{'url'} =~ m/channel=(.*?)&/);
-	
 	if ($channel && grep /$channel/, @non_rss) {
 		$aref = $bd->get_non_rss($xml);
 		$flg = 0;
@@ -112,15 +113,12 @@ foreach $rd (@{$bd->{'latest'}}) {
 		$h->{'url'} = $dbh->quote($t2);
 		$h->{'pubDate'} = $dbh->quote($t3);
 	
-		if($t4 eq $t5) {
-			$h->{'source'} = $dbh->quote($bd->{'url'});
-			$h->{'author'} = $dbh->quote($t5);
-		}   
-		else {
-			$h->{'source'} = $dbh->quote($bd->{'url'}.','.$t4);
-			$h->{'author'} = $dbh->quote($t5);
+		if ($t4) {
+			$h->{'source'} = $dbh->quote($t5);
 		}
-		$h->{'author'} = $channel unless $h->{'author'};
+		else ($t5) {
+			$h->{'source'} = $dbh->quote($t5);
+		}
 
 		$h->{'desc'} = $dbh->quote($t6);
 		$bd->insert_baidu($h, $rd);		

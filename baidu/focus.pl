@@ -97,16 +97,15 @@ foreach $rd (@{$bd->{'focus'}}) {
 		$h->{'title'} = $dbh->quote($t1); 
 		$h->{'url'} = $dbh->quote($t2);
 		$h->{'pubDate'} = $dbh->quote($t3);
-		if($t4 eq $t5) {
-			$h->{'source'} = $dbh->quote($t5);
-			$h->{'author'} = $dbh->quote($bd->{'url'});
-		} 
-		else {
-			$h->{'source'} = $dbh->quote($t5);
-			$h->{'author'} = $dbh->quote($bd->{'url'}.','.$t4);
-		}
 		$h->{'desc'} = $dbh->quote($t6);
-	
+
+		if ($t4) {
+			$h->{'source'} = $dbh->quote($t4);
+		} 
+		elseif($t5)  {
+			$h->{'source'} = $dbh->quote($t5);
+		}
+
 		$bd->insert_baidu($h, $rd);
 	}
 }
