@@ -329,7 +329,7 @@ sub get_item
 		$desc = $self->remove_CDATA($6);
 
 		$pubDate =~ s/T.*$//;
-		$desc =~ s/\s{2,}/\s/g if ($desc=~m/\s{2,}/);
+		$desc =~ s/\s{2,}/&nbsp;/g if ($desc=~m/\s{2,}/);
 	
 		push (@{$aref}, [ $title, $link, $pubDate, $source, $author, $desc ]);
     }
