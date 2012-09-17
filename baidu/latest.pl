@@ -83,9 +83,9 @@ foreach $rd (@{$bd->{'latest'}}) {
 	$h->{'item'} = $dbh->quote($rd->[0]);
 	$h->{'item_id'} = $bd->select_item($rd, $h);
 
-	my ($t) = ($bd->{'url'} =~ m/class=(.*?)&/);
+	my ($channel) = ($bd->{'url'} =~ m/channel=(.*?)&/);
 	
-	if ($t && grep /$t/, @non_rss) {
+	if ($channel && grep /$channel/, @non_rss) {
 		$aref = $bd->get_non_rss($xml);
 	}
 	else {
@@ -113,6 +113,8 @@ foreach $rd (@{$bd->{'latest'}}) {
 			$h->{'source'} = $dbh->quote($bd->{'url'}.','.$t4);
 			$h->{'author'} = $dbh->quote($t5);
 		}
+		$h->{'author'} = $channel unless $h->{'author'};
+
 		$h->{'desc'} = $dbh->quote($t6);
 		$bd->insert_baidu($h, $rd);		
 	}
