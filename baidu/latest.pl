@@ -45,6 +45,7 @@ $bd->set_log($log);
 $bd->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
 my ($num, $web) = (0);
+our @non_rss = ('star_chuanwen', 'star_gangtai', 'star_neidi', 'star_oumei', 'star_rihan');
 
 # Never insert without the following info.
 my $h = {
@@ -72,6 +73,7 @@ foreach $rd (@{$bd->{'latest'}}) {
 	$h->{'item'} = $dbh->quote($rd->[0]);
 	$h->{'item_id'} = $bd->select_item($rd, $h);
 
+	
 	$xml = get($bd->{'url'});
 	if(!defined($xml) || $xml eq '') {
 		$bd->write_log('Fail!'.$bd->{'url'}.', '.$h->{'item_id'}.', '.$h->{'cate_id'});
@@ -81,30 +83,38 @@ foreach $rd (@{$bd->{'latest'}}) {
 	$num ++;
 
 	# $title, $link, $pubDate, $source, $author, $desc
-	my $aref = $bd->get_item($xml);
-	my ($t1, $t2, $t3, $t4, $t5, $t6) = @{$aref};
-
-	$t1 = decode("euc-cn", "$t1");
-	$t4 = decode("euc-cn", "$t4");
-	$t5 = decode("euc-cn", "$t5");
-	$t6 = decode("euc-cn", "$t6");
-
-	$h->{'title'} = $dbh->quote($t1); 
-	$h->{'url'} = $dbh->quote($t2);
-	$h->{'pubDate'} = $dbh->quote($t3);
-
-	if($t4 eq $t5) {
-		$h->{'source'} = $dbh->quote($bd->{'url'});
-		$h->{'author'} = $dbh->quote($t5);
-	}   
+	my $aref;
+	
+	if (grep /$bd->{'url'}/, @non_rss) {
+		$aref = $bd->get_non_rss($xml);
+	}
 	else {
-		$h->{'source'} = $dbh->quote($bd->{'url'}.','.$t4);
-		$h->{'author'} = $dbh->quote($t5);
+		$aref = $bd->get_item($xml);	
 	}
 
-	$h->{'desc'} = $dbh->quote($t6);
-
-	$bd->insert_baidu($h, $rd);
+	foreach my $rss (@$aref) {
+		my ($t1, $t2, $t3, $t4, $t5, $t6) = @{$rss};
+	
+		$t1 = decode("euc-cn", "$t1");
+		$t4 = decode("euc-cn", "$t4");
+		$t5 = decode("euc-cn", "$t5");
+		$t6 = decode("euc-cn", "$t6");
+	
+		$h->{'title'} = $dbh->quote($t1); 
+		$h->{'url'} = $dbh->quote($t2);
+		$h->{'pubDate'} = $dbh->quote($t3);
+	
+		if($t4 eq $t5) {
+			$h->{'source'} = $dbh->quote($bd->{'url'});
+			$h->{'author'} = $dbh->quote($t5);
+		}   
+		else {
+			$h->{'source'} = $dbh->quote($bd->{'url'}.','.$t4);
+			$h->{'author'} = $dbh->quote($t5);
+		}
+		$h->{'desc'} = $dbh->quote($t6);
+		$bd->insert_baidu($h, $rd);		
+	}
 }
 	
 $dbh->disconnect();
