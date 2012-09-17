@@ -246,11 +246,47 @@ sub new {
 	bless $self, $type;
 }
 
+sub get_non_rss
+{
+    my ( $self, $html ) = @_;
+    return unless $html;
+    my $aref;
+	while ($html =~ m {
+		<div>
+		(?:.*?)
+		<a
+		(?:.*?)
+		href="
+		(.*?)  #链接地址
+		"
+		(?:.*?)
+		>
+		(.*?)  # 标题
+		<span\sclass="c">
+		(.*?)  # 来源
+		</span>
+		(.*?)  # 正文
+		</div>
+    }sgix) {
+		my ($title, $link, $pubDate, $source, $author, $desc);
+	
+		$link = $1;
+		$title = $2;
+		($source, $pubDate) = split('/\s+/', $3);
+		$desc = $6;
+		$author = $1;
+		
+		push (@{$aref}, $title, $link, $pubDate, $source, $author, $desc );
+    }
+    return $aref;
+}
+
 sub get_item
 {
     my ( $self, $html ) = @_;
     return unless $html;
-	$html =~ m {
+    my $aref;
+	while ($html =~ m {
 		<item>
 		(?:.*?)  #回车换行: \cJ
 		<title>
@@ -278,17 +314,19 @@ sub get_item
 		</description>
 		(?:.*?)
 		</item>
-    }sgix;
-	my ($title, $link, $pubDate, $source, $author, $desc);
-
-	$title = $self->remove_CDATA($1);
-	$link = $self->remove_CDATA($2);
-	$pubDate = $self->remove_CDATA($3);
-	$source = $self->remove_CDATA($4);
-	$author = $self->remove_CDATA($5);
-	$desc = $self->remove_CDATA($6);
-
-	return [ $title, $link, $pubDate, $source, $author, $desc ];
+    }sgix) {
+		my ($title, $link, $pubDate, $source, $author, $desc);
+	
+		$title = $self->remove_CDATA($1);
+		$link = $self->remove_CDATA($2);
+		$pubDate = $self->remove_CDATA($3);
+		$source = $self->remove_CDATA($4);
+		$author = $self->remove_CDATA($5);
+		$desc = $self->remove_CDATA($6);
+	
+		push ( @{$aref}, $title, $link, $pubDate, $source, $author, $desc );
+    }
+    return $aref;
 }
 
 # Mon, 10 Sep 12 20:19:06 +0800, reserved for future improvement.
