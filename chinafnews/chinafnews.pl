@@ -14,13 +14,6 @@ use WWW::Mechanize;
 use DBI;
 use Getopt::Long;
 
-use lib qw(./lib/);
-use config;
-use db;
-use chinafnews;
-
-use constant BASEURL=>q{http://www.chinafnews.com/news/};
-
 sub BEGIN
 {
 	$SIG{'INT'}  = 'IGNORE';
@@ -28,10 +21,22 @@ sub BEGIN
 	$SIG{'TERM'} = 'IGNORE';
 	$SIG{'PIPE'} = 'IGNORE';
 	$SIG{'CHLD'} = 'IGNORE';
-	$ENV{'PATH'} = '/usr/bin/:/bin/:.';
+	if ($^O eq 'MSWin32') {	
+		$ENV{'HOME'} = 'C:/Users/William/Desktop/NEW/ASAP/scraper/';
+	} else {
+		$ENV{'HOME'} = '/home/williamjxj/scraper/';		
+	}
+	
 	local ($|) = 1;
 	undef $/;
 }
+
+use lib qw(../lib/);
+use config;
+use db;
+use chinafnews;
+
+use constant BASEURL=>q{http://www.chinafnews.com/news/};
 
 #-----------------------------------
 # 0. initialize:
