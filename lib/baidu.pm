@@ -324,10 +324,11 @@ sub get_item
 		$title = $self->remove_CDATA($1);
 		$link = $self->remove_CDATA($2);
 		$pubDate = $self->remove_CDATA($3);
-		$pubDate =~ s/T.*$//;
 		$source = $self->remove_CDATA($4);
 		$author = $self->remove_CDATA($5);
 		$desc = $self->remove_CDATA($6);
+
+		$pubDate =~ s/T.*$//;
 	
 		push (@{$aref}, [ $title, $link, $pubDate, $source, $author, $desc ]);
     }
