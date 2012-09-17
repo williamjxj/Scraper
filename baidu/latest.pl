@@ -65,7 +65,7 @@ if ($web) {
 	exit 1;
 }
 
-my ($xml, $rd, $aref) = (undef, [], {});
+my ($xml, $rd, $aref, $flg) = (undef, [], {}, 1);
 
 foreach $rd (@{$bd->{'latest'}}) {
 	$bd->{'url'} = $rd->[1];
@@ -75,8 +75,7 @@ foreach $rd (@{$bd->{'latest'}}) {
 		$bd->write_log('Fail!'.$bd->{'url'}.', '.$h->{'item_id'}.', '.$h->{'cate_id'});
 		next;
 	}
-print $xml;
-exit;
+
 	$num ++;
 
 	$h->{'category'} = $dbh->quote($rd->[2]);
@@ -88,19 +87,26 @@ exit;
 	
 	if ($t && grep /$t/, @non_rss) {
 		$aref = $bd->get_non_rss($xml);
+		$flg = 0;
 	}
 	else {
 		$aref = $bd->get_item($xml);	
+		$flg = 1;
 	}
 
 	foreach my $rss (@$aref) {
 		# $title, $link, $pubDate, $source, $author, $desc
 		my ($t1, $t2, $t3, $t4, $t5, $t6) = @{$rss};
 	
-		$t1 = decode("euc-cn", "$t1");
-		$t4 = decode("euc-cn", "$t4");
-		$t5 = decode("euc-cn", "$t5");
-		$t6 = decode("euc-cn", "$t6");
+		if( $flg ) {
+			$t1 = decode("euc-cn", "$t1");
+			$t4 = decode("euc-cn", "$t4");
+			$t5 = decode("euc-cn", "$t5");
+			$t6 = decode("euc-cn", "$t6");
+		}
+		else {
+			$t3 = $bd->get_time('1') . ' ' . $t3;  # change 9:31 to '2012-09-14 9:31'
+		}
 	
 		$h->{'title'} = $dbh->quote($t1); 
 		$h->{'url'} = $dbh->quote($t2);

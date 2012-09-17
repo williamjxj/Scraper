@@ -362,7 +362,7 @@ sub insert_baidu
 	my $category = $self->{dbh}->quote($rank->[2]);
 	my $item = $self->{dbh}->quote($rank->[0]);
 
-	my $sql = qq{ insert into contents
+	my $sql = qq{ insert into contexts
 		(linkname,
 		url,
 		pubdate,
