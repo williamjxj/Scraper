@@ -23,11 +23,10 @@ sub BEGIN
 	$SIG{'TERM'} = 'IGNORE';
 	$SIG{'PIPE'} = 'IGNORE';
 	$SIG{'CHLD'} = 'IGNORE';
-	$ENV{'PATH'} = '/usr/bin/:/bin/:.';
+	$ENV{'HOME'} = '/home/williamjxj/scraper/';
 	local ($|) = 1;
 	undef $/;
 }
-
 
 our ( $start_time, $end_time ) = ( 0, 0 );
 $start_time = time;
@@ -56,7 +55,6 @@ my $h = {
 	'item_id' => 0,
 	'createdby' => $dbh->quote('baidu_' . $bd->get_os_stripname(__FILE__)),
 };
-
 
 GetOptions( 'log' => \$log );
 
@@ -107,7 +105,7 @@ foreach $rd (@{$bd->{'focus'}}) {
 
 	$bd->insert_baidu($h, $rd);
 }
-	
+
 $dbh->disconnect();
 $end_time = time;
 $bd->write_log( "Total total data: [ " . $num . "], " . ( $end_time - $start_time ) . " ] seconds used.\n" );

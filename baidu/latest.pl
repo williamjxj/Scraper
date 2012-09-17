@@ -27,7 +27,6 @@ sub BEGIN
 	undef $/;
 }
 
-
 our ( $start_time, $end_time ) = ( 0, 0 );
 $start_time = time;
 
