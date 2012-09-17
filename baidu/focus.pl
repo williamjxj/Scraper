@@ -45,7 +45,7 @@ $log = $bd->get_filename(__FILE__);
 $bd->set_log($log);
 $bd->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
-my ($num) = (0);
+my ($num1, $num2) = (0, 0);
 
 # Never insert without the following info.
 my $h = {
@@ -69,7 +69,8 @@ foreach $rd (@{$bd->{'focus'}}) {
 		next;
 	}
 
-	$num ++;
+	$num1 ++;
+	$num2 = 0;
 
 	$h->{'category'} = $dbh->quote($rd->[2]);
 	$h->{'cate_id'} = $bd->select_category($rd->[2]);
@@ -81,9 +82,10 @@ foreach $rd (@{$bd->{'focus'}}) {
 	my $aref = $bd->get_item($xml);
 	
 	foreach my $rss (@$aref) {
-	
 		my ($t1, $t2, $t3, $t4, $t5, $t6) = @{$rss};
 	
+		$num2 ++;
+
 		$t1 = decode("euc-cn", "$t1");
 		$t4 = decode("euc-cn", "$t4");
 		$t5 = decode("euc-cn", "$t5");
@@ -114,7 +116,7 @@ foreach $rd (@{$bd->{'focus'}}) {
 
 $dbh->disconnect();
 $end_time = time;
-$bd->write_log( "Total total data: [ " . $num . "], " . ( $end_time - $start_time ) . " ] seconds used.\n" );
+$bd->write_log( "Total total data: [ " . $num1 . ", " . $num2 . " ], [ " . ( $end_time - $start_time ) . " ] seconds used.\n" );
 $bd->write_log("----------------------------------------------\n");
 $bd->close_log();
 

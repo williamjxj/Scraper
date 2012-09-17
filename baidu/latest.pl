@@ -44,7 +44,7 @@ $log = $bd->get_filename(__FILE__);
 $bd->set_log($log);
 $bd->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
-my ($num, $web) = (0);
+my ($num1, $num2, $web) = (0, 0);
 our @non_rss = ('star_chuanwen', 'star_gangtai', 'star_neidi', 'star_oumei', 'star_rihan');
 
 # Never insert without the following info.
@@ -77,7 +77,8 @@ foreach $rd (@{$bd->{'latest'}}) {
 		next;
 	}
 
-	$num ++;
+	$num1 ++;
+	$num2 = 0;
 
 	$h->{'category'} = $dbh->quote($rd->[2]);
 	$h->{'cate_id'} = $bd->select_category($rd->[2]);
@@ -97,6 +98,8 @@ foreach $rd (@{$bd->{'latest'}}) {
 	foreach my $rss (@$aref) {
 		# $title, $link, $pubDate, $source, $author, $desc
 		my ($t1, $t2, $t3, $t4, $t5, $t6) = @{$rss};
+
+		$num2 ++;
 	
 		if( $flg ) {
 			$t1 = decode("euc-cn", "$t1");
@@ -126,7 +129,7 @@ foreach $rd (@{$bd->{'latest'}}) {
 	
 $dbh->disconnect();
 $end_time = time;
-$bd->write_log( "Total total data: [ " . $num . "], " . ( $end_time - $start_time ) . " ] seconds used.\n" );
+$bd->write_log( "Total total data: [ " . $num1 . ', ' . $num2 . " ], [ " . ( $end_time - $start_time ) . " ] seconds used.\n" );
 $bd->write_log("----------------------------------------------\n");
 $bd->close_log();
 
