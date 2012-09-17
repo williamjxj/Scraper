@@ -1,9 +1,9 @@
 #! /opt/lampp/bin/perl -w
+#use utf8;
+#use encoding 'utf8';
 
 use warnings;
 use strict;
-#use utf8;
-#use encoding 'utf8';
 use Data::Dumper;
 use FileHandle;
 use LWP::Simple;
@@ -61,10 +61,6 @@ GetOptions( 'log' => \$log );
 my ($xml, $rd) = (undef);
 foreach $rd (@{$bd->{'focus'}}) {
 	$bd->{'url'} = $rd->[1];
-	$h->{'category'} = $dbh->quote($rd->[2]);
-	$h->{'cate_id'} = $bd->select_category($rd->[2]);
-	$h->{'item'} = $dbh->quote($rd->[0]);
-	$h->{'item_id'} = $bd->select_item($rd, $h);
 
 	$xml = get($bd->{'url'});
 	if(!defined($xml) || $xml eq '') {
@@ -74,36 +70,45 @@ foreach $rd (@{$bd->{'focus'}}) {
 
 	$num ++;
 
+	$h->{'category'} = $dbh->quote($rd->[2]);
+	$h->{'cate_id'} = $bd->select_category($rd->[2]);
+	$h->{'item'} = $dbh->quote($rd->[0]);
+	$h->{'item_id'} = $bd->select_item($rd, $h);
+
 	# $title, $link, $pubDate, $source, $author, $desc
 	my $aref = $bd->get_item($xml);
-	my ($t1, $t2, $t3, $t4, $t5, $t6) = @{$aref};
-
-	$t1 = decode("euc-cn", "$t1");
-	$t4 = decode("euc-cn", "$t4");
-	$t5 = decode("euc-cn", "$t5");
-	$t6 = decode("euc-cn", "$t6");
-
-	# $h->{'title'} = encode("utf-8", decode("gb2312", $aref->[0])); 
-	# if (is_utf8($h->{'title'}, Encode::FB_CROAK)) { print "UTF-8\n"; }
-	# $h->{'title'} = encode_utf8(decode("gb2312", $aref->[0]));
-	# $t3 = from_to($t3, 'gb2312', 'utf8');
-	# $h->{'source'} = $dbh->quote($aref->[3]); 
-	# $h->{'author'} = $dbh->quote($aref->[4]);
-
-	$h->{'title'} = $dbh->quote($t1); 
-	$h->{'url'} = $dbh->quote($t2);
-	$h->{'pubDate'} = $dbh->quote($t3);
-	if($t4 eq $t5) {
-		$h->{'source'} = $dbh->quote($bd->{'url'});
-		$h->{'author'} = $dbh->quote($t5);
-	} 
-	else {
-		$h->{'source'} = $dbh->quote($bd->{'url'}.','.$t4);
-		$h->{'author'} = $dbh->quote($t5);
+	
+	foreach my $rss (@$aref) {
+	
+		my ($t1, $t2, $t3, $t4, $t5, $t6) = @{$rss};
+	
+		$t1 = decode("euc-cn", "$t1");
+		$t4 = decode("euc-cn", "$t4");
+		$t5 = decode("euc-cn", "$t5");
+		$t6 = decode("euc-cn", "$t6");
+	
+		# $h->{'title'} = encode("utf-8", decode("gb2312", $aref->[0])); 
+		# if (is_utf8($h->{'title'}, Encode::FB_CROAK)) { print "UTF-8\n"; }
+		# $h->{'title'} = encode_utf8(decode("gb2312", $aref->[0]));
+		# $t3 = from_to($t3, 'gb2312', 'utf8');
+		# $h->{'source'} = $dbh->quote($aref->[3]); 
+		# $h->{'author'} = $dbh->quote($aref->[4]);
+	
+		$h->{'title'} = $dbh->quote($t1); 
+		$h->{'url'} = $dbh->quote($t2);
+		$h->{'pubDate'} = $dbh->quote($t3);
+		if($t4 eq $t5) {
+			$h->{'source'} = $dbh->quote($bd->{'url'});
+			$h->{'author'} = $dbh->quote($t5);
+		} 
+		else {
+			$h->{'source'} = $dbh->quote($bd->{'url'}.','.$t4);
+			$h->{'author'} = $dbh->quote($t5);
+		}
+		$h->{'desc'} = $dbh->quote($t6);
+	
+		$bd->insert_baidu($h, $rd);
 	}
-	$h->{'desc'} = $dbh->quote($t6);
-
-	$bd->insert_baidu($h, $rd);
 }
 
 $dbh->disconnect();
