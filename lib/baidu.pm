@@ -264,7 +264,7 @@ sub get_non_rss
 		(?:.*?)
 		>
 		(.*?)  # 标题
-		<span\sclass="c">
+		<span\sclass=(?:"c"|c)>
 		(.*?)  # 来源
 		</span>
 		(.*?)  # 正文
@@ -275,7 +275,7 @@ sub get_non_rss
 		$link = $1;
 		$title = $2;
 		($source, $pubDate) = split(/(&nbsp;|\s)+/, $3);
-		$desc = $6;
+		$desc = $4;
 		$author = $1;
 		
 		push (@{$aref}, [ $title, $link, $pubDate, $source, $author, $desc ]);
