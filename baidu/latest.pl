@@ -78,7 +78,8 @@ foreach $rd (@{$bd->{'latest'}}) {
 		$bd->write_log('Fail!'.$bd->{'url'}.', '.$h->{'item_id'}.', '.$h->{'cate_id'});
 		next;
 	}
-
+print $xml;
+exit;
 	$num ++;
 
 	# $title, $link, $pubDate, $source, $author, $desc
