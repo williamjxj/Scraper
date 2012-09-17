@@ -276,7 +276,7 @@ sub get_non_rss
 		$desc = $6;
 		$author = $1;
 		
-		push (@{$aref}, $title, $link, $pubDate, $source, $author, $desc );
+		push (@{$aref}, [ $title, $link, $pubDate, $source, $author, $desc ]);
     }
     return $aref;
 }
@@ -324,7 +324,7 @@ sub get_item
 		$author = $self->remove_CDATA($5);
 		$desc = $self->remove_CDATA($6);
 	
-		push ( @{$aref}, $title, $link, $pubDate, $source, $author, $desc );
+		push (@{$aref}, [ $title, $link, $pubDate, $source, $author, $desc ]);
     }
     return $aref;
 }

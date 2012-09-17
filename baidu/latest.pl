@@ -73,7 +73,6 @@ foreach $rd (@{$bd->{'latest'}}) {
 	$h->{'item'} = $dbh->quote($rd->[0]);
 	$h->{'item_id'} = $bd->select_item($rd, $h);
 
-	
 	$xml = get($bd->{'url'});
 	if(!defined($xml) || $xml eq '') {
 		$bd->write_log('Fail!'.$bd->{'url'}.', '.$h->{'item_id'}.', '.$h->{'cate_id'});
@@ -84,8 +83,9 @@ foreach $rd (@{$bd->{'latest'}}) {
 
 	# $title, $link, $pubDate, $source, $author, $desc
 	my $aref;
+	my ($t) = ($bd->{'url'} =~ m/class=(.*?)&/);
 	
-	if (grep /$bd->{'url'}/, @non_rss) {
+	if ($t && grep /$t/, @non_rss) {
 		$aref = $bd->get_non_rss($xml);
 	}
 	else {
