@@ -45,7 +45,7 @@ $log = $bd->get_filename(__FILE__);
 $bd->set_log($log);
 $bd->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
-my ($num) = (0);
+my ($num, $web) = (0);
 
 # Never insert without the following info.
 my $h = {
@@ -56,7 +56,14 @@ my $h = {
 	'createdby' => $dbh->quote('baidu_' . $bd->get_os_stripname(__FILE__)),
 };
 
-GetOptions( 'log' => \$log );
+GetOptions( 'log' => \$log, 'web=s' => \$web );
+
+# for test purpose
+if ($web) {
+	my $html = get( $web );
+	print Dumper( $html );
+	exit 1;
+}
 
 my ($xml, $rd) = (undef);
 foreach $rd (@{$bd->{'latest'}}) {
