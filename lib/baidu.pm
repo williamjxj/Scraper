@@ -274,7 +274,7 @@ sub get_non_rss
 	
 		$link = $1;
 		$title = $2;
-		($source, $pubDate) = split('/\s+/', $3);
+		($source, $pubDate) = split(/(&nbsp;|\s)+/, $3);
 		$desc = $6;
 		$author = $1;
 		
