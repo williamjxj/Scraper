@@ -98,12 +98,12 @@ foreach $rd (@{$bd->{'focus'}}) {
 		$h->{'url'} = $dbh->quote($t2);
 		$h->{'pubDate'} = $dbh->quote($t3);
 		if($t4 eq $t5) {
-			$h->{'source'} = $dbh->quote($bd->{'url'});
-			$h->{'author'} = $dbh->quote($t5);
+			$h->{'source'} = $dbh->quote($t5);
+			$h->{'author'} = $dbh->quote($bd->{'url'});
 		} 
 		else {
-			$h->{'source'} = $dbh->quote($bd->{'url'}.','.$t4);
-			$h->{'author'} = $dbh->quote($t5);
+			$h->{'source'} = $dbh->quote($t5);
+			$h->{'author'} = $dbh->quote($bd->{'url'}.','.$t4);
 		}
 		$h->{'desc'} = $dbh->quote($t6);
 	
