@@ -69,7 +69,9 @@ foreach $data (<DATA>) {
 	@{$rank} = split(/,/, $data);
 	chomp $rank->[2];
 	$bd->{'url'} = $rank->[1];
-	my ($channel) = ($bd->{'url'} =~ m/class=(.*?)&/);
+	# 'http://top.baidu.com/buzz.php?p=top10'
+	# my ($channel) = ($bd->{'url'} =~ m/class=(.*?)&/);
+	my $channel = $bd->{'url'};
 	
 	$h->{'cate_id'} = $bd->select_category($rank->[2]);
 	$h->{'category'} = $dbh->quote($rank->[2]);
@@ -86,18 +88,20 @@ foreach $data (<DATA>) {
 	
 	# $title, $link, $pubDate, $source, $author, $desc
 	my $aref = $bd->get_item($xml);
+	my $r = $aref->[0];
 
-	$h->{'title'} = $dbh->quote($aref->[0]); 
-	$h->{'url'} = $dbh->quote($aref->[1]);
-	$h->{'pubDate'} = $dbh->quote($aref->[2]);
+	$h->{'title'} = $dbh->quote($r->[0]); 
+	$h->{'url'} = $dbh->quote($r->[1]);
+	$h->{'pubDate'} = $dbh->quote($r->[2]);
 	$h->{'author'} = $dbh->quote($channel);
-	$h->{'desc'} = $dbh->quote($aref->[5]);
+	$h->{'desc'} = $dbh->quote($r->[5]);
 
-	if($aref->[3]) {
-		$h->{'source'} = $dbh->quote($aref->[3]);
+	# $r->[3] = $r->[4]
+	if($r->[3]) {
+		$h->{'source'} = $dbh->quote($r->[3]);
 	}
-	elsif($aref->[4]) {
-		$h->{'source'} = $dbh->quote($aref->[4]);		
+	elsif($r->[4]) {
+		$h->{'source'} = $dbh->quote($r->[4]);		
 	} 
 
 	$bd->insert_baidu($h, $rank);
