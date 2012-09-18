@@ -183,15 +183,6 @@ sub write_file
 	$fh->autoflush(1);
 	$fh->close();
 }
-sub strip_result {
-	my ( $html ) = @_;
-	$html =~ m {
-			<div\sid="container">
-			(.*?)
-			<p\sid="page">
-	}sgix;
-	return $1;
-}
 sub parse_item {
 	my $html = shift;
 	my $aoh = [];
@@ -223,18 +214,5 @@ sub strip_tag
 	$str =~ s/<script.*?>.*?<\/script>//sg if ($str=~"<script");
 	return $str;
 }
-
-sub parse_result
-{
-    my ($html) = @_;
-    my $aoh = [];
-
-    while ($html =~ m {
-    }sgix) {
-       push (@{$aoh}, $1);
-    }
-    return $aoh;
-}
-
 
 1;

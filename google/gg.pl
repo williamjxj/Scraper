@@ -9,7 +9,7 @@ use Data::Dumper;
 use DBI;
 use Encode qw(decode encode);
 
-use lib qw(../lib/);
+use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 use db;
 use google;
@@ -17,7 +17,7 @@ use google;
 use constant SURL => q{http://www.google.com};
 
 die "usage: $0 keyword" if ($#ARGV != 0);
-our $keyword = decode($ARGV[0], $ARGV[0]);
+our $keyword = decode("utf-8", $ARGV[0]);
 
 our $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
 
@@ -34,38 +34,34 @@ $mech->timeout( 20 );
 
 $mech->get( SURL );
 $mech->success or die $mech->response->status_line;
-# print $mech->uri . "\n";
+$h->{'author'} = $dbh->quote($mech->uri()->as_string) if($mech->uri);
 
+#num=100->10
 $mech->submit_form(
     form_name => 'f',
-	fields    => { q => $keyword, num => 100 }
+	fields    => { q => $keyword, num => 10 }
 );
 $mech->success or die $mech->response->status_line;
 
 #write_file('gg1.html', $mech->content);
-my $t = strip_result( $mech->content );
+my $t = $gpm->strip_result( $mech->content );
 #write_file('gg2.html', $t);
 
-my $aoh = parse_result($t);
-#write_file('gg3.html', $aoh);
+my $aoh = $gpm->parse_result($t);
+#$gpm->write_file('gg3.html', $aoh);
 #print Dumper($aoh);
 
-foreach my $r (@{$aoh}) {
-
-	my $p = parse_item($r);
-	# print Dumper($p);
-	next unless defined($p->[1]);
+foreach my $p (@{$aoh}) {
 
 	$h->{'url'} = $dbh->quote($p->[0]);
-	$h->{'linkname'} = $dbh->quote(strip_tag($p->[1]));
-	$h->{'desc'} = $dbh->quote(strip_tag($p->[2]));
+	$h->{'linkname'} = $dbh->quote($p->[1]);
+	$h->{'desc'} = $dbh->quote($p->[2]);
 
 	$h->{'date'} = $dbh->quote($gpm->get_time('2'));
 	$h->{'tag'} = $dbh->quote($keyword);
 	$h->{'source'} = $dbh->quote('google搜索程序');
-	#$h->{'source'} = $dbh->quote($keyword);
 
-	my $sql = qq{ insert ignore into contents
+	my $sql = qq{ insert ignore into contexts
 		(linkname,
 		url,
 		pubdate,
