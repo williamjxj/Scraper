@@ -2,8 +2,8 @@
 
 use warnings;
 use strict;
-#use utf8;
-#use encoding 'utf8';
+use utf8;
+use encoding 'utf8';
 use WWW::Mechanize;
 use Data::Dumper;
 use DBI;
@@ -36,9 +36,10 @@ $mech->get( SURL );
 $mech->success or die $mech->response->status_line;
 
 #num=100->10
+# fields    => { q => $keyword, num => 10 }
 $mech->submit_form(
     form_name => 'f',
-	fields    => { q => $keyword, num => 20 }
+	fields    => { q => $keyword, ie=>'UTF-8', hl=>'zh-cn' }
 );
 $mech->success or die $mech->response->status_line;
 $h->{'author'} = $dbh->quote($mech->uri()->as_string) if($mech->uri);
@@ -60,7 +61,7 @@ foreach my $p (@{$aoh}) {
 	$h->{'tag'} = $dbh->quote($keyword);
 	$h->{'source'} = $dbh->quote('google搜索程序');
 
-	my $sql = qq{ insert ignore into contexts
+	my $sql = qq{ insert ignore into contents
 		(linkname,
 		url,
 		pubdate,
