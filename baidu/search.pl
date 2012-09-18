@@ -8,7 +8,6 @@ use WWW::Mechanize;
 use Data::Dumper;
 use DBI;
 use Encode qw(decode encode);
-use FileHandle;
 
 #use lib qq{$ENV{HOME}/scraper/lib/};
 use lib qq{/home/williamjxj/scraper/lib/};
@@ -16,20 +15,16 @@ use config;
 use db;
 use common;
 
-use constant SEARCH_URL => 'http://www.baidu.com';
+use constant SURL => 'http://www.baidu.com';
 
 die "usage: $0 keyword" if ($#ARGV != 0);
-
 our $keyword = $ARGV[0];
-
 $keyword = decode("utf-8", $keyword);
 
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
 $dsn .= ":hostname=$host";
 
 our $dbh = new db( $user, $pass, $dsn );
-
-my @blacklist = ('google', 'wikipedia');
 
 our $bd = new common() or die $!;
 
@@ -42,7 +37,7 @@ my $h = {
 my $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
 $mech->timeout( 20 );
 
-$mech->get( SEARCH_URL );
+$mech->get( SURL );
 $mech->success or die $mech->response->status_line;
 # print $mech->uri . "\n";
 
@@ -73,7 +68,7 @@ foreach my $r (@{$aoh}) {
 
 	$h->{'date'} = $dbh->quote($bd->get_time('2'));
 	$h->{'tag'} = $dbh->quote($keyword);
-	$h->{'source'} = $dbh->quote('°Ù¶ÈËÑË÷³ÌÐò');
+	$h->{'source'} = $dbh->quote('ç™¾åº¦æœç´¢ç¨‹åº');
 	#$h->{'source'} = $dbh->quote($keyword);
 
 	my $sql = qq{ insert ignore into contents

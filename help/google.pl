@@ -8,8 +8,8 @@ use WWW::Mechanize;
 use DBI;
 use Getopt::Long;
 
-use lib qw(./lib/);
-use google_config;
+use lib qw(../lib/);
+use config;
 use db;
 use google;
 
