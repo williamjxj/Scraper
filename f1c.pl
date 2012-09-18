@@ -114,6 +114,7 @@ $next_page = $news->get_next_page( $news->parse_list_page_2($mech->content));
 
 if($next_page) {
 	$page_url = $next_page;
+	$page_url = '' if ($page_url =~ m/page=4/);
 }
 else {
 	$page_url = '';

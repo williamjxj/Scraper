@@ -195,10 +195,7 @@ if($next_page) {
 		$current_page = $page_url;
 		$page_url = $next_page;
 	}
-
-	if($next_page =~ m/4.shtml/) {
-		$page_url = '';
-	}
+	$page_url = '' if($next_page =~ m/4.shtml/);
 }
 else {
 	$page_url = '';
