@@ -2,12 +2,12 @@
 
 use warnings;
 use strict;
-use utf8;
-use encoding 'utf8';
+#use utf8;
+#use encoding 'utf8';
 use WWW::Mechanize;
 use Data::Dumper;
 use DBI;
-use Encode qw(decode encode);
+#use Encode qw(decode);
 
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
@@ -34,7 +34,6 @@ $mech->timeout( 20 );
 
 $mech->get( SURL );
 $mech->success or die $mech->response->status_line;
-$h->{'author'} = $dbh->quote($mech->uri()->as_string) if($mech->uri);
 
 #num=100->10
 $mech->submit_form(
@@ -42,14 +41,14 @@ $mech->submit_form(
 	fields    => { q => $keyword, num => 10 }
 );
 $mech->success or die $mech->response->status_line;
+$h->{'author'} = $dbh->quote($mech->uri()->as_string) if($mech->uri);
+$gpm->write_file('gg1.html', $mech->content);
 
-#write_file('gg1.html', $mech->content);
 my $t = $gpm->strip_result( $mech->content );
-#write_file('gg2.html', $t);
+$gpm->write_file('gg2.html', $t);
 
 my $aoh = $gpm->parse_result($t);
-#$gpm->write_file('gg3.html', $aoh);
-#print Dumper($aoh);
+$gpm->write_file('gg3.html', $aoh);
 
 foreach my $p (@{$aoh}) {
 
@@ -67,6 +66,7 @@ foreach my $p (@{$aoh}) {
 		pubdate,
 		tags,
 		source,
+		author,
 		cate_id,
 		iid,
 		createdby,
@@ -78,6 +78,7 @@ foreach my $p (@{$aoh}) {
 		$h->{'date'},
 		$h->{'tag'},
 		$h->{'source'},
+		$h->{'author'},
 		$h->{'cate_id'},
 		$h->{'iid'},
 		$h->{'createdby'},

@@ -4,7 +4,8 @@ use config;
 use common;
 @ISA = qw(common);
 use strict;
-our ( $sth );
+use FileHandle;
+use Data::Dumper;
 use constant CONTACTS => q{contexts};
 
 sub new {
@@ -170,7 +171,7 @@ sub trim
 
 sub write_file
 {
-	my ($file, $html) = @_;
+	my ($self, $file, $html) = @_;
 	$file = '/tmp/' . $file;
 	my $fh = FileHandle->new($file, "w");
 	die unless (defined $fh);
@@ -184,7 +185,7 @@ sub write_file
 	$fh->close();
 }
 sub parse_item {
-	my $html = shift;
+	my ($self, $html) = @_;
 	my $aoh = [];
     $html =~ m {
         <h3\sclass=(?:"t"|t)
@@ -206,7 +207,7 @@ sub parse_item {
 }
 sub strip_tag
 {
-	my $str = shift;
+	my ($self, $str) = @_;
 	return '' unless $str;
 
 	$str =~ s/<(?:.*?)>//g if ($str=~m"<");
