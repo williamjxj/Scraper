@@ -43,9 +43,6 @@ use constant BASEURL=>q{http://www.chinafnews.com/news/};
 #-----------------------------------
 our ( $mech, $news, $log ) = ( undef, undef );
 
-#数据库句柄.
-our ( $db, $dbh ) = ( undef, undef );
-
 #当前页, 翻页变量.
 my ( $page_url,  $next_page, $current_page ) = ( undef, undef, undef );
 
@@ -59,7 +56,9 @@ my ($queue) = ([]);
 # 初始化数据库:
 my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
 $dsn .= ":hostname=$host";
-$dbh = new db( $user, $pass, $dsn );
+
+#数据库句柄.
+our $dbh = new db( $user, $pass, $dsn );
 
 # 初始化页面抓取模块:
 $news = new chinafnews( $dbh ) or die;
