@@ -7,7 +7,7 @@ use strict;
 use WWW::Mechanize;
 use Data::Dumper;
 use DBI;
-#use Encode qw(decode);
+use Encode qw(decode);
 
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
@@ -38,7 +38,7 @@ $mech->success or die $mech->response->status_line;
 #num=100->10
 $mech->submit_form(
     form_name => 'f',
-	fields    => { q => $keyword, num => 10 }
+	fields    => { q => $keyword, num => 20 }
 );
 $mech->success or die $mech->response->status_line;
 $h->{'author'} = $dbh->quote($mech->uri()->as_string) if($mech->uri);

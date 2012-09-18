@@ -1,6 +1,9 @@
 #!/opt/lampp/bin/perl -w
 ##! /cygdrive/c/Perl/bin/perl.exe -w
 
+use utf8;
+use encoding 'utf8';
+
 use lib qw(../lib/);
 use config;
 use db;
