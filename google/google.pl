@@ -78,6 +78,7 @@ if ($web) {
 	exit 1;
 }
 
+$keyword = '中国食品';
 # read keywords.txt first line (without ^#).
 unless ($keyword) {
 	local ($/) = "\n";
