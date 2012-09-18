@@ -93,7 +93,7 @@ unless ($keyword) {
 	$kfile->close;
 	die unless ($keyword);
 }
-$keyword = 'china food negative news' unless (defined $keyword && $keyword);
+$keyword = '中国食品' unless (defined $keyword && $keyword);
 
 
 $mech->get( $url );

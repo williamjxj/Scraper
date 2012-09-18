@@ -13,7 +13,6 @@ use strict;
 use Data::Dumper;
 my ( $sth );
 
-
 our @focus = (
 	[ '国内焦点', "http://news.baidu.com/n?cmd=1&class=civilnews&tn=rss", '国内' ],
 	[ '台湾焦点', "http://news.baidu.com/n?cmd=1&class=taiwan&tn=rss", '国内' ],
