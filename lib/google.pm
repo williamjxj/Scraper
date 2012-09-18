@@ -166,6 +166,33 @@ sub trim
     return $str;
 }
 
+sub parse_next_page
+{
+    my ( $self, $html ) = @_;
+    return unless $html;
+    while (
+        $html =~ m {
+        id=(?:nav|"nav")
+        (?:.*)
+	<b>(.*?)</b>			# current page.
+		(?:.*?)
+        <td>
+		(?:.*?)
+		<a(?:.*?)\shref="(.*?)"
+		(?:.*?)
+		</span>
+		(.*?)			# next page.
+		(?:</a>|</td>)
+    }sgix) {
+		my ($cur_page, $alink, $next_page) = ($1, $2, $3);
+		$cur_page =~ s/\<span.*?>//g;
+		$cur_page =~ s/\<\/span>//g;
+		$next_page =~ s/\<span.*?>//g;
+		$next_page =~ s/\<\/span>//g;
+        return [ $cur_page, $alink, $next_page ];
+    }
+    return;
+}
 #####################
 
 sub write_file
