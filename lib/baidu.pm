@@ -5,12 +5,10 @@ package baidu;
 use utf8;
 use encoding 'utf8';
 
-use lib qw(./);
 use config;
 use common;
 @ISA = qw(common);
 use strict;
-use Data::Dumper;
 my ( $sth );
 
 our @focus = (
@@ -249,7 +247,7 @@ sub get_non_rss
 {
     my ( $self, $html ) = @_;
     return unless $html;
-    my $aref;
+    my $aref = [];
 	while ($html =~ m {
 		<div>
 		(?:.*?)
@@ -361,6 +359,10 @@ sub insert_baidu
 	my $category = $self->{dbh}->quote($rank->[2]);
 	my $item = $self->{dbh}->quote($rank->[0]);
 
+	$h->{'clicks'} = $self->generate_random();
+	$h->{'likes'} = $self->generate_random(100);
+	$h->{'guanzhu'} = $self->generate_random(100);
+
 	my $sql = qq{ insert into contents
 		(linkname,
 		url,
@@ -371,6 +373,10 @@ sub insert_baidu
 		cate_id,
 		item,
 		iid,
+		tags,
+		clicks,
+		likes,
+		guanzhu,
 		createdby,
 		created,
 		content
@@ -384,6 +390,12 @@ sub insert_baidu
 		$h->{'cate_id'},
 		$item,
 		$h->{'item_id'},
+
+		$h->{'keyword'},
+		$h->{'clicks'},
+		$h->{'likes'},
+		$h->{'guanzhu'},
+		
 		$h->{'createdby'},
 		now(),
 		$h->{'desc'}
@@ -436,15 +448,4 @@ sub select_items_by_cid {
 }
 
 
-# 相关搜索。
-sub strip_related_keywords
-{
-	my ( $self, $html ) = @_;
-	return $html;
-}
-sub get_related_keywords
-{
-	my ( $self, $html ) = @_;
-	return $html;
-}
 1;
