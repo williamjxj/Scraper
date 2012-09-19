@@ -435,4 +435,16 @@ sub select_items_by_cid {
 	return $aref;
 }
 
+
+# 相关搜索。
+sub strip_related_keywords
+{
+	my ( $self, $html ) = @_;
+	return $html;
+}
+sub get_related_keywords
+{
+	my ( $self, $html ) = @_;
+	return $html;
+}
 1;
