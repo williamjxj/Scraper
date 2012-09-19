@@ -6,7 +6,6 @@ use common;
 use strict;
 use FileHandle;
 use Data::Dumper;
-use constant CONTACTS => q{contexts};
 
 sub new {
 	my ( $type, $dbh_handle ) = @_;
@@ -15,38 +14,18 @@ sub new {
 	bless $self, $type;
 }
 
-sub parse_page
-{
-    my ( $self, $html ) = @_;
-    return unless $html;
-	$html =~ m {
-		Result\sPage:
-		(?:.*?)
-		<font\scolor="\#a90a08">
-		(.*?)
-		</font>
-		(?:.*?)
-		<a(?:.*?)href="(.*?)"
-		(?:.*?)
-		>
-		(.*?)			# current page.
-		</span>
-    }sgix;
-	my ($cur, $alink, $next_page) = ($1, $2, $3);
-	$next_page =~ s/\<.*?>//g if ($next_page);
-	return [ $cur, $alink, $next_page ];
-}
-
+# 第一步，提取有用部分的信息 。
 sub strip_result {
 	my ( $self, $html ) = @_;
-
 	my $striped_html = undef;
+	
 	$html =~ m {
 			<div\sid=(?:ires|"ires")
 			(.*?)
 			id=(?:nav|"nav")
 	}sgix;
 	$striped_html = $1;
+	
 	if ($striped_html) {
 		return $self->trim( $striped_html );
 	}
@@ -54,46 +33,72 @@ sub strip_result {
 		$html =~ m {
 				id=(?:rso|"rso")
 				(.*?)
-				id=(?:nav|"nav")
+				id=(?:bottomads|"bottomads"|nav|"nav")
 		}sgix;
 		$striped_html = $1;
 		return $self->trim( $striped_html );
 	}
 }
 
+# 第二步，解析。
 sub parse_result
 {
     my ($self, $html) = @_;
+    return unless $html;
     my $aoh = [];
-
     while ($html =~ m {
         <li\sclass=(?:g|"g")>
-        <h3(?:.*?)
-		<a\s
-		href="(.*?)"	#url
+        (?:.*?)
+        <h3\sclass=(?:r|"r")>
+        (?:.*?)
+		<a
+		(?:.*?)
+		href="(.*?)"	#1.url部分
         (?:.*?)
 		>
-		(.*?)			#title
+		(.*?)			#2.标题部分
 		</a>
-		</h3>
+		(?:.*?)
         <div\sclass=(?:s|"s")>
-        (.*?)			#content
+        (?:.*?)
+        <cite>
+        (.*?)			#3.source部分
+        </cite>
+        (?:.*?)
+        <span\sclass="st">
+        (.*?)			#4.content正文部分
+        </span>
+        (?:.*?)
 		</li>
     }sgix) {
-        my ($t1,$t2,$t3) = ($1,$2,$3);
+        my ($t1,$t2,$t3, $t4) = ($1,$2,$3,$4);
 		$t1 =~ s/^\/url\?q=//  if($t1 =~ m/^\/url/);
 		$t1 =~ s/\&sa=.*$//  if($t1 =~ m/\&sa=/);
 		#$t1 =~ s/^.*\?q=//  if($t1 =~ m/^.*\?q=/);
 		$t2 =~ s/\<em>//g if ($t2=~m/\<em>/);
 		$t2 =~ s/\<\/em>//g if ($t2=~m/\<\/em>/);
 		$t2 =~ s/\<b>\.+\<\/b>//s;
-		$t3 =~ s/\<br>.*$//sg;
-		$t3 =~ s/\<b>\.\.\.\<\/b>/.../sg;
-		$t3 =~ s/\<.*?>//sg;
-        push (@{$aoh}, [$t1,$t2,$t3]);
+		$t4 =~ s/\<br>.*$//sg;
+		$t4 =~ s/\<b>\.\.\.\<\/b>/.../sg;
+		$t4 =~ s/\<.*?>//sg;
+        push (@{$aoh}, [$t1,$t2,$t3,$t4]);
     }
     return $aoh;
 }
+
+# 相关搜索。
+sub strip_related_keywords
+{
+	my ( $self, $html ) = @_;
+	return $html;
+}
+sub get_related_keywords
+{
+	my ( $self, $html ) = @_;
+	return $html;
+}
+
+# google.pl 部分。
 sub get_detail {
 	my ( $self, $html ) = @_;
 	return unless $html;
@@ -153,20 +158,6 @@ sub parse_url
 	return $aref;
 }
 
-sub trim
-{
-    my ($self, $str) = @_;
-    return '' unless $str;
-
-	$str =~ s/\r//g if ($str=~m/\r/);
-	$str =~ s/\n//g if ($str=~m/\n/);
-    $str =~ s/&nbsp;/ /g if ($str =~ m/&nbsp;/);
-    $str =~ s/&amp;/&/g if ($str =~ m/&amp;/);
-    $str =~ s/^\s+// if ($str =~ m/^\s/);
-    $str =~ s/\s+$// if ($str =~ m/\s$/);
-    return $str;
-}
-
 sub parse_next_page
 {
     my ( $self, $html ) = @_;
@@ -193,54 +184,6 @@ sub parse_next_page
         return [ $cur_page, $alink, $next_page ];
     }
     return;
-}
-#####################
-
-sub write_file
-{
-	my ($self, $file, $html) = @_;
-	$file = '/tmp/' . $file;
-	my $fh = FileHandle->new($file, "w");
-	die unless (defined $fh);
-	if(ref $html) {
-		print $fh Dumper($html);
-	}
-	else {
-		print $fh $html;
-	}
-	$fh->autoflush(1);
-	$fh->close();
-}
-sub parse_item {
-	my ($self, $html) = @_;
-	my $aoh = [];
-    $html =~ m {
-        <h3\sclass=(?:"t"|t)
-        (?:.*?)>
-		<a
-		(?:.*?)
-		href="(.*?)"	#url
-		(?:.*?)
-		>
-		(.*?)			#title
-		</a>
-		(?:.*?)
-		<font\ssize=(?:"-1"|-1)>
-        (.*)			#content
-    }sgix;
-    my ($t1,$t2,$t3) = ($1,$2,$3);
-    push (@{$aoh}, $t1,$t2,$t3);
-	return $aoh;
-}
-sub strip_tag
-{
-	my ($self, $str) = @_;
-	return '' unless $str;
-
-	$str =~ s/<(?:.*?)>//g if ($str=~m"<");
-	$str =~ s/<\/.*?>//g if ($str=~m"</");
-	$str =~ s/<script.*?>.*?<\/script>//sg if ($str=~"<script");
-	return $str;
 }
 
 1;

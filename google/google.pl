@@ -1,24 +1,25 @@
 #!/opt/lampp/bin/perl -w
 ##! /cygdrive/c/Perl/bin/perl.exe -w
+#和gg.pl不同的是, 本文件从命令行执行,而不是从php进行调用.
+# 没有输入'查询关键词'参数.
 
+use warnings;
+use strict;
 use utf8;
 use encoding 'utf8';
+use WWW::Mechanize;
+use Data::Dumper;
+use DBI;
+use FileHandle;
+use Getopt::Long;
 
-use lib qw(../lib/);
+#如何将绝对路径改为相对的, for 移植 purpose?
+use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 use db;
 use google;
 
-use warnings;
-use strict;
-
-use Data::Dumper;
-use FileHandle;
-use WWW::Mechanize;
-use DBI;
-use Getopt::Long;
-
-use constant FURL => q{http://www.google.com};
+use constant SURL => q{http://www.google.com};
 use constant KEYFILE => q{./keywords.txt};
 
 sub BEGIN
@@ -29,6 +30,8 @@ sub BEGIN
 	$SIG{'PIPE'} = 'IGNORE';
 	$SIG{'CHLD'} = 'IGNORE';
 	$ENV{'PATH'} = '/usr/bin/:/bin/:.';
+	#好像不起作用.
+	$ENV{'HOME'} = '/home/williamjxj/scraper/';
 	local ($|) = 1;
 	undef $/;
 }
@@ -38,39 +41,31 @@ $start_time = time;
 
 # 2 mech are created, 1 for google, 1 for detail website.
 our ( $mech, $mech1) = ( undef, undef );
-our ( $gpm, $log ) = ( undef, undef );
-our ( $db, $dbh, $sth ) = ( undef, undef, undef );
+
 my @blacklist = ('google', 'wikipedia');
+my $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
+my $gpm = new google( $dbh );
 
-$db = new db( USER, PASS, DSN.":hostname=".HOST );
-$dbh = $db->{dbh};
-
-$gpm = new google( $db->{dbh} );
-
-$log = $gpm->get_filename(__FILE__);
+my $log = $gpm->get_filename(__FILE__);
 $gpm->set_log($log);
 $gpm->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
 my ( $html, $detail, $web ) = ( '', '', undef );
-my ( $all_links, $url ) = ( [], FURL );
+my ( $all_links, $url ) = ( [], SURL );
 my ( $keyword, $kfile, $debug ) = ( undef, undef, 0 );
 my ( $page_url, $cate_id ) = ('', 3);
 
 
-$mech = WWW::Mechanize->new( autocheck => 0 ) or die;
-$mech1 = WWW::Mechanize->new( autocheck => 0 ) or die;
+$mech = WWW::Mechanize->new( autocheck => 0 ) or die $!;
+$mech1 = WWW::Mechanize->new( autocheck => 0 ) or die $!;
 $mech->timeout( 20 );
 $mech1->timeout( 20 );
 
 GetOptions(
-		'web=s' => \$web,
-		'keyword=s' => \$keyword,
-		'debug' => \$debug,
-	 );
-
-if ($debug) {
-	$gpm->{web_flag} = '1';
-}
+	'web=s' => \$web,
+	'keyword=s' => \$keyword,
+	'debug' => \$debug,
+);
 
 # for test purpose
 if ($web) {
@@ -162,7 +157,7 @@ foreach my $r (@{$aoh}) {
 	$description = $dbh->quote($garef->[1]);
 	$keywords = $dbh->quote($garef->[2] );
 
-	$sth = $dbh->do( qq{ insert ignore into foods
+	$dbh->do( qq{ insert ignore into foods
 		(google_keywords, meta_description, meta_keywords, title, url, summary, fdate, cate_id, detail) 
 		values( '$keyword', $description, $keywords, $title, '$link', $summary, now(), $cate_id, $detail)
 	});

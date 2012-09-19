@@ -84,78 +84,50 @@ sub write_log
 # last step: graceful exit.
 sub close_log {
     my $self = shift;
-	return;
     $self->{log}->close();
+	return;
 }
 
-#-------------------------------
-# Parsing
-#-------------------------------
-sub get_email
+# 将网页抓取的中间结果html文件保存下来,用于debug. 在help/目录下创建link来查看.
+sub write_file
 {
-    my ($self, $html) = @_;
-	return '' unless $html;
-	my ($email) = $html =~ m{\b([\w\.\-]+@[\w\.\-]+)\b}s;
-	return $email;
-}
-
-# phone: New $15,000.00  web: Asking $10,900.00. 
-# http://www.jt-hotshotting.com
-# ($web)=$html=~m{[^@](?:\b)((?:[\w\-]+$pattern)(\s|<)}si;
-sub get_web
-{
-	my ($self, $html) = @_;
-	return '' unless $html;
-	# ($web) = $html =~ m{((http://|www\.)?(?:[\w\-]+\.){1,5}\w+(/\S*)?)}is;
-    my ($web) = $html =~ m{((http://|www\.)(?:[\w\-]+\.){1,5}\w+(/\S*)?)}sig;
-
-	# '<b><font size="5">TheEssayCoach.com</font> offers',
-	#  Email mailto:ethnojammusic@yahoo.ca
-	unless ($web) {
-		my $pattern = "(\.com|\.ca|\.info|\.us|\.tv|.gov)";
-		if ($html=~m/$pattern/i) {		
-			($web) = $html =~ m{[^@](?:\b)((?:[\w\-]+\.){1,5}(com|us|info|ca|jpg|png|jpeg|gif)(/\S*)?)}sig;
-		}
+	my ($self, $file, $html) = @_;
+	$file = '/tmp/' . $file;
+	my $fh = FileHandle->new($file, "w");
+	die unless (defined $fh);
+	if(ref $html) {
+		print $fh Dumper($html);
 	}
-	$web =~ s/<.*$// if ($web && $web=~m/<.*$/);
-	$web =~ s/">.*$// if ($web && $web=~m/">/);
-	$web =~ s/&amp;/&/g if ($web && $web=~m/&amp;/);
-	$web =~ s/\S$// if ($web && $web=~m/["';,?]$/);
-	return $web;
+	else {
+		print $fh $html;
+	}
+	$fh->autoflush(1);
+	$fh->close();
 }
 
-sub get_phone
+
+# 生成随机的数字,用于填充contents表的几列: clicks, likes, guanzhu. 缺省: 0-1000
+sub generate_random
 {
-	my ($self, $html) = @_;
-	return '' unless $html;
-	$html =~ s/<img.*?>//g;
-	my ($phone) = $html =~ m{(?:\b|<b>)?([\d\-\(\)\.]{10,})(?:\b|</b>|\s)}s;
-	return '' unless($phone);
-	return '' if ($phone=~m/\.{10,}/); 	# more..........
-	return '' if ($phone=~m/(?:\d\s){3,}/);  # 5 0 0 0 0 0
-	$phone =~ s/^\s+// if ($phone=~m/^\s+/); # ' 123'
-	$phone =~ s/\s+$// if ($phone=~m/\s+$/); # '123 '
-	$phone =~ s/^\.+// if ($phone=~m/^\./);	 # '.1(604)'
-	$phone =~ s/^-+// if ($phone=~m/^-/);	 # '-1(604)'
-	$phone = '(' . $phone if ($phone=~m"\)" && $phone!~m"\(");
-	$phone =~ s/\s/-/g if ($phone=~m/\s/);		#  '123 456 7890'
-	$phone =~ s/-\($// if ($phone=~m/-\($/);  # '6789-('
-	return $phone;
+	my ($self, $range, $min) = @_;
+	$range = 1000 unless $range;
+	$min = 0 unless $min;
+	return int(rand($range)) + $min;
 }
 
 
-# $str =~ s/'/\'/g if ($str =~ m/'/);
 sub trim
 {
-	my ($self, $str) = @_;
-	return '' unless $str;
+    my ($self, $str) = @_;
+    return '' unless $str;
 
-	$str =~ s/&nbsp;/ /g if ($str =~ m/&nbsp;/);
-	$str =~ s/&amp;/&/g if ($str =~ m/&amp;/);
-	$str =~ s/^\s+// if ($str =~ m/^\s/);
-	$str =~ s/\s+$// if ($str =~ m/\s$/);
-	return $str;
+	$str =~ s/\r//g if ($str=~m/\r/);
+	$str =~ s/\n//g if ($str=~m/\n/);
+    $str =~ s/&nbsp;/ /g if ($str =~ m/&nbsp;/);
+    $str =~ s/&amp;/&/g if ($str =~ m/&amp;/);
+    $str =~ s/^\s+// if ($str =~ m/^\s/);
+    $str =~ s/\s+$// if ($str =~ m/\s$/);
+    return $str;
 }
-
 
 1;

@@ -189,3 +189,17 @@ CREATE TABLE IF NOT EXISTS `contexts` (
   KEY `linkname` (`linkname`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `key_related`
+--
+
+CREATE TABLE IF NOT EXISTS `key_related` (
+  `rk` varchar(255) NOT NULL,
+  `kid` int(10) unsigned NOT NULL,
+  `keyword` varchar(255) NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

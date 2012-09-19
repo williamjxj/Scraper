@@ -12,16 +12,16 @@ use Encode qw(decode);
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 use db;
-use google;
+use yahoo;
 
-use constant SURL => q{http://www.google.com};
+use constant SURL => q{http://search.yahoo.com/};
 
 die "usage: $0 keyword" if ($#ARGV != 0);
 our $keyword = decode("utf-8", $ARGV[0]);
 
 our $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
 
-my $gg = new google( $dbh );
+my $yh = new google( $dbh );
 
 =comment
 定义插入数组的缺省值.
@@ -33,13 +33,13 @@ created: 'google'
 =cut
 my $h = {
 	'tag' => $dbh->quote($keyword);
-	'clicks' => $gg->generate_random();
-	'likes' => $gg->generate_random(100);
-	'guanzhu' => $gg->generate_random(100);	
-	'createdby' => $dbh->quote('google_' . $gg->get_os_stripname(__FILE__)),
+	'clicks' => $yh->generate_random();
+	'likes' => $yh->generate_random(100);
+	'guanzhu' => $yh->generate_random(100);	
+	'createdby' => $dbh->quote('yahoo_' . $yh->get_os_stripname(__FILE__)),
 };
 
-my $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
+my $mech = WWW::Mechanize->new( ) or die;
 $mech->timeout( 20 );
 
 $mech->get( SURL );
@@ -48,22 +48,21 @@ $mech->success or die $mech->response->status_line;
 #num=100->10
 # fields    => { q => $keyword, num => 10 }
 $mech->submit_form(
-    form_name => 'f',
-	fields    => { q => $keyword, ie=>'UTF-8', hl=>'zh-CN' }
+    form_id => 'sf',
+	fields    => { p => $keyword }
 );
 $mech->success or die $mech->response->status_line;
-# $gg->write_file('gg1.html', $mech->content);
+# $yh->write_file('yh1.html', $mech->content);
 
 # 保存查询的url, 上面有字符集, 查询数量等信息.
 $h->{'author'} = $dbh->quote($mech->uri()->as_string) if($mech->uri);
 
 # 1. 
-my $t = $gg->strip_result( $mech->content );
-# $gg->write_file('gg2.html', $t);
+my $t = $yh->strip_result( $mech->content );
+# $yh->write_file('yh2.html', $t);
 
-my $aoh = $gg->parse_result($t);
-# $gg->write_file('gg3.html', $aoh);
-
+my $aoh = $yh->parse_result($t);
+# $yh->write_file('yh3.html', $aoh);
 
 my $html = $gg->strip_related_keywords($mech->content);
 
@@ -87,7 +86,7 @@ foreach my $p (@{$aoh}) {
 	$h->{'desc'} = $dbh->quote($p->[2]);
 
 	# 当前OS系统的时间, created 存放数据库系统的时间,两者不同.
-	$h->{'pubdate'} = $dbh->quote($gg->get_time('2'));
+	$h->{'pubdate'} = $dbh->quote($yh->get_time('2'));
 	$h->{'source'} = $dbh->quote('google搜索程序');
 
 	my $sql = qq{ insert ignore into contents(
