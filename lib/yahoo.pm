@@ -20,9 +20,9 @@ sub strip_result
 
 	my $striped_html = undef;
 	$html =~ m {
-			<div\sid="pg">
+			<div\sid="main">
 			(.*?)
-			class="bdc"
+			<div\sid="right">
 	}sgix;
 	return $1;
 }
@@ -33,7 +33,7 @@ sub parse_result
     return unless $html;
     my $aoh = [];    
 	while ($html =~ m {
-		<div\sclass=(?:"res"|res)>
+		<div\sclass=(?:"res"|res)
 		(?:.*?)
 		<h3>
 		(?:.*?)
@@ -45,7 +45,7 @@ sub parse_result
 		(.*?)	#2.标题
         </a>
         (?:.*?)
-        <div\sclass="abstr">
+        <div\sclass="abstr"
         (.*?)	#3.正文
         </div>
     }sgix) {
@@ -68,12 +68,12 @@ sub parse_result
 sub strip_related_keywords
 {
 	my ( $self, $html ) = @_;
-	return $html;
+	return '';
 }
 sub get_related_keywords
 {
 	my ( $self, $html ) = @_;
-	return $html;
+	return [];
 }
 
 1;
