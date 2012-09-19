@@ -33,7 +33,7 @@ created: 'yahoo'
 =cut
 my $h = {
 	'tag' => $dbh->quote($keyword),
-	'source' => $dbh->quote(SURL);
+	'source' => $dbh->quote(SURL),
 	'createdby' => $dbh->quote($yh->get_os_stripname(__FILE__)),
 };
 
