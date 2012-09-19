@@ -21,7 +21,7 @@ our $keyword = decode("utf-8", $ARGV[0]);
 
 our $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
 
-my $yh = new google( $dbh );
+my $yh = new yahoo( $dbh );
 
 =comment
 定义插入数组的缺省值.
@@ -29,14 +29,11 @@ tag: 关键词
 clicks: 总共点击的次数, 0-1000
 likes: 欣赏此文, 0-100
 guanzhu: 关注此文, 0-100
-created: 'google'
+created: 'yahoo'
 =cut
 my $h = {
-	'tag' => $dbh->quote($keyword);
-	'clicks' => $yh->generate_random();
-	'likes' => $yh->generate_random(100);
-	'guanzhu' => $yh->generate_random(100);	
-	'createdby' => $dbh->quote('yahoo_' . $yh->get_os_stripname(__FILE__)),
+	'tag' => $dbh->quote($keyword),
+	'createdby' => $dbh->quote($yh->get_os_stripname(__FILE__)),
 };
 
 my $mech = WWW::Mechanize->new( ) or die;
@@ -52,9 +49,9 @@ $mech->submit_form(
 	fields    => { p => $keyword }
 );
 $mech->success or die $mech->response->status_line;
-$mech->save_file('/tmp/yh1.html');
-print $mech-text();
-$mech->dump_text();
+$mech->save_content('/tmp/yh1.html');
+# undefined subroutune: print $mech-text();
+# $mech->dump_text();
 # $yh->write_file('yh1.html', $mech->content);
 
 # 保存查询的url, 上面有字符集, 查询数量等信息.
@@ -67,11 +64,14 @@ my $t = $yh->strip_result( $mech->content );
 my $aoh = $yh->parse_result($t);
 # $yh->write_file('yh3.html', $aoh);
 
-my $html = $gg->strip_related_keywords($mech->content);
 
-my $rks = $yh->get_related_keywords($html);
+my ($html, $rks, $sql) = ('', []);
 
-#保存google中的相关搜索关键词.
+$html = $yh->strip_related_keywords($mech->content);
+
+$rks = $yh->get_related_keywords($html) if $html;
+
+#保存yahoo��的相关搜索关键词.
 foreach my $r (@{$rks}) {
 	$sql = qq{
 		insert ignore into key_related(rk, kid, keyword, created)
@@ -90,9 +90,13 @@ foreach my $p (@{$aoh}) {
 
 	# 当前OS系统的时间, created 存放数据库系统的时间,两者不同.
 	$h->{'pubdate'} = $dbh->quote($yh->get_time('2'));
-	$h->{'source'} = $dbh->quote('google搜索程序');
+	$h->{'source'} = $dbh->quote('yahoo��索程序');
 
-	my $sql = qq{ insert ignore into contents(
+	$h{'clicks'} = $yh->generate_random();
+	$h{'likes'} = $yh->generate_random(100);
+	$h{'guanzhu'} = $yh->generate_random(100);	
+
+	$sql = qq{ insert ignore into contexts(
 		linkname,
 		url,
 		author,
