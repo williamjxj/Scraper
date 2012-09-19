@@ -52,6 +52,7 @@ $mech->submit_form(
 	fields    => { q => $keyword, ie=>'UTF-8', hl=>'zh-CN' }
 );
 $mech->success or die $mech->response->status_line;
+#$mech->save_content('/tmp/gg1.html');
 # $gg->write_file('gg1.html', $mech->content);
 
 # 保存查询的url, 上面有字符集, 查询数量等信息.

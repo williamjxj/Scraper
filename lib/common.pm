@@ -130,4 +130,14 @@ sub trim
     return $str;
 }
 
+sub strip_html
+{
+	my ($self, $html) = @_;
+	$html =~ s/<[^>]+>//g;   # Strip HTML tags
+	$html =~ s/\s+/ /g;          # Squash whitespace
+    $html =~ s/^ //;     # Strip leading space
+    $html =~ s/ $//;     # Strip trailing space
+    return $html;
+}
+
 1;
