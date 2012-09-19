@@ -21,16 +21,14 @@ die "usage: $0 keyword" if ($#ARGV != 0);
 our $keyword = $ARGV[0];
 $keyword = decode("utf-8", $keyword);
 
-my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
-$dsn .= ":hostname=$host";
-
-our $dbh = new db( $user, $pass, $dsn );
+our $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
 
 our $bd = new common() or die $!;
 
 my $h = {
 	'cate_id' => 0,
 	'iid' => 0,
+	'keyword' = $dbh->quote($keyword),
 	'createdby' => $dbh->quote('baidu_' . $bd->get_os_stripname(__FILE__)),
 };
 
@@ -66,35 +64,45 @@ foreach my $r (@{$aoh}) {
 	$h->{'linkname'} = $dbh->quote(strip_tag($p->[1]));
 	$h->{'desc'} = $dbh->quote(strip_tag($p->[2]));
 
-	$h->{'date'} = $dbh->quote($bd->get_time('2'));
-	$h->{'tag'} = $dbh->quote($keyword);
+	$h->{'pubdate'} = $dbh->quote($bd->get_time('2'));
+	$h->{'keyword'} = $dbh->quote($keyword);
 	$h->{'source'} = $dbh->quote('百度搜索程序');
 	#$h->{'source'} = $dbh->quote($keyword);
 
-	my $sql = qq{ insert ignore into contents
-		(linkname,
+	$h{'clicks'} = $yh->generate_random();
+	$h{'likes'} = $yh->generate_random(100);
+	$h{'guanzhu'} = $yh->generate_random(100);	
+
+
+	my $sql = qq{  insert ignore into contents(
+		linkname,
 		url,
+		author,
+		source,
 		pubdate,
 		tags,
-		source,
-		cate_id,
-		iid,
+		clicks,
+		likes,
+		guanzhu,
 		createdby,
 		created,
 		content
 	) values(
 		$h->{'linkname'},
 		$h->{'url'},
-		$h->{'date'},
-		$h->{'tag'},
+		$h->{'author'},
 		$h->{'source'},
-		$h->{'cate_id'},
-		$h->{'iid'},
+		$h->{'pubdate'},
+		$h->{'keyword'},
+		$h->{'clicks'},
+		$h->{'likes'},
+		$h->{'guanzhu'},
 		$h->{'createdby'},
 		now(),
 		$h->{'desc'}
 	)};
 	$dbh->do($sql);
+
 }
 
 $dbh->disconnect();
@@ -178,4 +186,17 @@ sub parse_result
        push (@{$aoh}, $1);
     }
     return $aoh;
+}
+
+
+# 相关搜索。
+sub strip_related_keywords
+{
+	my ( $self, $html ) = @_;
+	return $html;
+}
+sub get_related_keywords
+{
+	my ( $self, $html ) = @_;
+	return $html;
 }
