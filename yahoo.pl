@@ -33,6 +33,7 @@ created: 'yahoo'
 =cut
 my $h = {
 	'tag' => $dbh->quote($keyword),
+	'source' => $dbh->quote(SURL);
 	'createdby' => $dbh->quote($yh->get_os_stripname(__FILE__)),
 };
 
@@ -71,7 +72,7 @@ $html = $yh->strip_related_keywords($mech->content);
 
 $rks = $yh->get_related_keywords($html) if $html;
 
-#保存yahoo��的相关搜索关键词.
+#保存yahoo的相关搜索关键词.
 foreach my $r (@{$rks}) {
 	$sql = qq{
 		insert ignore into key_related(rk, kid, keyword, created)
@@ -90,13 +91,12 @@ foreach my $p (@{$aoh}) {
 
 	# 当前OS系统的时间, created 存放数据库系统的时间,两者不同.
 	$h->{'pubdate'} = $dbh->quote($yh->get_time('2'));
-	$h->{'source'} = $dbh->quote('yahoo��索程序');
 
 	$h{'clicks'} = $yh->generate_random();
 	$h{'likes'} = $yh->generate_random(100);
 	$h{'guanzhu'} = $yh->generate_random(100);	
 
-	$sql = qq{ insert ignore into contexts(
+	$sql = qq{ insert ignore into contents(
 		linkname,
 		url,
 		author,
