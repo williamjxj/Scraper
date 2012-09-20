@@ -95,7 +95,7 @@ sub strip_related_keywords
 sub get_related_keywords
 {
 	my ( $self, $html ) = @_;
-	return $html;
+	return [];
 }
 
 # google.pl 部分。

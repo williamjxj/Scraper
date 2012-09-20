@@ -64,13 +64,13 @@ my $aoh = $gg->parse_result($t);
 # $gg->write_file('gg3.html', $aoh);
 
 #保存google的相关搜索关键词.
-my $kid = $ss->get_kid_by_keyword($keyword);
+my $kid = $gg->get_kid_by_keyword($keyword);
 if($kid) {
 	my ($rks, $html, $rkey, $rurl, $sql) = ([]);
 
-	$html = $ss->strip_related_keywords($mech->content);
+	$html = $gg->strip_related_keywords($mech->content);
 
-	$rks = $ss->get_related_keywords($html) if $html;
+	$rks = $gg->get_related_keywords($html) if $html;
 
 	foreach my $r (@{$rks}) {
 		$rkey = $dbh->quote($r->[1]);
@@ -98,9 +98,9 @@ foreach my $p (@{$aoh}) {
 	# 当前OS系统的时间, created 存放数据库系统的时间,两者不同.
 	$h->{'pubdate'} = $dbh->quote($gg->get_time('2'));
 
-	$h->{'clicks'} = $ss->generate_random();
-	$h->{'likes'} = $ss->generate_random(100);
-	$h->{'guanzhu'} = $ss->generate_random(100);	
+	$h->{'clicks'} = $gg->generate_random();
+	$h->{'likes'} = $gg->generate_random(100);
+	$h->{'guanzhu'} = $gg->generate_random(100);	
 
 	my $sql = qq{ insert ignore into contents(
 		linkname,
