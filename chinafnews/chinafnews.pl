@@ -130,7 +130,8 @@ if ($version) {
 
 ########### 正式 抓取
 
-$mech = WWW::Mechanize->new( autocheck => 0 );
+$mech = WWW::Mechanize->new( autocheck => 0 ) or die $!;
+$mech->timeout( 30 );
 
 #用于测试，如果哪个网页出错，可以直接定位，来查找原因。
 if ($aurl) {

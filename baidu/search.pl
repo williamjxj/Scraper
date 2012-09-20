@@ -24,9 +24,10 @@ $keyword = decode("utf-8", $keyword);
 our $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
 
 our $bd = new common() or die $!;
+$bd->{dbh} = $dbh;
 
 my $h = {
-	'keyword' = $dbh->quote($keyword),
+	'keyword' => $dbh->quote($keyword),
 	'source' => $dbh->quote(SURL),	
 	'createdby' => $dbh->quote('baidu'),
 };
@@ -46,6 +47,9 @@ $mech->submit_form(
 $mech->success or die $mech->response->status_line;
 #write_file('bd1.html', $mech->content);
 
+# ±£´æ²éÑ¯µÄurl, ÉÏÃæÓĞ×Ö·û¼¯, ²éÑ¯ÊıÁ¿µÈĞÅÏ¢.
+$h->{'author'} = $dbh->quote($mech->uri()->as_string) if($mech->uri);
+
 my $t = strip_result( $mech->content );
 #write_file('bd2.html', $t);
 
@@ -54,13 +58,13 @@ my $aoh = parse_result($t);
 #print Dumper($aoh);
 
 #ä¿å­˜baiduçš„ç›¸å…³æœç´¢å…³é”®è¯.
-my $kid = $ss->get_kid_by_keyword($keyword);
+my $kid = $bd->get_kid_by_keyword($keyword);
 if($kid) {
 	my ($rks, $html, $rkey, $rurl, $sql) = ([]);
 
-	$html = $ss->strip_related_keywords($mech->content);
+	$html = strip_related_keywords($mech->content);
 
-	$rks = $ss->get_related_keywords($html) if $html;
+	$rks = get_related_keywords($html) if $html;
 
 	foreach my $r (@{$rks}) {
 		$rkey = $dbh->quote($r->[1]);
@@ -92,10 +96,9 @@ foreach my $r (@{$aoh}) {
 
 	$h->{'pubdate'} = $dbh->quote($bd->get_time('2'));
 
-	$h->{'clicks'} = $yh->generate_random();
-	$h->{'likes'} = $yh->generate_random(100);
-	$h->{'guanzhu'} = $yh->generate_random(100);	
-
+	$h->{'clicks'} = $bd->generate_random();
+	$h->{'likes'} = $bd->generate_random(100);
+	$h->{'guanzhu'} = $bd->generate_random(100);	
 
 	my $sql = qq{  insert ignore into contents(
 		linkname,
@@ -215,11 +218,11 @@ sub parse_result
 # ç›¸å…³æœç´¢ã€‚
 sub strip_related_keywords
 {
-	my ( $self, $html ) = @_;
+	my ( $html ) = @_;
 	return $html;
 }
 sub get_related_keywords
 {
-	my ( $self, $html ) = @_;
-	return $html;
+	my ( $html ) = @_;
+	return [];
 }

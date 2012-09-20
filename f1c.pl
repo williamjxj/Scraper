@@ -101,6 +101,7 @@ if ($keyword) {
 
 ########### 正式 抓取 ###########
 $mech = WWW::Mechanize->new( autocheck => 0 );
+$mech->timeout( 30 );
 
 # 从START_URL: 'http://food.120v.cn/FoodsTypeList.html'开始:
 LOOP:

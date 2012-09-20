@@ -1,177 +1,139 @@
 #!/opt/lampp/bin/perl -w
-##! /cygdrive/c/Perl/bin/perl.exe -w
 
-use lib qw(./lib/);
+use strict;
+use warnings;
+use utf8;
+use encoding 'utf8';
+use WWW::Mechanize;
+use Data::Dumper;
+use DBI;
+use Encode qw(decode);
+
+use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 use db;
-use google;
+use soso;
 
-use warnings;
-use strict;
+use constant SURL => q{http://www.soso.com/};
 
-use Data::Dumper;
-use FileHandle;
-use WWW::Mechanize;
-use DBI;
-use Getopt::Long;
+die "usage: $0 keyword" if ($#ARGV != 0);
+our $keyword = decode("utf-8", $ARGV[0]);
 
-use constant FURL => q{http://www.google.com};
-use constant KEYFILE => q{./keywords.txt};
+our $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
 
-sub BEGIN
-{
-	$SIG{'INT'}  = 'IGNORE';
-	$SIG{'QUIT'} = 'IGNORE';
-	$SIG{'TERM'} = 'IGNORE';
-	$SIG{'PIPE'} = 'IGNORE';
-	$SIG{'CHLD'} = 'IGNORE';
-	$ENV{'PATH'} = '/usr/bin/:/bin/:.';
-	local ($|) = 1;
-	undef $/;
-}
+my $ss = new soso( $dbh );
 
-our ( $start_time, $end_time ) = ( 0, 0 );
-$start_time = time;
+=comment
+定义插入数组的缺省值.
+keyword: 关键词
+clicks: 总共点击的次数, 0-1000
+likes: 欣赏此文, 0-100
+guanzhu: 关注此文, 0-100
+created: 'soso'
+=cut
+my $h = {
+	'keyword' => $dbh->quote($keyword),
+	'source' => $dbh->quote(SURL),
+	'createdby' => $dbh->quote($ss->get_os_stripname(__FILE__)),
+};
 
-# 2 mech are created, 1 for google, 1 for detail website.
-our ( $mech, $mech1) = ( undef, undef );
-our ( $gpm, $log ) = ( undef, undef );
-our ( $db, $dbh, $sth ) = ( undef, undef, undef );
-my @blacklist = ('google', 'wikipedia');
-
-$db = new db( USER, PASS, DSN.":hostname=".HOST );
-$dbh = $db->{dbh};
-
-$gpm = new google( $db->{dbh} );
-
-$log = $gpm->get_filename(__FILE__);
-$gpm->set_log($log);
-$gpm->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
-
-my ( $html, $detail, $web ) = ( '', '', undef );
-my ( $all_links, $url ) = ( [], FURL );
-my ( $keyword, $kfile, $debug ) = ( undef, undef, 0 );
-my ( $page_url, $cate_id ) = ('', 3);
-
-
-$mech = WWW::Mechanize->new( autocheck => 0 ) or die;
-$mech1 = WWW::Mechanize->new( autocheck => 0 ) or die;
+my $mech = WWW::Mechanize->new( ) or die;
 $mech->timeout( 20 );
-$mech1->timeout( 20 );
 
-GetOptions(
-		'web=s' => \$web,
-		'keyword=s' => \$keyword,
-		'debug' => \$debug,
-	 );
-
-if ($debug) {
-	$gpm->{web_flag} = '1';
-}
-
-# for test purpose
-if ($web) {
-	$mech->get( $web );
-	$mech->success or die $mech->response->status_line;
-	$detail = $gpm->get_detail( $mech->content );
-	print Dumper( $detail );
-	exit 1;
-}
-
-# read keywords.txt first line (without ^#).
-unless ($keyword) {
-	local ($/) = "\n";
-	$kfile = new FileHandle(KEYFILE, 'r') or die $!;
-	my @lines = <$kfile>;
-	foreach my $line (@lines) {
-		chomp($line);
-		if ($line !~ m/^#/) {
-			$keyword = $line;
-			last;
-		}
-	}
-	$kfile->close;
-	die unless ($keyword);
-}
-$keyword = 'china food negative news' unless (defined $keyword && $keyword);
-
-
-$mech->get( $url );
+$mech->get( SURL );
 $mech->success or die $mech->response->status_line;
-# print $mech->uri . "\n";
 
+#num=100->10
+# fields    => { q => $keyword, num => 10 }
 $mech->submit_form(
-    form_name => 'f',
-	fields    => { q => $keyword, num => 100 }
+    form_name => 'flpage',
+	fields    => { w => $keyword }
 );
 $mech->success or die $mech->response->status_line;
+# $mech->save_content('/tmp/ss1.html');
+# undefined subroutune: print $mech-text();
+# $mech->dump_text();
+# $ss->write_file('ss1.html', $mech->content);
 
-my $paref = $gpm->parse_next_page( $mech->content );
-print Dumper( $paref );
-$page_url = $paref->[1];
+# 保存查询的url, 上面有字符集, 查询数量等信息.
+$h->{'author'} = $dbh->quote($mech->uri()->as_string) if($mech->uri);
 
-# very imporant.
-$page_url =~ s/\&amp;/\&/g if ($page_url=~m/&amp;/);
-# $page_url =~ s/search\?/#/;
-$page_url = $url . $page_url;
+my $t = $ss->strip_result( $mech->content );
+# $ss->write_file('ss2.html', $t);
 
-my $garef = [];
-my ($description, $keywords, $title, $summary, $email, $phone, $fax, $link, $zip);
+my $aoh = $ss->parse_result($t);
+# $ss->write_file('ss3.html', $aoh);
 
-LOOP:
+my $kid = $ss->get_kid_by_keyword($keyword);
+if($kid) {
+	my ($rks, $html, $rkey, $rurl, $sql) = ([]);
 
-$mech->get( $page_url );
-$mech->success or die $mech->response->status_line;
+	$html = $ss->strip_related_keywords($mech->content);
 
-my $t = $gpm->strip_result( $mech->content );
-my $aoh = $gpm->parse_result($t);
-#print Dumper($aoh);
+	$rks = $ss->get_related_keywords($html) if $html;
 
-foreach my $r (@{$aoh}) {
-
-	$link = $r->[0];
-	$summary = $r->[1] . ': ' . $r->[2];
-	$summary = $dbh->quote( $summary );
-	print "-------------------------\n";
-	print $link . "\n";
-
-	if (grep{ $link =~ m{$_}i } @blacklist) {
-		next;
+	#保存soso的相关搜索关键词.
+	foreach my $r (@{$rks}) {
+		$rkey = $dbh->quote($r->[1]);
+		$rurl = $dbh->quote($r->[0]);
+		$sql = qq{
+			insert ignore into key_related(rk, kurl, kid, keyword, createdby, created)
+			values(
+				$rkey,
+				$rurl,
+				$kid,
+				$h->{'keyword'},
+				$h->{'createdby'},
+				now()
+			)
+		};
+		$dbh->do($sql);		
 	}
+}
 
-	$mech1->get( $link );
-	$mech1->success or next;
+my $sql;
+foreach my $p (@{$aoh}) {
+	$h->{'url'} = $dbh->quote($p->[0]);
+	$h->{'linkname'} = $dbh->quote($p->[1]);
+	$h->{'desc'} = $dbh->quote($p->[2]);
 
-	$garef = $gpm->parse_url( $mech1->content );
-	# print Dumper( $garef );
+	# 当前OS系统的时间, created 存放数据库系统的时间,两者不同.
+	$h->{'pubdate'} = $dbh->quote($ss->get_time('2'));
 
-	$html = $mech1->content;
+	$h->{'clicks'} = $ss->generate_random();
+	$h->{'likes'} = $ss->generate_random(100);
+	$h->{'guanzhu'} = $ss->generate_random(100);	
 
-	# after parse homepage of the website, search email/phone.
-	$detail = $gpm->get_detail( $html );
-
-	print Dumper($detail);
-	next if($detail eq '' );
-	$detail = $dbh->quote($detail);
-	
-	$title = $dbh->quote($garef->[0] );
-	$description = $dbh->quote($garef->[1]);
-	$keywords = $dbh->quote($garef->[2] );
-
-	$sth = $dbh->do( qq{ insert ignore into foods
-		(google_keywords, meta_description, meta_keywords, title, url, summary, fdate, cate_id, detail) 
-		values( '$keyword', $description, $keywords, $title, '$link', $summary, now(), $cate_id, $detail)
-	});
-
-	undef( @{$garef} );
-	$mech1->back;
+	$sql = qq{ insert ignore into contents(
+		linkname,
+		url,
+		author,
+		source,
+		pubdate,
+		tags,
+		clicks,
+		likes,
+		guanzhu,
+		createdby,
+		created,
+		content
+	) values(
+		$h->{'linkname'},
+		$h->{'url'},
+		$h->{'author'},
+		$h->{'source'},
+		$h->{'pubdate'},
+		$h->{'keyword'},
+		$h->{'clicks'},
+		$h->{'likes'},
+		$h->{'guanzhu'},
+		$h->{'createdby'},
+		now(),
+		$h->{'desc'}
+	)};
+	$dbh->do($sql);
 }
 
 $dbh->disconnect();
-
-$end_time = time;
-$gpm->write_log( "Total days' data: [ " . ( $end_time - $start_time ) . " ] seconds used.\n" );
-$gpm->close_log();
-
 exit 6;
 
