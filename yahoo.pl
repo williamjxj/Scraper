@@ -25,7 +25,7 @@ my $yh = new yahoo( $dbh );
 
 =comment
 定义插入数组的缺省值.
-tag: 关键词
+keyword: 关键词
 clicks: 总共点击的次数, 0-1000
 likes: 欣赏此文, 0-100
 guanzhu: 关注此文, 0-100

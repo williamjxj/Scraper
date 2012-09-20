@@ -17,13 +17,13 @@ sub new {
 sub strip_result
 {
 	my ( $self, $html ) = @_;
-
-	my $striped_html = undef;
 	$html =~ m {
-			<div\sid="main">
-			(.*?)
-			<div\sid="right">
-	}sgix;
+			<div\sid="result"
+			.*?
+			<ol>
+			(.*?)	#soso用ol->li来划分每条记录
+			</ol>
+	}six;
 	return $1;
 }
 
@@ -33,10 +33,8 @@ sub parse_result
     return unless $html;
     my $aoh = [];    
 	while ($html =~ m {
-		<div\sclass=(?:"res"|res)
-		(?:.*?)
-		<h3>
-		(?:.*?)
+		<li
+		.*?
 		href="
 		(.*?)	#1.链接地址
 		"
@@ -45,20 +43,17 @@ sub parse_result
 		(.*?)	#2.标题
         </a>
         (?:.*?)
-        <div\sclass="abstr"
+        <p\sclass="ds">
         (.*?)	#3.正文
-        </div>
+        </p>
+        (?:.*?)
+        <cite>
+        (.*?)	#4.日期和网址
+        </cite>
     }sgix) {
-        my ($t1,$t2,$t3) = ($1,$2,$3);
-		$t1 =~ s/^\/url\?q=//  if($t1 =~ m/^\/url/);
-		$t1 =~ s/\&sa=.*$//  if($t1 =~ m/\&sa=/);
-		$t2 =~ s/\<em>//g if ($t2=~m/\<em>/);
-		$t2 =~ s/\<\/em>//g if ($t2=~m/\<\/em>/);
-		$t2 =~ s/\<b>\.+\<\/b>//s;
-		$t3 =~ s/\<br>.*$//sg;
-		$t3 =~ s/\<b>\.\.\.\<\/b>/.../sg;
-		$t3 =~ s/\<.*?>//sg;
-        push (@{$aoh}, [$t1,$t2,$t3]);
+        my ($t1,$t2,$t3,$t4) = ($1,$2,$3,$4);
+        my @url_date = $t4 =~ m/(.*?)(?:\s|-|\.{1,3})(.*)/;
+        push (@{$aoh}, [$t1,$t2,$t3,$url_date[0], $url_date[1]]);
     }
     return $aoh;
 }
@@ -68,12 +63,35 @@ sub parse_result
 sub strip_related_keywords
 {
 	my ( $self, $html ) = @_;
-	return '';
+	$html =~ m{
+		<div\sid="rel"
+		.*?
+		>
+		(.*?)
+		<div\sid="bSearch"
+	}six;
+	return $1;
 }
 sub get_related_keywords
 {
 	my ( $self, $html ) = @_;
-	return [];
+	return unless $html;
+	my $aoh;
+	
+	while($html =~ m{
+		<td
+		(?:.*?)
+		<a\shref="
+		(.*?)		#链接地址
+		">
+		(.*?)		#关键词
+		</a>
+	}sgix) {
+		my ($t1, $t2) = ($1, $2);
+		push (@{$aoh}, [$t1, $t2]);
+	}
+	return $aoh;
 }
+
 
 1;
