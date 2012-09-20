@@ -373,7 +373,6 @@ sub insert_baidu
 		cate_id,
 		item,
 		iid,
-		tags,
 		clicks,
 		likes,
 		guanzhu,
@@ -390,12 +389,9 @@ sub insert_baidu
 		$h->{'cate_id'},
 		$item,
 		$h->{'item_id'},
-
-		$h->{'keyword'},
 		$h->{'clicks'},
 		$h->{'likes'},
 		$h->{'guanzhu'},
-		
 		$h->{'createdby'},
 		now(),
 		$h->{'desc'}

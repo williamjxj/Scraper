@@ -92,7 +92,12 @@ foreach $data (<DATA>) {
 
 	$h->{'title'} = $dbh->quote($r->[0]); 
 	$h->{'url'} = $dbh->quote($r->[1]);
-	$h->{'pubDate'} = $dbh->quote($r->[2]);
+	if($r->[2]) {
+		$h->{'pubDate'} = $dbh->quote($r->[2]);
+	}
+	else {
+	    $h->{'pubDate'} = $dbh->quote($bd->get_time('2'));
+	}
 	$h->{'author'} = $dbh->quote($channel);
 	$h->{'desc'} = $dbh->quote($r->[5]);
 

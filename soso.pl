@@ -64,31 +64,34 @@ my $t = $ss->strip_result( $mech->content );
 my $aoh = $ss->parse_result($t);
 # $ss->write_file('ss3.html', $aoh);
 
+my $kid = $ss->get_kid_by_keyword($keyword);
+if($kid) {
+	my ($rks, $html, $rkey, $rurl, $sql) = ([]);
 
-my ($html, $rks, $sql) = ('', []);
+	$html = $ss->strip_related_keywords($mech->content);
 
-$html = $ss->strip_related_keywords($mech->content);
+	$rks = $ss->get_related_keywords($html) if $html;
 
-$rks = $ss->get_related_keywords($html) if $html;
-
-my ($rk, $rurl);
-#保存soso的相关搜索关键词.
-foreach my $r (@{$rks}) {
-	$rk = $dbh->quote($r->[1]);
-	$rurl = $dbh->quote($r->[0]);
-	$sql = qq{
-		insert ignore into key_related(rk, kurl, keyword, createdby, created)
-		values(
-			$rk,
-			$rurl,
-			$h->{'keyword'},
-			$h->{'createdby'},
-			now()
-		)
-	};
-	$dbh->do($sql);		
+	#保存soso的相关搜索关键词.
+	foreach my $r (@{$rks}) {
+		$rkey = $dbh->quote($r->[1]);
+		$rurl = $dbh->quote($r->[0]);
+		$sql = qq{
+			insert ignore into key_related(rk, kurl, kid, keyword, createdby, created)
+			values(
+				$rkey,
+				$rurl,
+				$kid,
+				$h->{'keyword'},
+				$h->{'createdby'},
+				now()
+			)
+		};
+		$dbh->do($sql);		
+	}
 }
 
+my $sql;
 foreach my $p (@{$aoh}) {
 	$h->{'url'} = $dbh->quote($p->[0]);
 	$h->{'linkname'} = $dbh->quote($p->[1]);
@@ -101,7 +104,7 @@ foreach my $p (@{$aoh}) {
 	$h->{'likes'} = $ss->generate_random(100);
 	$h->{'guanzhu'} = $ss->generate_random(100);	
 
-	$sql = qq{ insert ignore into contexts(
+	$sql = qq{ insert ignore into contents(
 		linkname,
 		url,
 		author,
