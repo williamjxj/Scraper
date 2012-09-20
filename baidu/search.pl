@@ -1,7 +1,7 @@
 #!/opt/lampp/bin/perl -w
 
-use warnings;
 use strict;
+use warnings;
 use utf8;
 use encoding 'utf8';
 use WWW::Mechanize;
@@ -26,10 +26,9 @@ our $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
 our $bd = new common() or die $!;
 
 my $h = {
-	'cate_id' => 0,
-	'iid' => 0,
 	'keyword' = $dbh->quote($keyword),
-	'createdby' => $dbh->quote('baidu_' . $bd->get_os_stripname(__FILE__)),
+	'source' => $dbh->quote(SURL),	
+	'createdby' => $dbh->quote('baidu'),
 };
 
 my $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
@@ -54,6 +53,33 @@ my $aoh = parse_result($t);
 #write_file('bd3.html', $aoh);
 #print Dumper($aoh);
 
+#保存baidu的相关搜索关键词.
+my $kid = $ss->get_kid_by_keyword($keyword);
+if($kid) {
+	my ($rks, $html, $rkey, $rurl, $sql) = ([]);
+
+	$html = $ss->strip_related_keywords($mech->content);
+
+	$rks = $ss->get_related_keywords($html) if $html;
+
+	foreach my $r (@{$rks}) {
+		$rkey = $dbh->quote($r->[1]);
+		$rurl = $dbh->quote($r->[0]);
+		$sql = qq{
+			insert ignore into key_related(rk, kurl, kid, keyword, createdby, created)
+			values(
+				$rkey,
+				$rurl,
+				$kid,
+				$h->{'keyword'},
+				$h->{'createdby'},
+				now()
+			)
+		};
+		$dbh->do($sql);		
+	}
+}
+
 foreach my $r (@{$aoh}) {
 
 	my $p = parse_item($r);
@@ -65,9 +91,6 @@ foreach my $r (@{$aoh}) {
 	$h->{'desc'} = $dbh->quote(strip_tag($p->[2]));
 
 	$h->{'pubdate'} = $dbh->quote($bd->get_time('2'));
-	$h->{'keyword'} = $dbh->quote($keyword);
-	$h->{'source'} = $dbh->quote('百度搜索程序');
-	#$h->{'source'} = $dbh->quote($keyword);
 
 	$h->{'clicks'} = $yh->generate_random();
 	$h->{'likes'} = $yh->generate_random(100);

@@ -231,6 +231,10 @@ sub select_keywords {
 sub insert_contents
 {
 	my ($self, $h) = @_;
+	$h->{'clicks'} = $self->generate_random();
+	$h->{'likes'} = $self->generate_random(100);
+	$h->{'guanzhu'} = $self->generate_random(100);
+		
 	my $sql = qq{ insert ignore into contents
 		(linkname,
 		url,
@@ -241,6 +245,9 @@ sub insert_contents
 		cate_id,
 		item,
 		iid,
+		clicks,
+		likes,
+		guanzhu,
 		createdby,
 		created,
 		content
@@ -254,6 +261,9 @@ sub insert_contents
 		$h->{'cate_id'},
 		$h->{'item'},
 		$h->{'item_id'},
+		$h->{'clicks'},
+		$h->{'likes'},
+		$h->{'guanzhu'},
 		$h->{'createdby'},
 		now(),
 		$h->{'content'}

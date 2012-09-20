@@ -30,13 +30,12 @@ clicks: 总共点击的次数, 0-1000
 likes: 欣赏此文, 0-100
 guanzhu: 关注此文, 0-100
 created: 'google'
+source:'google搜索程序'
 =cut
 my $h = {
-	'tag' => $dbh->quote($keyword);
-	'clicks' => $gg->generate_random();
-	'likes' => $gg->generate_random(100);
-	'guanzhu' => $gg->generate_random(100);	
-	'createdby' => $dbh->quote('google_' . $gg->get_os_stripname(__FILE__)),
+	'keyword' => $dbh->quote($keyword),
+	'source' => $dbh->quote(SURL),
+	'createdby' => $dbh->quote('google'),
 };
 
 my $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
@@ -57,29 +56,38 @@ $mech->success or die $mech->response->status_line;
 
 # 保存查询的url, 上面有字符集, 查询数量等信息.
 $h->{'author'} = $dbh->quote($mech->uri()->as_string) if($mech->uri);
-
-# 1. 
+ 
 my $t = $gg->strip_result( $mech->content );
 # $gg->write_file('gg2.html', $t);
 
 my $aoh = $gg->parse_result($t);
 # $gg->write_file('gg3.html', $aoh);
 
+#保存google的相关搜索关键词.
+my $kid = $ss->get_kid_by_keyword($keyword);
+if($kid) {
+	my ($rks, $html, $rkey, $rurl, $sql) = ([]);
 
-my $html = $gg->strip_related_keywords($mech->content);
+	$html = $ss->strip_related_keywords($mech->content);
 
-my $rks = $yh->get_related_keywords($html);
+	$rks = $ss->get_related_keywords($html) if $html;
 
-#保存google中的相关搜索关键词.
-foreach my $r (@{$rks}) {
-	$sql = qq{
-		insert ignore into key_related(rk, kid, keyword, created)
-		values(
-		$r,
-		$h->{'tag'},
-		now()
-	)};
-	$dbh->do($sql);		
+	foreach my $r (@{$rks}) {
+		$rkey = $dbh->quote($r->[1]);
+		$rurl = $dbh->quote($r->[0]);
+		$sql = qq{
+			insert ignore into key_related(rk, kurl, kid, keyword, createdby, created)
+			values(
+				$rkey,
+				$rurl,
+				$kid,
+				$h->{'keyword'},
+				$h->{'createdby'},
+				now()
+			)
+		};
+		$dbh->do($sql);		
+	}
 }
 
 foreach my $p (@{$aoh}) {
@@ -89,7 +97,10 @@ foreach my $p (@{$aoh}) {
 
 	# 当前OS系统的时间, created 存放数据库系统的时间,两者不同.
 	$h->{'pubdate'} = $dbh->quote($gg->get_time('2'));
-	$h->{'source'} = $dbh->quote('google搜索程序');
+
+	$h->{'clicks'} = $ss->generate_random();
+	$h->{'likes'} = $ss->generate_random(100);
+	$h->{'guanzhu'} = $ss->generate_random(100);	
 
 	my $sql = qq{ insert ignore into contents(
 		linkname,
@@ -110,7 +121,7 @@ foreach my $p (@{$aoh}) {
 		$h->{'author'},
 		$h->{'source'},		
 		$h->{'pubdate'},
-		$h->{'tag'},
+		$h->{'keyword'},
 		$h->{'clicks'},
 		$h->{'likes'},
 		$h->{'guanzhu'},

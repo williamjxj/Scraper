@@ -88,6 +88,16 @@ sub close_log {
 	return;
 }
 
+sub get_kid_by_keyword
+{
+	my ($self, $keyword) = @_;
+	my $sth = $self->{dbh}->prepare(qq{ select kid from keywords where keyword = ? });
+	$sth->execute($keyword);
+	my @row = $sth->fetchrow_array();
+	$sth->finish();
+	return defined $row[0] ? $row[0] : 0;
+}
+
 # 将网页抓取的中间结果html文件保存下来,用于debug. 在help/目录下创建link来查看.
 # $mech->save_content, $mech->text();
 sub write_file

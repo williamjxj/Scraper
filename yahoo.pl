@@ -32,7 +32,7 @@ guanzhu: 关注此文, 0-100
 created: 'yahoo'
 =cut
 my $h = {
-	'tag' => $dbh->quote($keyword),
+	'keyword' => $dbh->quote($keyword),
 	'source' => $dbh->quote(SURL),
 	'createdby' => $dbh->quote($yh->get_os_stripname(__FILE__)),
 };
@@ -65,25 +65,8 @@ my $t = $yh->strip_result( $mech->content );
 my $aoh = $yh->parse_result($t);
 # $yh->write_file('yh3.html', $aoh);
 
-
-my ($html, $rks, $sql) = ('', []);
-
-$html = $yh->strip_related_keywords($mech->content);
-
-$rks = $yh->get_related_keywords($html) if $html;
-
-#保存yahoo的相关搜索关键词.
-foreach my $r (@{$rks}) {
-	$sql = qq{
-		insert ignore into key_related(rk, kid, keyword, created)
-		values(
-		$r,
-		$h->{'tag'},
-		now()
-	)};
-	$dbh->do($sql);		
-}
-
+# yahoo竟然没有相关关键词推荐!!!
+my $sql = '';
 foreach my $p (@{$aoh}) {
 	$h->{'url'} = $dbh->quote($p->[0]);
 	$h->{'linkname'} = $dbh->quote($p->[1]);
@@ -115,7 +98,7 @@ foreach my $p (@{$aoh}) {
 		$h->{'author'},
 		$h->{'source'},		
 		$h->{'pubdate'},
-		$h->{'tag'},
+		$h->{'keyword'},
 		$h->{'clicks'},
 		$h->{'likes'},
 		$h->{'guanzhu'},

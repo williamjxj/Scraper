@@ -146,7 +146,11 @@ foreach my $url ( @{$links} ) {
 	$h->{'url'} = $dbh->quote(ROOT_URL.$url);
 	$h->{'source'} = $dbh->quote($url);
 	$h->{'author'} = $dbh->quote($t3);
-	
+
+	$h->{'clicks'} = $news->generate_random();
+	$h->{'likes'} = $news->generate_random(100);
+	$h->{'guanzhu'} = $news->generate_random(100);
+		
 	my $sql = qq{ insert ignore into contents
 		(linkname,
 		url,
@@ -157,6 +161,9 @@ foreach my $url ( @{$links} ) {
 		cate_id,
 		item,
 		iid,
+		clicks,
+		likes,
+		guanzhu,
 		createdby,
 		created,
 		content
@@ -170,6 +177,9 @@ foreach my $url ( @{$links} ) {
 		$h->{'cate_id'},
 		$h->{'item'},
 		$h->{'item_id'},
+		$h->{'clicks'},
+		$h->{'likes'},
+		$h->{'guanzhu'},
 		$h->{'createdby'},
 		now(),
 		$h->{'content'}
