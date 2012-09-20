@@ -1,9 +1,5 @@
 package chinafnews;
 
-use utf8;
-use encoding 'utf8';
-
-use lib qw(./);
 use config;
 use common;
 @ISA = qw(common);
