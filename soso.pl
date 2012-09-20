@@ -33,7 +33,7 @@ created: 'yahoo'
 =cut
 my $h = {
 	'keyword' => $dbh->quote($keyword),
-	'source' => $dbh->quote(SURL);
+	'source' => $dbh->quote(SURL),
 	'createdby' => $dbh->quote($yh->get_os_stripname(__FILE__)),
 };
 
@@ -92,9 +92,9 @@ foreach my $p (@{$aoh}) {
 	# 当前OS系统的时间, created 存放数据库系统的时间,两者不同.
 	$h->{'pubdate'} = $dbh->quote($yh->get_time('2'));
 
-	$h{'clicks'} = $yh->generate_random();
-	$h{'likes'} = $yh->generate_random(100);
-	$h{'guanzhu'} = $yh->generate_random(100);	
+	$h->{'clicks'} = $yh->generate_random();
+	$h->{'likes'} = $yh->generate_random(100);
+	$h->{'guanzhu'} = $yh->generate_random(100);	
 
 	$sql = qq{ insert ignore into contents(
 		linkname,

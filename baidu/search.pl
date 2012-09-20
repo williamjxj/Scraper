@@ -69,9 +69,9 @@ foreach my $r (@{$aoh}) {
 	$h->{'source'} = $dbh->quote('百度搜索程序');
 	#$h->{'source'} = $dbh->quote($keyword);
 
-	$h{'clicks'} = $yh->generate_random();
-	$h{'likes'} = $yh->generate_random(100);
-	$h{'guanzhu'} = $yh->generate_random(100);	
+	$h->{'clicks'} = $yh->generate_random();
+	$h->{'likes'} = $yh->generate_random(100);
+	$h->{'guanzhu'} = $yh->generate_random(100);	
 
 
 	my $sql = qq{  insert ignore into contents(
