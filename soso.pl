@@ -34,7 +34,7 @@ created: 'soso'
 my $h = {
 	'keyword' => $dbh->quote($keyword),
 	'source' => $dbh->quote(SURL),
-	'createdby' => $dbh->quote($yh->get_os_stripname(__FILE__)),
+	'createdby' => $dbh->quote($ss->get_os_stripname(__FILE__)),
 };
 
 my $mech = WWW::Mechanize->new( ) or die;
@@ -50,7 +50,7 @@ $mech->submit_form(
 	fields    => { w => $keyword }
 );
 $mech->success or die $mech->response->status_line;
-$mech->save_content('/tmp/ss1.html');
+# $mech->save_content('/tmp/ss1.html');
 # undefined subroutune: print $mech-text();
 # $mech->dump_text();
 # $ss->write_file('ss1.html', $mech->content);
@@ -71,15 +71,21 @@ $html = $ss->strip_related_keywords($mech->content);
 
 $rks = $ss->get_related_keywords($html) if $html;
 
+my ($rk, $rurl);
 #保存soso的相关搜索关键词.
 foreach my $r (@{$rks}) {
+	$rk = $dbh->quote($r->[1]);
+	$rurl = $dbh->quote($r->[0]);
 	$sql = qq{
-		insert ignore into key_related(rk, kid, keyword, created)
+		insert ignore into key_related(rk, kurl, keyword, createdby, created)
 		values(
-		$r,
-		$h->{'keyword'},
-		now()
-	)};
+			$rk,
+			$rurl,
+			$h->{'keyword'},
+			$h->{'createdby'},
+			now()
+		)
+	};
 	$dbh->do($sql);		
 }
 
@@ -91,11 +97,11 @@ foreach my $p (@{$aoh}) {
 	# 当前OS系统的时间, created 存放数据库系统的时间,两者不同.
 	$h->{'pubdate'} = $dbh->quote($ss->get_time('2'));
 
-	$h->{'clicks'} = $yh->generate_random();
-	$h->{'likes'} = $yh->generate_random(100);
-	$h->{'guanzhu'} = $yh->generate_random(100);	
+	$h->{'clicks'} = $ss->generate_random();
+	$h->{'likes'} = $ss->generate_random(100);
+	$h->{'guanzhu'} = $ss->generate_random(100);	
 
-	$sql = qq{ insert ignore into contents(
+	$sql = qq{ insert ignore into contexts(
 		linkname,
 		url,
 		author,

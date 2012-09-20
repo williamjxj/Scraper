@@ -20,7 +20,7 @@ sub strip_result
 	$html =~ m {
 			<div\sid="result"
 			.*?
-			<ol>
+			<ol\s*>
 			(.*?)	#soso用ol->li来划分每条记录
 			</ol>
 	}six;
@@ -64,7 +64,9 @@ sub strip_related_keywords
 {
 	my ( $self, $html ) = @_;
 	$html =~ m{
-		<div\sid="rel"
+		<div
+		(?:.*?)
+		id="rel"
 		.*?
 		>
 		(.*?)
