@@ -95,5 +95,14 @@ sub get_related_keywords
 	return $aoh;
 }
 
+sub get_kid_by_keyword
+{
+	my ($self, $keyword) = @_;
+	$sth = $self->{dbh}->prepare(qq{ select kid from keywords where keyword = ? });
+	$sth->execute($keyword);
+	my @row = $sth->fetchrow_array();
+	$sth->finish();
+	return defined $row[0] ? $row[0] : 0;
+}
 
 1;
