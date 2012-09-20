@@ -12,29 +12,29 @@ use Encode qw(decode);
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 use db;
-use yahoo;
+use soso;
 
-use constant SURL => q{http://search.yahoo.com/};
+use constant SURL => q{http://www.soso.com/};
 
 die "usage: $0 keyword" if ($#ARGV != 0);
 our $keyword = decode("utf-8", $ARGV[0]);
 
 our $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
 
-my $yh = new yahoo( $dbh );
+my $ss = new soso( $dbh );
 
 =comment
 定义插入数组的缺省值.
-tag: 关键词
+keyword: 关键词
 clicks: 总共点击的次数, 0-1000
 likes: 欣赏此文, 0-100
 guanzhu: 关注此文, 0-100
-created: 'yahoo'
+created: 'soso'
 =cut
 my $h = {
 	'keyword' => $dbh->quote($keyword),
 	'source' => $dbh->quote(SURL);
-	'createdby' => $dbh->quote($yh->get_os_stripname(__FILE__)),
+	'createdby' => $dbh->quote($ss->get_os_stripname(__FILE__)),
 };
 
 my $mech = WWW::Mechanize->new( ) or die;
@@ -46,33 +46,32 @@ $mech->success or die $mech->response->status_line;
 #num=100->10
 # fields    => { q => $keyword, num => 10 }
 $mech->submit_form(
-    form_id => 'sf',
-	fields    => { p => $keyword }
+    form_name => 'flpage',
+	fields    => { w => $keyword }
 );
 $mech->success or die $mech->response->status_line;
-$mech->save_content('/tmp/yh1.html');
+$mech->save_content('/tmp/ss1.html');
 # undefined subroutune: print $mech-text();
 # $mech->dump_text();
-# $yh->write_file('yh1.html', $mech->content);
+# $ss->write_file('ss1.html', $mech->content);
 
 # 保存查询的url, 上面有字符集, 查询数量等信息.
 $h->{'author'} = $dbh->quote($mech->uri()->as_string) if($mech->uri);
 
-# 1. 
-my $t = $yh->strip_result( $mech->content );
-# $yh->write_file('yh2.html', $t);
+my $t = $ss->strip_result( $mech->content );
+# $ss->write_file('ss2.html', $t);
 
-my $aoh = $yh->parse_result($t);
-# $yh->write_file('yh3.html', $aoh);
+my $aoh = $ss->parse_result($t);
+# $ss->write_file('ss3.html', $aoh);
 
 
 my ($html, $rks, $sql) = ('', []);
 
-$html = $yh->strip_related_keywords($mech->content);
+$html = $ss->strip_related_keywords($mech->content);
 
-$rks = $yh->get_related_keywords($html) if $html;
+$rks = $ss->get_related_keywords($html) if $html;
 
-#保存yahoo的相关搜索关键词.
+#保存soso的相关搜索关键词.
 foreach my $r (@{$rks}) {
 	$sql = qq{
 		insert ignore into key_related(rk, kid, keyword, created)
@@ -90,11 +89,11 @@ foreach my $p (@{$aoh}) {
 	$h->{'desc'} = $dbh->quote($p->[2]);
 
 	# 当前OS系统的时间, created 存放数据库系统的时间,两者不同.
-	$h->{'pubdate'} = $dbh->quote($yh->get_time('2'));
+	$h->{'pubdate'} = $dbh->quote($ss->get_time('2'));
 
-	$h{'clicks'} = $yh->generate_random();
-	$h{'likes'} = $yh->generate_random(100);
-	$h{'guanzhu'} = $yh->generate_random(100);	
+	$h{'clicks'} = $ss->generate_random();
+	$h{'likes'} = $ss->generate_random(100);
+	$h{'guanzhu'} = $ss->generate_random(100);	
 
 	$sql = qq{ insert ignore into contents(
 		linkname,
