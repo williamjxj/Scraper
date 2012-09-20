@@ -364,7 +364,7 @@ sub insert_baidu
 	$h->{'guanzhu'} = $self->generate_random(100);
 
 	my $sql = qq{ insert into contents
-		(linkname,
+		(title,
 		url,
 		pubdate,
 		author, 

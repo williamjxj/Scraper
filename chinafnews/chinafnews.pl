@@ -210,15 +210,15 @@ foreach my $url ( @{$links} ) {
 		next;
 	}
 
-	($h->{'linkname'}, $h->{'source'}, $h->{'pubdate'}, $h->{'content'})
+	($h->{'title'}, $h->{'source'}, $h->{'pubdate'}, $h->{'content'})
 		 = $news->parse_detail( $mech->content );
 
 	# 如果'来源' is null，就要尝试没有‘来源’的解析。
-	if(!defined($h->{'linkname'}) || $h->{'linkname'} eq '') {
-		( $h->{'linkname'}, $h->{'pubdate'}, $h->{'content'} ) 
+	if(!defined($h->{'title'}) || $h->{'title'} eq '') {
+		( $h->{'title'}, $h->{'pubdate'}, $h->{'content'} ) 
 			= $news->parse_detail_without_from( $mech->content );
 	}
-	if(!defined($h->{'linkname'}) || $h->{'linkname'} eq '') {
+	if(!defined($h->{'title'}) || $h->{'title'} eq '') {
 		$news->write_log('Fail3! not to insert: ' . $page_url . ', [' . $h->{'item_id'} . '], ' . $url);
 		next;
 	}
@@ -234,7 +234,7 @@ foreach my $url ( @{$links} ) {
 	$h->{'author'} = $dbh->quote($url);
 	 
 
-	$h->{'linkname'} = $dbh->quote($h->{'linkname'});
+	$h->{'title'} = $dbh->quote($h->{'title'});
 	$h->{'source'} = $dbh->quote($h->{'source'}); # probably NULL.
 	$h->{'content'} = $dbh->quote($h->{'content'});
 	$h->{'pubdate'} = $dbh->quote($h->{'pubdate'});

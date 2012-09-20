@@ -91,7 +91,7 @@ foreach my $r (@{$aoh}) {
 	next unless defined($p->[1]);
 
 	$h->{'url'} = $dbh->quote($p->[0]);
-	$h->{'linkname'} = $dbh->quote(strip_tag($p->[1]));
+	$h->{'title'} = $dbh->quote(strip_tag($p->[1]));
 	$h->{'desc'} = $dbh->quote(strip_tag($p->[2]));
 
 	$h->{'pubdate'} = $dbh->quote($bd->get_time('2'));
@@ -101,7 +101,7 @@ foreach my $r (@{$aoh}) {
 	$h->{'guanzhu'} = $bd->generate_random(100);	
 
 	my $sql = qq{  insert ignore into contents(
-		linkname,
+		title,
 		url,
 		author,
 		source,
@@ -114,7 +114,7 @@ foreach my $r (@{$aoh}) {
 		created,
 		content
 	) values(
-		$h->{'linkname'},
+		$h->{'title'},
 		$h->{'url'},
 		$h->{'author'},
 		$h->{'source'},

@@ -167,7 +167,7 @@ INSERT INTO tbl_tag (name) VALUES ('test');
 
 CREATE TABLE IF NOT EXISTS `contexts` (
   `cid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `linkname` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
   `url` varchar(255) DEFAULT NULL,
   `pubdate` varchar(30) DEFAULT NULL,
   `author` varchar(255) NOT NULL,
@@ -185,8 +185,8 @@ CREATE TABLE IF NOT EXISTS `contexts` (
   `createdby` varchar(50) DEFAULT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`cid`),
-  UNIQUE KEY `linkname_iid` (`linkname`,`iid`),
-  KEY `linkname` (`linkname`)
+  UNIQUE KEY `title` (`title`,`iid`),
+  KEY `title` (`title`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 

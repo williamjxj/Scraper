@@ -138,7 +138,7 @@ foreach my $url ( @{$links} ) {
 	#( $name, $item_name, $notes, $published_date, $content ) = $news->parse_detail( $mech->content );
 	my ($t1, $t2, $t3, $t4, $t5) = $news->parse_detail( $mech->content );
 	
-	$h->{'linkname'} = $dbh->quote($t1);
+	$h->{'title'} = $dbh->quote($t1);
 	$h->{'item'} = $dbh->quote($t2);
 	$h->{'item_id'} = $news->select_item_by_name($t2);
 	$h->{'pubdate'} = $dbh->quote($t4);
@@ -153,7 +153,7 @@ foreach my $url ( @{$links} ) {
 	$h->{'guanzhu'} = $news->generate_random(100);
 		
 	my $sql = qq{ insert ignore into contents
-		(linkname,
+		(title,
 		url,
 		pubdate,
 		author, 
@@ -169,7 +169,7 @@ foreach my $url ( @{$links} ) {
 		created,
 		content
 	) values(
-		$h->{'linkname'}, 
+		$h->{'title'}, 
 		$h->{'url'},
 		$h->{'pubdate'},
 		$h->{'source'}, 

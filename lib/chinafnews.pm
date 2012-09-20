@@ -232,7 +232,7 @@ sub insert_contents
 	$h->{'guanzhu'} = $self->generate_random(100);
 		
 	my $sql = qq{ insert ignore into contents
-		(linkname,
+		(title,
 		url,
 		pubdate,
 		author, 
@@ -248,7 +248,7 @@ sub insert_contents
 		created,
 		content
 	) values(
-		$h->{'linkname'}, 
+		$h->{'title'}, 
 		$h->{'url'},
 		$h->{'pubdate'},
 		$h->{'author'},

@@ -92,7 +92,7 @@ if($kid) {
 
 foreach my $p (@{$aoh}) {
 	$h->{'url'} = $dbh->quote($p->[0]);
-	$h->{'linkname'} = $dbh->quote($p->[1]);
+	$h->{'title'} = $dbh->quote($p->[1]);
 	$h->{'desc'} = $dbh->quote($p->[2]);
 
 	# 当前OS系统的时间, created 存放数据库系统的时间,两者不同.
@@ -103,7 +103,7 @@ foreach my $p (@{$aoh}) {
 	$h->{'guanzhu'} = $gg->generate_random(100);	
 
 	my $sql = qq{ insert ignore into contents(
-		linkname,
+		title,
 		url,
 		author,
 		source,
@@ -116,7 +116,7 @@ foreach my $p (@{$aoh}) {
 		created,
 		content
 	) values(
-		$h->{'linkname'},
+		$h->{'title'},
 		$h->{'url'},
 		$h->{'author'},
 		$h->{'source'},		
