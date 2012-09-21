@@ -47,7 +47,6 @@ $mech->submit_form(
 $mech->success or die $mech->response->status_line;
 #write_file('bd1.html', $mech->content);
 
-# ±£´æ²éÑ¯µÄurl, ÉÏÃæÓĞ×Ö·û¼¯, ²éÑ¯ÊıÁ¿µÈĞÅÏ¢.
 $h->{'author'} = $dbh->quote($mech->uri()->as_string) if($mech->uri);
 
 my $t = strip_result( $mech->content );
@@ -214,15 +213,41 @@ sub parse_result
     return $aoh;
 }
 
-
 # ç›¸å…³æœç´¢ã€‚
 sub strip_related_keywords
 {
 	my ( $html ) = @_;
-	return $html;
+	$html =~ m{
+		<div\sid=(?:"rs"|rs)>
+		(?:.*?)
+		<table
+		(?:.*?)
+		>
+		(.*?)
+		</table>
+		.*?
+		<div\sid=(?:"search"|search)>
+	}six;
+	return $1;
 }
+
 sub get_related_keywords
 {
-	my ( $html ) = @_;
-	return [];
+	my $html  = shift;
+	return unless $html;
+	my $aoh = [];
+	
+	while($html =~ m{
+		<a
+		(?:.*?)
+		href="
+		(.*?)		#é“¾æ¥åœ°å€
+		">
+		(.*?)		#å…³é”®è¯
+		</a>
+	}sgix) {
+		my ($t1, $t2) = ($1, $2);
+		push (@{$aoh}, [$t1, $t2]);
+	}
+	return $aoh;
 }
