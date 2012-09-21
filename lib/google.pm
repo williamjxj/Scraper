@@ -99,7 +99,7 @@ sub strip_related_keywords
 		(.*?)
 		</table>
 		.*?
-		<div\sid="foot">
+		<div\sid=(?:"foot"|foot)>
 	}six;
 	return $1;
 }
@@ -109,7 +109,7 @@ sub get_related_keywords
 	return unless $html;
 	my $aoh = [];
 	while($html =~ m{
-		<p
+		<a
 		(?:.*?)
 		href="
 		(.*?)		#链接地址

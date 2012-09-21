@@ -80,9 +80,9 @@ sub get_related_keywords
 	my $aoh;
 	
 	while($html =~ m{
-		<td
+		<a
 		(?:.*?)
-		<a\shref="
+		href="
 		(.*?)		#链接地址
 		">
 		(.*?)		#关键词
