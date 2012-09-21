@@ -69,6 +69,8 @@ if($kid) {
 	my ($rks, $html, $rkey, $rurl, $sql) = ([]);
 
 	$html = $gg->strip_related_keywords($mech->content);
+	print $mech->content;
+	exit;
 
 	$rks = $gg->get_related_keywords($html) if $html;
 
