@@ -6,7 +6,8 @@ use common;
 use strict;
 our ( $sth );
 
-sub new {
+sub new
+{
 	my ( $type, $dbh_handle ) = @_;
 	my $self = {};
 	$self->{dbh} = $dbh_handle;
