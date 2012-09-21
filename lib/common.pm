@@ -10,6 +10,7 @@ sub new {
 	$self->{dbh} = DBI->connect( DSN, USER, PASS, { RaiseError => 1 } );
 	$self->{dbh}->do('SET NAMES "utf8"');
 	bless $self, $type;
+	return $self;
 }
 
 # 备用, 也许以后可以同时建立多个链接.
