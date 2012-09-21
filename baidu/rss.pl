@@ -19,7 +19,7 @@ use Getopt::Long;
 
 use constant BAIDU_RSS => 'http://www.baidu.com/search/rss.html';
 
-sub BEGIN
+BEGIN
 {
 	$SIG{'INT'}  = 'IGNORE';
 	$SIG{'QUIT'} = 'IGNORE';

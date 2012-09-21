@@ -3,8 +3,8 @@
 #和gg.pl不同的是, 本文件从命令行执行,而不是从php进行调用.
 # 没有输入'查询关键词'参数.
 
-use warnings;
 use strict;
+use warnings;
 use utf8;
 use encoding 'utf8';
 use WWW::Mechanize;
@@ -22,7 +22,7 @@ use google;
 use constant SURL => q{http://www.google.com};
 use constant KEYFILE => q{./keywords.txt};
 
-sub BEGIN
+BEGIN
 {
 	$SIG{'INT'}  = 'IGNORE';
 	$SIG{'QUIT'} = 'IGNORE';

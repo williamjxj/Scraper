@@ -9,9 +9,15 @@ use Data::Dumper;
 use DBI;
 use Encode qw(decode);
 
-use lib qw(/home/williamjxj/scraper/lib/);
+BEGIN{
+	if ( $^O eq 'MSWin32' ) {
+		use lib qw(../lib/);
+	}
+	else {
+		use lib qw(/home/williamjxj/scraper/lib/);
+	}
+}
 use config;
-use db;
 use yahoo;
 
 use constant SURL => q{http://tw.search.yahoo.com/};
@@ -30,9 +36,9 @@ guanzhu: 关注此文, 0-100
 created: 'yahoo'
 =cut
 my $h = {
-	'keyword' => $dbh->quote($keyword),
-	'source' => $dbh->quote(SURL),
-	'createdby' => $dbh->quote($tw->get_os_stripname(__FILE__)),
+	'keyword' => $tw->{'dbh'}->quote($keyword),
+	'source' => $tw->{'dbh'}->quote(SURL),
+	'createdby' => $tw->{'dbh'}->quote($tw->get_os_stripname(__FILE__)),
 };
 
 my $mech = WWW::Mechanize->new( ) or die;
@@ -54,7 +60,7 @@ $mech->save_content(HTML.'tw1.html');
 # $tw->write_file('tw1.html', $mech->content);
 
 # 保存查询的url, 上面有字符集, 查询数量等信息.
-$h->{'author'} = $dbh->quote($mech->uri()->as_string) if($mech->uri);
+$h->{'author'} = $tw->{'dbh'}->quote($mech->uri()->as_string) if($mech->uri);
 
 my $t = $tw->strip_result( $mech->content );
 # $tw->write_file('tw2.html', $t);
@@ -65,12 +71,12 @@ my $aoh = $tw->parse_result($t);
 # yahoo竟然没有相关关键词推荐!!!
 my $sql = '';
 foreach my $p (@{$aoh}) {
-	$h->{'url'} = $dbh->quote($p->[0]);
-	$h->{'title'} = $dbh->quote($p->[1]);
-	$h->{'desc'} = $dbh->quote($p->[2]);
+	$h->{'url'} = $tw->{'dbh'}->quote($p->[0]);
+	$h->{'title'} = $tw->{'dbh'}->quote($p->[1]);
+	$h->{'desc'} = $tw->{'dbh'}->quote($p->[2]);
 
 	# 当前OS系统的时间, created 存放数据库系统的时间,两者不同.
-	$h->{'pubdate'} = $dbh->quote($tw->get_time('2'));
+	$h->{'pubdate'} = $tw->{'dbh'}->quote($tw->get_time('2'));
 
 	$h->{'clicks'} = $tw->generate_random();
 	$h->{'likes'} = $tw->generate_random(100);
@@ -103,9 +109,9 @@ foreach my $p (@{$aoh}) {
 		now(),
 		$h->{'desc'}
 	)};
-	$dbh->do($sql);
+	$tw->{'dbh'}->do($sql);
 }
 
-$dbh->disconnect();
+$tw->{'dbh'}->disconnect();
 exit 6;
 

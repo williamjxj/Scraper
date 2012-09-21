@@ -2,7 +2,7 @@ package config;
 
 require Exporter;
 @ISA = qw( Exporter );
-@EXPORT = qw(USER PASS DSN BASE VERSION URL LOG HTML CATEGORY ITEM CONTEXTS CONTENTS CONTENTS_1 FOOD INTERVAL_DATE);
+@EXPORT = qw(USER PASS DSN BASE VERSION URL LOG HTML CATEGORY ITEM CONTEXTS CONTENTS CONTENTS_1 FOOD INTERVAL_DATE HOST);
 
 use constant USER => q{dixitruth};
 use constant PASS => q{dixi123456};
@@ -20,4 +20,5 @@ use constant FOOD => q{食品};
 use constant INTERVAL_DATE => 7;
 use constant RW_MODE => "a";
 
+use constant HOST => q{localhost};
 1;

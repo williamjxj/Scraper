@@ -9,32 +9,26 @@ use Data::Dumper;
 use DBI;
 use Encode qw(decode);
 
-use lib qw(/home/williamjxj/scraper/lib/);
+BEGIN{
+	if ( $^O eq 'MSWin32' ) {
+		use lib qw(../lib/);
+	}
+	else {
+		use lib qw(/home/williamjxj/scraper/lib/);
+	}
+}
 use config;
-use db;
 use yahoo;
-
 use constant SURL => q{http://hk.search.yahoo.com/};
 
 die "usage: $0 keyword" if ($#ARGV != 0);
 our $keyword = decode("utf-8", $ARGV[0]);
 
-our $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
-
-my $yh = new yahoo( $dbh );
-
-=comment
-定义插入数组的缺省值.
-keyword: 关键词
-clicks: 总共点击的次数, 0-1000
-likes: 欣赏此文, 0-100
-guanzhu: 关注此文, 0-100
-created: 'yahoo'
-=cut
+my $hk = new yahoo() or die $!;
 my $h = {
-	'keyword' => $dbh->quote($keyword),
-	'source' => $dbh->quote(SURL),
-	'createdby' => $dbh->quote($yh->get_os_stripname(__FILE__)),
+	'keyword' => $hk->{'dbh'}->quote($keyword),
+	'source' => $hk->{'dbh'}->quote(SURL),
+	'createdby' => $hk->{'dbh'}->quote($hk->get_os_stripname(__FILE__)),
 };
 
 my $mech = WWW::Mechanize->new( ) or die;
@@ -43,8 +37,7 @@ $mech->timeout( 20 );
 $mech->get( SURL );
 $mech->success or die $mech->response->status_line;
 
-#num=100->10
-# fields    => { q => $keyword, num => 10 }
+
 $mech->submit_form(
     form_id => 'sf',
 	fields    => { p => $keyword }
@@ -53,31 +46,33 @@ $mech->success or die $mech->response->status_line;
 $mech->save_content('/tmp/yh1.html');
 # undefined subroutune: print $mech-text();
 # $mech->dump_text();
-# $yh->write_file('yh1.html', $mech->content);
+# $hk->write_file('yh1.html', $mech->content);
 
 # 保存查询的url, 上面有字符集, 查询数量等信息.
-$h->{'author'} = $dbh->quote($mech->uri()->as_string) if($mech->uri);
+$h->{'author'} = $hk->{'dbh'}->quote($mech->uri()->as_string) if($mech->uri);
 
-# 1. 
-my $t = $yh->strip_result( $mech->content );
-# $yh->write_file('yh2.html', $t);
 
-my $aoh = $yh->parse_result($t);
-# $yh->write_file('yh3.html', $aoh);
+my $t = $hk->strip_result( $mech->content );
+# $hk->write_file('yh2.html', $t);
+
+
+my $aoh = $hk->parse_result($t);
+# $hk->write_file('yh3.html', $aoh);
+
 
 # yahoo竟然没有相关关键词推荐!!!
 my $sql = '';
 foreach my $p (@{$aoh}) {
-	$h->{'url'} = $dbh->quote($p->[0]);
-	$h->{'title'} = $dbh->quote($p->[1]);
-	$h->{'desc'} = $dbh->quote($p->[2]);
+	$h->{'url'} = $hk->{'dbh'}->quote($p->[0]);
+	$h->{'title'} = $hk->{'dbh'}->quote($p->[1]);
+	$h->{'desc'} = $hk->{'dbh'}->quote($p->[2]);
 
 	# 当前OS系统的时间, created 存放数据库系统的时间,两者不同.
-	$h->{'pubdate'} = $dbh->quote($yh->get_time('2'));
+	$h->{'pubdate'} = $hk->{'dbh'}->quote($hk->get_time('2'));
 
-	$h->{'clicks'} = $yh->generate_random();
-	$h->{'likes'} = $yh->generate_random(100);
-	$h->{'guanzhu'} = $yh->generate_random(100);	
+	$h->{'clicks'} = $hk->generate_random();
+	$h->{'likes'} = $hk->generate_random(100);
+	$h->{'guanzhu'} = $hk->generate_random(100);	
 
 	$sql = qq{ insert ignore into contents(
 		title,
@@ -106,9 +101,9 @@ foreach my $p (@{$aoh}) {
 		now(),
 		$h->{'desc'}
 	)};
-	$dbh->do($sql);
+	$hk->{'dbh'}->do($sql);
 }
 
-$dbh->disconnect();
+$hk->{'dbh'}->disconnect();
 exit 6;
 

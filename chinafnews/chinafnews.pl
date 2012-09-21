@@ -14,7 +14,7 @@ use WWW::Mechanize;
 use DBI;
 use Getopt::Long;
 
-sub BEGIN
+BEGIN
 {
 	$SIG{'INT'}  = 'IGNORE';
 	$SIG{'QUIT'} = 'IGNORE';
@@ -186,7 +186,6 @@ $next_page = $news->get_next_page( $news->parse_list_page_2($mech->content));
 
 if($next_page) {
 	# 如果到了第三页,就返回,不必执行了.
-	# $next_page="http://www.chinafnews.com/news/puguangtai/2.shtml"
 	# 已经是最后一页了,跳过去.
 	if (defined($current_page) && $next_page eq $current_page) {
 		$page_url = '';
@@ -250,11 +249,13 @@ goto LOOP if ($page_url);
 
 }
 
-$dbh->disconnect();
-
-$end_time = time;
-$news->write_log( "Total [$total] records, [ " . ( $end_time - $start_time ) . " ] seconds used.\n" );
-$news->close_log();
+END {
+	$dbh->disconnect();
+	
+	$end_time = time;
+	$news->write_log( "Total [$total] records, [ " . ( $end_time - $start_time ) . " ] seconds used.\n" );
+	$news->close_log();	
+}
 
 exit 8;
 
