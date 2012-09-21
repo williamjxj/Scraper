@@ -74,7 +74,7 @@ if($kid) {
 
 	foreach my $r (@{$rks}) {
 		$rkey = $dbh->quote($r->[1]);
-		$rurl = $dbh->quote($r->[0]);
+		$rurl = $dbh->quote(SURL . $r->[0]);
 		$sql = qq{
 			insert ignore into key_related(rk, kurl, kid, keyword, createdby, created)
 			values(

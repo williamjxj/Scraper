@@ -14,7 +14,7 @@ use config;
 use db;
 use soso;
 
-use constant SURL => q{http://www.soso.com/};
+use constant SURL => q{http://www.soso.com};
 
 die "usage: $0 keyword" if ($#ARGV != 0);
 our $keyword = decode("utf-8", $ARGV[0]);
@@ -75,7 +75,7 @@ if($kid) {
 	#保存soso的相关搜索关键词.
 	foreach my $r (@{$rks}) {
 		$rkey = $dbh->quote($r->[1]);
-		$rurl = $dbh->quote($r->[0]);
+		$rurl = $dbh->quote(SURL . $r->[0]);
 		$sql = qq{
 			insert ignore into key_related(rk, kurl, kid, keyword, createdby, created)
 			values(
