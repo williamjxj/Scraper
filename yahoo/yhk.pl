@@ -43,21 +43,21 @@ $mech->submit_form(
 	fields    => { p => $keyword }
 );
 $mech->success or die $mech->response->status_line;
-$mech->save_content('/tmp/yh1.html');
+$mech->save_content(HTML.'hk1.html');
 # undefined subroutune: print $mech-text();
 # $mech->dump_text();
-# $hk->write_file('yh1.html', $mech->content);
+# $hk->write_file('hk1.html', $mech->content);
 
 # 保存查询的url, 上面有字符集, 查询数量等信息.
 $h->{'author'} = $hk->{'dbh'}->quote($mech->uri()->as_string) if($mech->uri);
 
 
 my $t = $hk->strip_result( $mech->content );
-# $hk->write_file('yh2.html', $t);
+# $hk->write_file('hk2.html', $t);
 
 
 my $aoh = $hk->parse_result($t);
-# $hk->write_file('yh3.html', $aoh);
+# $hk->write_file('hk3.html', $aoh);
 
 
 # yahoo竟然没有相关关键词推荐!!!
@@ -74,7 +74,7 @@ foreach my $p (@{$aoh}) {
 	$h->{'likes'} = $hk->generate_random(100);
 	$h->{'guanzhu'} = $hk->generate_random(100);	
 
-	$sql = qq{ insert ignore into contents(
+	$sql = qq{ insert ignore into } . CONTENTS_1 . qq{(
 		title,
 		url,
 		author,

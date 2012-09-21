@@ -1,6 +1,5 @@
 package yahoo;
 
-use config;
 use common;
 @ISA = qw(common);
 use strict;
@@ -8,10 +7,11 @@ our ( $sth );
 
 sub new
 {
-	my ( $type, $dbh_handle ) = @_;
-	my $self = {};
-	$self->{dbh} = $dbh_handle;
-	bless $self, $type;
+	my ( $class, @args ) = @_;
+	my $self = $class->SUPER::new(@args);
+
+	#no need to rebless $self, if parent already blessed: bless $self, $type;
+	return $self;
 }
 
 # use for yy.pl. yahoo.com can pagnation, google.com can't.
