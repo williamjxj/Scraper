@@ -90,12 +90,37 @@ sub parse_result
 sub strip_related_keywords
 {
 	my ( $self, $html ) = @_;
-	return $html;
+	$html =~ m{
+		</ol>
+		(?:.*?)
+		<table
+		(?:.*?)
+		>
+		(.*?)
+		</table>
+		.*?
+		<div\sid="foot">
+	}six;
+	return $1;
 }
 sub get_related_keywords
 {
 	my ( $self, $html ) = @_;
-	return [];
+	return unless $html;
+	my $aoh = [];
+	while($html =~ m{
+		<p
+		(?:.*?)
+		href="
+		(.*?)		#链接地址
+		">
+		(.*?)		#关键词
+		</a>
+	}sgix) {
+		my ($t1, $t2) = ($1, $2);
+		push (@{$aoh}, [$t1, $t2]);
+	}
+	return $aoh;
 }
 
 # google.pl 部分。
