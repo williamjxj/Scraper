@@ -1,12 +1,17 @@
 package common;
 # 所有没有用到的函数和变量以下划线开头.
 
+use strict;
+use warnings;
 use FileHandle;
 use Data::Dumper;
+use config;
 
 sub new {
-	my ($type) = @_;
+	my ($type, @args) = @_;
 	my $self = {};
+	# my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
+	# $self->{dbh} = DBI->connect( $dsn, $user, $pass, { RaiseError => 1 } );
 	$self->{dbh} = DBI->connect( DSN, USER, PASS, { RaiseError => 1 } );
 	$self->{dbh}->do('SET NAMES "utf8"');
 	bless $self, $type;
