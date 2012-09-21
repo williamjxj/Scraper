@@ -16,7 +16,7 @@ use config;
 use db;
 use baidu;
 
-sub BEGIN
+BEGIN
 {
 	$SIG{'INT'}  = 'IGNORE';
 	$SIG{'QUIT'} = 'IGNORE';
