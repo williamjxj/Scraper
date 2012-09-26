@@ -1,0 +1,148 @@
+<blockquote> 1. <a href="http://en.wikipedia.orghttp://en.wikipedia.org/wiki/Utf8" title="UTF-8">UTF-8</a> -> <a href="http://en.wikipedia.orghttp://en.wikipedia.org/wiki/Utf8" title="UTF-8">http://en.wikipedia.orghttp://en.wikipedia.org/wiki/Utf8</a><br> 2. <a href="http://en.wikipedia.orghttp://en.wikipedia.org/wiki/CJK_Unified_Ideographs" title="http://en.wikipedia.orghttp://en.wikipedia.org/wiki/CJK_Unified_Ideographs">CJK Unified Ideographs</a> </blockquote>
+
+<h4>1. Unicode CJK</h4>
+<p> I am looking for Chinese charset. They are in the range of <a href="http://en.wikipedia.orghttp://en.wikipedia.org/wiki/CJK_Unified_Ideographs" title="http://en.wikipedia.orghttp://en.wikipedia.org/wiki/CJK_Unified_Ideographs">CJK</a>.</p>
+<p>The basic block named CJK Unified Ideographs (4E00–9FFF) contains 20,941 basic Chinese characters in the range U+4E00 through U+9FCC. The Charts:</p>
+<p><a title="List of CJK Unified Ideographs, part 1 of 4" href="http://en.wikipedia.org/wiki/List_of_CJK_Unified_Ideographs,_part_1_of_4">4E00-62FF</a>, <a title="List of CJK Unified Ideographs, part 2 of 4" href="http://en.wikipedia.org/wiki/List_of_CJK_Unified_Ideographs,_part_2_of_4">6300-77FF</a>, <a title="List of CJK Unified Ideographs, part 3 of 4" href="http://en.wikipedia.org/wiki/List_of_CJK_Unified_Ideographs,_part_3_of_4">7800-8CFF</a>, <a title="List of CJK Unified Ideographs, part 4 of 4" href="http://en.wikipedia.org/wiki/List_of_CJK_Unified_Ideographs,_part_4_of_4">8D00-9FFF</a>.</p>
+<h4>2. utf-8 <-> Unicode table</h4>
+<p>What I need to do is to translate the right side Unicode to left-side UTF-8 3-bytes character.</p>
+<table>
+  <tr style="color:red; font-weight:bolder">
+    <th>utf-8(3字节)</th>
+    <th colspan="16">unicode(16位 - 用十六进制)</th>
+  <tr>
+  <tr>
+    <th>&nbsp;<br>
+      3-byte<br>
+      E_<br>
+      &nbsp;</th>
+    <td bgcolor="#EEEEEE"><small>Indic</small><br>
+      <small>0800*</small><br>
+      <i><b>224</b></i></td>
+    <td bgcolor="#EEEEEE"><small>Misc.</small><br>
+      <small>1000</small><br>
+      <i><b>225</b></i></td>
+    <td bgcolor="#EEEEEE"><small>Symbol</small><br>
+      <small>2000</small><br>
+      <i><b>226</b></i></td>
+    <td bgcolor="#EEEEEE"><small><a href="http://en.wikipedia.org/wiki/Kana" title="Kana">Kana</a><br>
+      <a href="http://en.wikipedia.org/wiki/CJK_Unified_Ideographs" title="CJK Unified Ideographs">CJK</a></small><br>
+      <small>3000</small><br>
+      <i><b>227</b></i></td>
+    <td bgcolor="#EEEEEE"><small><a href="http://en.wikipedia.org/wiki/CJK_Unified_Ideographs" title="CJK Unified Ideographs">CJK</a></small><br>
+      <small>4000</small><br>
+      <i><b>228</b></i></td>
+    <td bgcolor="#EEEEEE"><small><a href="http://en.wikipedia.org/wiki/CJK_Unified_Ideographs" title="CJK Unified Ideographs">CJK</a></small><br>
+      <small>5000</small><br>
+      <i><b>229</b></i></td>
+    <td bgcolor="#EEEEEE"><small><a href="http://en.wikipedia.org/wiki/CJK_Unified_Ideographs" title="CJK Unified Ideographs">CJK</a></small><br>
+      <small>6000</small><br>
+      <i><b>230</b></i></td>
+    <td bgcolor="#EEEEEE"><small><a href="http://en.wikipedia.org/wiki/CJK_Unified_Ideographs" title="CJK Unified Ideographs">CJK</a></small><br>
+      <small>7000</small><br>
+      <i><b>231</b></i></td>
+    <td bgcolor="#EEEEEE"><small><a href="http://en.wikipedia.org/wiki/CJK_Unified_Ideographs" title="CJK Unified Ideographs">CJK</a></small><br>
+      <small>8000</small><br>
+      <i><b>232</b></i></td>
+    <td bgcolor="#EEEEEE"><small><a href="http://en.wikipedia.org/wiki/CJK_Unified_Ideographs" title="CJK Unified Ideographs">CJK</a></small><br>
+      <small>9000</small><br>
+      <i><b>233</b></i></td>
+    <td bgcolor="#EEEEEE"><small>Asian</small><br>
+      <small>A000</small><br>
+      <i><b>234</b></i></td>
+    <td bgcolor="#EEEEEE"><small><a href="http://en.wikipedia.org/wiki/Hangul" title="Hangul">Hangul</a></small><br>
+      <small>B000</small><br>
+      <i><b>235</b></i></td>
+    <td bgcolor="#EEEEEE"><small><a href="http://en.wikipedia.org/wiki/Hangul" title="Hangul">Hangul</a></small><br>
+      <small>C000</small><br>
+      <i><b>236</b></i></td>
+    <td bgcolor="#EEEEEE"><small><a href="http://en.wikipedia.org/wiki/Hangul" title="Hangul">Hangul</a><br>
+      Surr</small><br>
+      <small>D000</small><br>
+      <i><b>237</b></i></td>
+    <td bgcolor="#EEEEEE"><small><a href="http://en.wikipedia.org/wiki/Private_Use_Area" title="Private Use Area" class="mw-redirect">Priv Use</a></small><br>
+      <small>E000</small><br>
+      <i><b>238</b></i></td>
+    <td bgcolor="#EEEEEE"><small>Forms</small><br>
+      <small>F000</small><br>
+      <i><b>239</b></i></td>
+  </tr>
+</table>
+<h4>3. unicode->utf8 convert Formular</h4>
+For CJK set, there is 3-bytes utf8 for a unicode charactor(16-bits).
+<table class="wikitable">
+  <tbody>
+    <tr>
+      <th>Bits</th>
+      <th>Last code point</th>
+      <th>Byte 1</th>
+      <th>Byte 2</th>
+      <th>Byte 3</th>
+      <th>Byte 4</th>
+      <th>Byte 5</th>
+      <th>Byte 6</th>
+    </tr>
+    <tr>
+      <th>&nbsp;&nbsp;7</th>
+      <td>U+007F</td>
+      <td><code>0xxxxxxx</code></td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>U+07FF</td>
+      <td><code>110xxxxx</code></td>
+      <td><code>10xxxxxx</code></td>
+    </tr>
+    <tr style="color:red; size:150%">
+      <th><strong>16</strong></th>
+      <td><strong>U+FFFF</strong></td>
+      <td><strong><code>1110xxxx</code></strong></td>
+      <td><strong><code>10xxxxxx</code></strong></td>
+      <td><strong><code>10xxxxxx</code></strong></td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>U+1FFFFF</td>
+      <td><code>11110xxx</code></td>
+      <td><code>10xxxxxx</code></td>
+      <td><code>10xxxxxx</code></td>
+      <td><code>10xxxxxx</code></td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>U+3FFFFFF</td>
+      <td><code>111110xx</code></td>
+      <td><code>10xxxxxx</code></td>
+      <td><code>10xxxxxx</code></td>
+      <td><code>10xxxxxx</code></td>
+      <td><code>10xxxxxx</code></td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>U+7FFFFFFF</td>
+      <td><code>1111110x</code></td>
+      <td><code>10xxxxxx</code></td>
+      <td><code>10xxxxxx</code></td>
+      <td><code>10xxxxxx</code></td>
+      <td><code>10xxxxxx</code></td>
+      <td><code>10xxxxxx</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>4. example</h4>
+<p>对于汉字‘大', U+5927, unicode 转化为utf-8的步骤如下：</p>
+<pre>
+按照unicode转utf-8的编码规则，汉字使用3字节序列
+所以套用三字节转换公式
+0800 - FFFF 
+1110xxxx 10xxxxxx 10xxxxxx
+其中用x代表的16位使用unicode相应的位来填充
+0x5927转换为2进制0101 1001 0010 0111
+填充到上面公式中的x中变成
+11100101 10100100 10100111
+用16进制表示为E5 A4 A7
+验证方法为：
+在浏览器地址栏中输入javascript:alert(encodeURI('大').replace(/%/g,''))，按回车。
+</pre>
+</body></html>
