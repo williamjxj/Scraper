@@ -47,6 +47,8 @@ sub parse_result
         </a>
         (?:.*?)
         <div\sclass="abstr"
+        (?:.*?)
+        >
         (.*?)	#3.正文
         </div>
     }sgix) {
