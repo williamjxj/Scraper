@@ -1,4 +1,4 @@
-#! /opt/lampp/bin/perl -w
+#! /usr/bin/perl -w
 # 1. 操作contents 表.
 # 2. issue: 不是全部下载,而是每次更新,只下载更新部分!!
 #use DateTime;
@@ -22,7 +22,7 @@ use config;
 use db;
 use food_120v_cn;
 
-sub BEGIN
+BEGIN
 {
 	$SIG{'INT'}  = 'IGNORE';
 	$SIG{'QUIT'} = 'IGNORE';

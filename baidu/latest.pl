@@ -1,4 +1,4 @@
-#! /opt/lampp/bin/perl -w
+#! /usr/bin/perl -w
 # http://bbs.chinaunix.net/thread-364569-1-1.html
 
 use warnings;

@@ -1,4 +1,4 @@
-#! /opt/lampp/bin/perl -w
+#! /usr/bin/perl -w
 
 # 从http://www.baidu.com/search/rss.html获取所有的rss信息，放入baidu_rss表，仪表其他程序根据这些items取得数据。
 use warnings;

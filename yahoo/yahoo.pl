@@ -1,9 +1,10 @@
-#!/opt/lampp/bin/perl -w
+#!/usr/bin/perl -w
 
 use strict;
 use warnings;
 use utf8;
 use encoding 'utf8';
+use lib qq{/home/williamjxj/perl5/lib/perl5/};
 use WWW::Mechanize;
 use Data::Dumper;
 use DBI;
@@ -53,7 +54,7 @@ $mech->submit_form(
 	fields    => { p => $keyword }
 );
 $mech->success or die $mech->response->status_line;
-$mech->save_content('/tmp/yh1.html');
+#$mech->save_content('/tmp/yh1.html');
 # undefined subroutune: print $mech-text();
 # $mech->dump_text();
 # $yh->write_file('yh1.html', $mech->content);

@@ -1,4 +1,4 @@
-#! /opt/lampp/bin/perl -w
+#! /usr/bin/perl -w
 # http://top.baidu.com/
 # windows下无法安装,用 LWP::Simple替代.
 #use XML::RSS::Parser::Lite;
@@ -29,7 +29,6 @@ BEGIN
 	local ($|) = 1;
 	#undef $/;
 }
-
 
 our ( $start_time, $end_time ) = ( 0, 0 );
 $start_time = time;

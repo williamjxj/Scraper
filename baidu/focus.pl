@@ -1,4 +1,4 @@
-#! /opt/lampp/bin/perl -w
+#! /usr/bin/perl -w
 #use utf8;
 #use encoding 'utf8';
 

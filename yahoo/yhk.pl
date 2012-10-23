@@ -1,4 +1,4 @@
-#!/opt/lampp/bin/perl -w
+#!/usr/bin/perl -w
 
 use strict;
 use warnings;
@@ -43,7 +43,7 @@ $mech->submit_form(
 	fields    => { p => $keyword }
 );
 $mech->success or die $mech->response->status_line;
-$mech->save_content(HTML.'hk1.html');
+#$mech->save_content(HTML.'hk1.html');
 # undefined subroutune: print $mech-text();
 # $mech->dump_text();
 # $hk->write_file('hk1.html', $mech->content);

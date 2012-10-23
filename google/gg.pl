@@ -1,9 +1,10 @@
-#!/opt/lampp/bin/perl -w
+#!/usr/bin/perl -w
 
 use warnings;
 use strict;
 use utf8;
 use encoding 'utf8';
+use lib qw(/home/williamjxj/perl5/lib/perl5/);
 use WWW::Mechanize;
 use Data::Dumper;
 use DBI;

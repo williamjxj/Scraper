@@ -1,4 +1,4 @@
-#!/opt/lampp/bin/perl -w
+#!/usr/bin/perl -w
 ##! /cygdrive/c/Perl/bin/perl.exe -w
 #和gg.pl不同的是, 本文件从命令行执行,而不是从php进行调用.
 # 没有输入'查询关键词'参数.

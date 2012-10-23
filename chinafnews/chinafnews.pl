@@ -1,4 +1,4 @@
-#! /opt/lampp/bin/perl -w
+#! /usr/bin/perl -w
 ##! /cygdrive/c/Perl/bin/perl.exe -w
 # 1. 操作contents 表.
 # 2. issue: 不是全部下载,而是每次更新,只下载更新部分!!
@@ -131,7 +131,7 @@ if ($version) {
 ########### 正式 抓取
 
 $mech = WWW::Mechanize->new( autocheck => 0 ) or die $!;
-$mech->timeout( 30 );
+$mech->timeout( 50 );
 
 #用于测试，如果哪个网页出错，可以直接定位，来查找原因。
 if ($aurl) {
@@ -169,7 +169,7 @@ foreach my $li (@{$queue}) {
 	$h->{'item'} = $dbh->quote($li->[1]);
 	$page_url = BASEURL . $li->[2];
 	$num = 0; #将循环计数复位.
-	$news->write_log([$h->{'item_id'}, $h->{'item'}, $page_url], 'Looping:'.__LINE__.':');	
+	# $news->write_log([$h->{'item_id'}, $h->{'item'}, $page_url], 'Looping:'.__LINE__.':');	
 
 LOOP:
 
