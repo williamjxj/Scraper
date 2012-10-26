@@ -1,4 +1,4 @@
-#! /usr/bin/perl -w
+#! /usr/bin/perl
 
 use strict;
 use warnings;
@@ -8,6 +8,7 @@ use WWW::Mechanize;
 use DBI;
 use Encode qw(decode encode);
 use Proc::Daemon;
+
 #use Proc::PID::File;
 use Fcntl;    #sysopen
 use feature qw(say);
@@ -21,11 +22,12 @@ use common;
 
 use constant SURL     => 'http://www.baidu.com';
 use constant DHOME    => '/home/williamjxj/pipes/';
-use constant NP_BAIDU => DHOME.'.baidu';
+use constant NP_BAIDU => DHOME . '.baidu';
 
 BEGIN {
-	unless (-p NP_BAIDU) {
-		if ( system("mknod", NP_BAIDU, "p") && system("mkfifo", NP_BAIDU) ) {
+	unless ( -p NP_BAIDU ) {
+		if ( system( "mknod", NP_BAIDU, "p" ) && system( "mkfifo", NP_BAIDU ) )
+		{
 			die "mk{nod,fifo} NP_BAIDU failed";
 		}
 	}
@@ -39,8 +41,8 @@ BEGIN {
 	undef $/;
 }
 
-
 Proc::Daemon::Init;
+
 # die "Already running!" if Proc::PID::File->running();
 
 # 做好准备工作。
@@ -58,12 +60,11 @@ $mech->timeout(20);
 
 #####################################################
 chdir();
-sysopen( FIFO, NP_BAIDU, O_RDONLY ) or die  "$!";
-my $fh = new FileHandle(DHOME."baidu.log", "a") or die "$!";
+sysopen( FIFO, NP_BAIDU, O_RDONLY ) or die "$!";
+my $fh = new FileHandle( DHOME . "baidu.log", "a" ) or die "$!";
 $fh->autoflush(1);
 
-while( 1 )
-{
+while (1) {
 	my $php_input = <FIFO>;
 	if ($php_input) {
 		my $keyword = $php_input;
