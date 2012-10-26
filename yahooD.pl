@@ -59,7 +59,7 @@ guanzhu: 关注此文, 0-100
 created: 'yahoo'
 =cut
 
-my $h = {
+our $h = {
 	'source'    => $yh->{'dbh'}->quote(SURL),
 	'createdby' => $yh->{'dbh'}->quote( $yh->get_os_stripname(__FILE__) ),
 };
@@ -79,7 +79,7 @@ while (1) {
 		my $keyword = $php_input;
 		print $fh $keyword . "\n";
 		$keyword = decode( "utf-8", $keyword );
-		$h->{'keyword'} = $dbh->quote($keyword);
+		$h->{'keyword'} = $yh->{'dbh'}->quote($keyword);
 
 		$mech->get(SURL);
 		$mech->success or die $mech->response->status_line;
