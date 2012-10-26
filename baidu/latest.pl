@@ -91,7 +91,7 @@ foreach $rd (@{$bd->{'latest'}}) {
 		$flg = 0;
 	}
 	else {
-		$aref = $bd->get_item($xml);	
+		$aref = $bd->get_item1($xml);	
 		$flg = 1;
 	}
 
@@ -124,6 +124,8 @@ foreach $rd (@{$bd->{'latest'}}) {
 
 		$h->{'desc'} = $dbh->quote($t6);
 		$bd->insert_baidu($h, $rd);		
+
+		# delete $h->{$_} for (keys %{$h});
 	}
 }
 	

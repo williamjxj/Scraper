@@ -12,12 +12,34 @@ http://stackoverflow.com/questions/766397/how-can-i-run-a-perl-script-as-a-syste
 use strict;
 use warnings;
 use Proc::Daemon;
+#use Proc::PID::File;
+use FileHandle;
+use Fcntl;
 
 Proc::Daemon::Init;
+#die "Already running!" if Proc::PID::File->running();
 
+my $fh = new FileHandle("/tmp/654321", "a") or die "$!";
+$fh->autoflush(1);
+
+local($|) = 1;
 my $continue = 1;
 $SIG{TERM} = sub { $continue = 0 };
 
+print $fh "aaaaaaaaaaaaaaaaaaaaaaaaaa";
+
+my $np_baidu = '/home/williamjxj/pipes/.baidu';
+sysopen( FIFO, $np_baidu, O_RDONLY ) or die  "$0 is already running";
+
 while ($continue) {
      #do stuff
+	 my $t = <FIFO>;
+	 if ($t) {
+	 	chomp($t);
+		 say $fh $t;
+	 }
 }
+
+close(FIFO);
+$fh->close();
+exit 6;

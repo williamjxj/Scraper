@@ -282,6 +282,57 @@ sub get_non_rss
     return $aref;
 }
 
+sub get_item1
+{
+    my ( $self, $html ) = @_;
+    return unless $html;
+    my $aref;
+	while ($html =~ m {
+		<item>
+		(?:.*?)  #回车换行: \cJ
+		<title>
+		(.*?)  #标题部分
+		</title>
+		(?:.*?)
+		<link>
+		(.*?)  #链接部分
+		</link>
+		(?:.*?)
+		<description>
+		(.*?)  #正文
+		</description>
+		(?:.*?)
+		<pubDate>
+		(.*?)  #生成日期
+		</pubDate>		
+		(?:.*?)
+		<source>
+		(.*?)  #资源
+		</source>
+		(?:.*?)
+		<author>
+		(.*?)  #作者
+		</author>
+		(?:.*?)
+		</item>
+    }sgix) {
+		my ($title, $link, $pubDate, $source, $author, $desc);
+	
+		$title = $self->remove_CDATA($1);
+		$link = $self->remove_CDATA($2);
+		$pubDate = $self->remove_CDATA($4);
+		$source = $self->remove_CDATA($5);
+		$author = $self->remove_CDATA($6);
+		$desc = $self->remove_CDATA($3);
+
+		$pubDate =~ s/T.*$//;
+		$desc =~ s/\s{2,}/&nbsp;/g if ($desc=~m/\s{2,}/);
+	
+		push (@{$aref}, [ $title, $link, $pubDate, $source, $author, $desc ]);
+    }
+    return $aref;
+}
+
 sub get_item
 {
     my ( $self, $html ) = @_;
