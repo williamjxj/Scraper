@@ -21,7 +21,7 @@ use google;
 
 use constant SURL => q{http://www.google.com};
 
-use constant DHOME    => '/home/williamjxj/pipes/';
+use constant DHOME    => '/home/williamjxj/scraper/';
 use constant NP_GOOGLE => DHOME . '.google';
 
 BEGIN {
@@ -36,7 +36,7 @@ BEGIN {
 	$SIG{'TERM'} = 'IGNORE';
 	$SIG{'PIPE'} = 'IGNORE';
 	$SIG{'CHLD'} = 'IGNORE';
-	$ENV{PATH} .= "/home/williamjxj/pipes/:/home/williamjxj/scraper/bin:";
+	$ENV{PATH} .= "/home/williamjxj/scraper/:/home/williamjxj/scraper/bin:";
 	local ($|) = 1;
 	undef $/;
 }
@@ -68,7 +68,7 @@ $mech->timeout(20);
 #####################################################
 chdir();
 sysopen( FIFO, NP_GOOGLE, O_RDONLY ) or die "$!";
-my $fh = new FileHandle( DHOME . "baidu.log", "a" ) or die "$!";
+my $fh = new FileHandle( DHOME . "logs/google.log", "a" ) or die "$!";
 $fh->autoflush(1);
 
 while (1) {
