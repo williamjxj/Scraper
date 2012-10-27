@@ -1,23 +1,17 @@
 #!/bin/bash
 # http://stackoverflow.com/questions/766397/how-can-i-run-a-perl-script-as-a-system-daemon-in-linux
-# baiduD This starts and stops baiduD
 #
-# chkconfig: 2345 12 88
-# description: baiduD is baidu scraper daemon.
-# processname: baiduD
-# pidfile: /var/run/baiduD.pid
-
 # Source function library.
 . /etc/init.d/functions
 
-binary="/home/williamjxj/scraper/baidu/baiduD"
+binary="/home/williamjxj/scraper/baiduD.pl"
 
 [ -x $binary ] || exit 0
 
 RETVAL=0
 
 start() {
-    echo -n "Starting baiduD: "
+    echo -n "Starting baidu Daemon: "
     daemon $binary
     RETVAL=$?
     PID=$!

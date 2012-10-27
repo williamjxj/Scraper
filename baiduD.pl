@@ -52,7 +52,7 @@ $bd->{dbh} = $dbh;
 
 our $h = {
 	'source'    => $dbh->quote(SURL),
-	'createdby' => $dbh->quote('baidu'),
+	'createdby' => $dbh->quote('baiduD'),
 };
 
 my $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
