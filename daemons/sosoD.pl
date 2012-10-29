@@ -61,7 +61,7 @@ my $h = {
 };
 
 my $mech = WWW::Mechanize->new() or die;
-$mech->timeout(20);
+$mech->timeout(30);
 
 #####################################################
 chdir();
@@ -88,24 +88,16 @@ while (1) {
 		);
 		$mech->success or die $mech->response->status_line;
 
-		# $mech->save_content('/tmp/ss1.html');
-		# undefined subroutune: print $mech-text();
-		# $mech->dump_text();
-		# $ss->write_file('ss1.html', $mech->content);
-
 		# 保存查询的url, 上面有字符集, 查询数量等信息.
 		$h->{'author'} = $dbh->quote( $mech->uri()->as_string )
 		  if ( $mech->uri );
 
 		my $t = $ss->strip_result( $mech->content );
 
-		# $ss->write_file('ss2.html', $t);
-
 		my $aoh = $ss->parse_result($t);
 
-		# $ss->write_file('ss3.html', $aoh);
-
 		my $kid = $ss->get_kid_by_keyword($keyword);
+
 		if ($kid) {
 			my ( $rks, $html, $rkey, $rurl, $sql ) = ( [] );
 
