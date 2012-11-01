@@ -2,14 +2,13 @@
 
 use strict;
 use warnings;
-#use utf8;
+use utf8;
 #use encoding 'utf8';
 use WWW::Mechanize;
 use Data::Dumper;
 use CGI qw(:standard);
 use JSON;
 use Encode qw(from_to encode decode);
-use Encode::CN;
 
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
@@ -24,6 +23,7 @@ my $q = CGI->new;
 my $keyword = $q->param('q');
 #encode("utf-8", $keyword);
 #$keyword = decode("euc-cn", "$keyword");
+#$keyword = encode("gbk", decode("utf-8", $keyword));
 
 my $ss = new soso();
 
@@ -38,23 +38,21 @@ $mech->submit_form(
 	fields    => { w => $keyword }
 );
 $mech->success or die $mech->response->status_line;
-$ss->write_file('soso.html', $mech->content);
+#$ss->write_file('soso.html', $mech->content);
 
 my $t = $ss->strip_result( $mech->content );
 
 my $aoh = $ss->parse_result($t);
 
-# print Dumper($aoh);
+print Dumper($aoh);
 
 my $json = JSON->new->allow_nonref;
 
 #my $text = encode_json $aoh;
-$aoh = ['soso.cgi', $keyword, $keyword];
+#$aoh = ['soso.cgi', $keyword, $keyword];
 
-my $text = $json->encode($aoh);
+#my $text = $json->encode($aoh);
 
-print $text;
-
+#print $text;
 
 exit 6;
-
