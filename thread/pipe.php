@@ -14,7 +14,7 @@
   <button type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i>搜索</button>
   <button type="button" class="btn" id="search_button"><i class="icon-search icon-white"></i>查询关键词</button>
 </form>
-<iframe width="640" height="480" frameborder="0" allowfullscreen></iframe>
+<iframe width="640" height="480" frameborder="0" allowfullscreen id="if"></iframe>
 <script type="text/javascript">
 $(function() {
 	$('#search_button').click(function() {
