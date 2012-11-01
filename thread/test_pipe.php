@@ -17,12 +17,12 @@
 <script type="text/javascript">
 $(function() {
 	$('#search_button').click(function() {
-	//	$('#google').load('./fork_gg.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
-	//	$('#baidu').load('./fork_baidu.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
-	//	$('#yahoo').load('./fork_yahoo.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
-	//	$('#soso').load('./fork_soso.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
+	//	$('#google').load('./google.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
+	//	$('#baidu').load('./baidu.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
+	//	$('#yahoo').load('./yahoo.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
+	//	$('#soso').load('./soso.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
 
-	$.getJSON('./fork_gg.cgi', { 'q' : $('#q').val() }, function(data) {
+	$.getJSON('./google.cgi', { 'q' : $('#q').val() }, function(data) {
 		var ary = [];
 		$.each(data, function(key, val) {
 			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
@@ -30,7 +30,7 @@ $(function() {
 		});
 		$('#google').append(ary);
 	});
-	$.getJSON('./fork_yahoo.cgi', { 'q' : $('#q').val() }, function(data) {
+	$.getJSON('./yahoo.cgi', { 'q' : $('#q').val() }, function(data) {
 		var ary = [];
 		$.each(data, function(key, val) {
 			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
@@ -38,10 +38,10 @@ $(function() {
 		});
 		$('#yahoo').append(ary);
 	});
-	$.getJSON('./fork_baidu.cgi', { 'q' : $('#q').val() }, function(data) {
+	$.getJSON('./baidu.cgi', { 'q' : $('#q').val() }, function(data) {
 		$('#baidu').append(data);
 	});
-	$.getJSON('./fork_soso.cgi', { 'q' : $('#q').val() }, function(data) {
+	$.getJSON('./soso.cgi', { 'q' : $('#q').val() }, function(data) {
 		var ary = [];
 		$.each(data, function(key, val) {
 			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
