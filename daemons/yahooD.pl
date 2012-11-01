@@ -24,12 +24,6 @@ use constant DHOME    => '/home/williamjxj/scraper/';
 use constant NP_YAHOO => DHOME . '.yahoo';
 
 BEGIN {
-	if ( $^O eq 'MSWin32' ) {
-		use lib qw(../lib/);
-	}
-	else {
-		use lib qw(/home/williamjxj/scraper/lib/);
-	}
 	unless ( -p NP_YAHOO ) {
 		if ( system( "mknod", NP_YAHOO, "p" ) && system( "mkfifo", NP_YAHOO ) )
 		{
@@ -41,7 +35,7 @@ BEGIN {
 	$SIG{'TERM'} = 'IGNORE';
 	$SIG{'PIPE'} = 'IGNORE';
 	$SIG{'CHLD'} = 'IGNORE';
-	$ENV{PATH} .= "/home/williamjxj/scraper/:/home/williamjxj/scraper/bin:";
+	$ENV{PATH} .= "/home/williamjxj/scraper/:/home/williamjxj/scraper/daemons/:";
 	local ($|) = 1;
 	undef $/;
 }

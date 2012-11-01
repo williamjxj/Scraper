@@ -15,6 +15,9 @@ use lib qq{/home/williamjxj/scraper/lib/};
 use config;
 use common;
 
+binmode(STDIN, ":encoding(utf8)");
+binmode(STDOUT, ":encoding(utf8)");
+
 use constant SURL => 'http://www.baidu.com';
 
 #print "Content-type: text/html; charset=utf-8\n\n";
@@ -42,7 +45,7 @@ my $t = strip_result( $mech->content );
 
 my $aoh = parse_result($t);
 
-#print Dumper($aoh);
+# print Dumper($aoh);
 #print "<br>\n$0<br>\n";
 
 my $json = JSON->new->allow_nonref;
