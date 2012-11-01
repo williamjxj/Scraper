@@ -66,7 +66,7 @@ $mech->timeout(30);
 #####################################################
 chdir();
 sysopen( FIFO, NP_SOSO, O_RDONLY ) or die "$!";
-my $fh = new FileHandle( DHOME . "logs/soso.log", "a" ) or die "$!";
+my $fh = new FileHandle( DHOME . "logs/soso.log", "w" ) or die "$!";
 $fh->autoflush(1);
 
 while (1) {
@@ -80,8 +80,6 @@ while (1) {
 		$mech->get(SURL);
 		$mech->success or die $mech->response->status_line;
 
-		#num=100->10
-		# fields    => { q => $keyword, num => 10 }
 		$mech->submit_form(
 			form_name => 'flpage',
 			fields    => { w => $keyword }

@@ -70,7 +70,7 @@ $mech->timeout(20);
 #####################################################
 chdir();
 sysopen( FIFO, NP_YAHOO, O_RDONLY ) or die "$!";
-my $fh = new FileHandle( DHOME . "logs/yahoo.log", "a" ) or die "$!";
+my $fh = new FileHandle( DHOME . "logs/yahoo.log", "w" ) or die "$!";
 $fh->autoflush(1);
 
 while (1) {
