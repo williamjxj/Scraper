@@ -22,6 +22,7 @@ $(function() {
 	//	$('#yahoo').load('./yahoo.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
 	//	$('#soso').load('./soso.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
 
+/*
 	$.getJSON('./google.cgi', { 'q' : $('#q').val() }, function(data) {
 		var ary = [];
 		$.each(data, function(key, val) {
@@ -38,10 +39,15 @@ $(function() {
 		});
 		$('#yahoo').append(ary);
 	});
+	*/
 	$.getJSON('./baidu.cgi', { 'q' : $('#q').val() }, function(data) {
 		$('#baidu').append(data);
 	});
+	/*
 	$.getJSON('./soso.cgi', { 'q' : $('#q').val() }, function(data) {
+		return;
+		console.log(data);
+		//alert(data);
 		var ary = [];
 		$.each(data, function(key, val) {
 			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
@@ -49,6 +55,7 @@ $(function() {
 		});
 		$('#soso').append(ary);
 	});
+	*/
   });
 });
 </script>
