@@ -55,7 +55,6 @@ my $json = JSON->new->allow_nonref;
 
 my $text = $json->encode($aoh);
 
-print "<br>\n$0<br>\n";
 print $text;
 exit 6;
 
