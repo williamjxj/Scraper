@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use utf8;
+#use utf8;
 #use encoding 'utf8';
 use WWW::Mechanize;
 use Data::Dumper;

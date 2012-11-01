@@ -5,7 +5,7 @@ use warnings;
 use WWW::Mechanize;
 use utf8;
 use encoding 'utf8';
-use CGI;
+use CGI qw(:standard);
 use JSON;
 use Encode qw(decode);
 use Data::Dumper;
@@ -16,7 +16,8 @@ use google;
 
 use constant SURL => q{http://www.google.com};
 
-print "Content-type: text/html; charset=utf-8\n\n";
+#print "Content-type: text/html; charset=utf-8\n\n";
+print header(-charset=>"UTF-8");
 
 my $q = CGI->new;
 my $keyword = $q->param('q');

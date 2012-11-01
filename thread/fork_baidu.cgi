@@ -5,7 +5,7 @@ use warnings;
 use utf8;
 use encoding 'utf8';
 use WWW::Mechanize;
-use CGI;
+use CGI qw(:standard);
 use JSON;
 use Data::Dumper;
 use Encode qw(decode encode);
@@ -17,7 +17,8 @@ use common;
 
 use constant SURL => 'http://www.baidu.com';
 
-print "Content-type: text/html; charset=utf-8\n\n";
+#print "Content-type: text/html; charset=utf-8\n\n";
+print header(-charset=>"UTF-8");
 
 my $q = CGI->new;
 my $keyword = $q->param('q');

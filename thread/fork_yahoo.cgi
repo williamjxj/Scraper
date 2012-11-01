@@ -6,7 +6,7 @@ use utf8;
 use encoding 'utf8';
 use WWW::Mechanize;
 use Data::Dumper;
-use CGI;
+use CGI qw(:standard);
 use JSON;
 use Encode qw(decode);
 
@@ -23,7 +23,8 @@ use yahoo;
 
 use constant SURL => q{http://search.yahoo.com/};
 
-print "Content-type: text/html; charset=utf-8\n\n";
+#print "Content-type: text/html; charset=utf-8\n\n";
+print header(-charset=>"UTF-8");
 
 my $q = CGI->new;
 my $keyword = $q->param('q');

@@ -10,7 +10,7 @@
 <h3>BAIDU</h3><div id="baidu"></div>
 <h3>GOOGLE</h3><div id="google"></div>
 <form class="well form-search" action="<?=$_SERVER['PHP_SELF'];?>" method="get" name="search1">
-  <input type="text" name="q" id="q" class="search-query" style="width:399px" data-provide="typeahead" autocomplete="off" placeholder="请输入关键词" />
+  <input type="text" name="q" id="q" class="search-query" style="width:399px" data-provide="typeahead" autocomplete="off" placeholder="请输入关键词" value="文学城" />
   <button type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i>搜索</button>
   <button type="button" class="btn" id="search_button"><i class="icon-search icon-white"></i>查询关键词</button>
 </form>
