@@ -120,7 +120,7 @@ foreach my $p (@{$aoh}) {
 		$h->{'title'},
 		$h->{'url'},
 		$h->{'author'},
-		$h->{'source'},		
+		$h->{'source'},
 		$h->{'pubdate'},
 		$h->{'keyword'},
 		$h->{'clicks'},

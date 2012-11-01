@@ -88,7 +88,7 @@ if($kid) {
 				now()
 			)
 		};
-		$dbh->do($sql);		
+		$dbh->do($sql);
 	}
 }
 
@@ -103,7 +103,7 @@ foreach my $p (@{$aoh}) {
 
 	$h->{'clicks'} = $ss->generate_random();
 	$h->{'likes'} = $ss->generate_random(100);
-	$h->{'guanzhu'} = $ss->generate_random(100);	
+	$h->{'guanzhu'} = $ss->generate_random(100);
 
 	$sql = qq{ insert ignore into contents(
 		title,

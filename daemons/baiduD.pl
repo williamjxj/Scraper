@@ -61,7 +61,7 @@ $mech->timeout(20);
 #####################################################
 chdir();
 sysopen( FIFO, NP_BAIDU, O_RDONLY ) or die "$!";
-my $fh = new FileHandle( DHOME . "logs/baidu.log", "a" ) or die "$!";
+my $fh = new FileHandle( DHOME . "logs/baidu.log", "w" ) or die "$!";
 $fh->autoflush(1);
 
 while (1) {
