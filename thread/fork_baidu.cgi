@@ -42,12 +42,12 @@ my $t = strip_result( $mech->content );
 my $aoh = parse_result($t);
 
 #print Dumper($aoh);
+#print "<br>\n$0<br>\n";
 
 my $json = JSON->new->allow_nonref;
 
 my $text = $json->encode($aoh);
 
-print "<br>\n$0<br>\n";
 print $text;
 
 exit 8;
