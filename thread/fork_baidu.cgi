@@ -21,10 +21,9 @@ print "Content-type: text/html; charset=utf-8\n\n";
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
-decode("utf-8", $keyword);
+#decode("utf-8", $keyword);
 
 our $bd = new common() or die $!;
-
 
 my $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
 $mech->timeout( 20 );
@@ -42,12 +41,13 @@ my $t = strip_result( $mech->content );
 
 my $aoh = parse_result($t);
 
-print Dumper($aoh);
+#print Dumper($aoh);
 
 my $json = JSON->new->allow_nonref;
 
 my $text = $json->encode($aoh);
 
+print "<br>\n$0<br>\n";
 print $text;
 
 exit 8;

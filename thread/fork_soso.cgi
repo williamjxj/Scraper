@@ -10,24 +10,19 @@ use CGI;
 use JSON;
 use Encode qw(decode);
 
-BEGIN{
-	if ( $^O eq 'MSWin32' ) {
-		use lib qw(../lib/);
-	}
-	else {
-		use lib qw(/home/williamjxj/scraper/lib/);
-	}
-}
+use lib qw(/home/williamjxj/scraper/lib/);
 use config;
-use yahoo;
+use soso;
 
-use constant SURL => q{http://search.yahoo.com/};
+use constant SURL => q{http://www.soso.com};
+
+print "Content-type: text/html; charset=utf-8\n\n";
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
-decode("utf-8", $keyword);
+#decode("utf-8", $keyword);
 
-my $cn = new yahoo();
+my $ss = new soso();
 
 my $mech = WWW::Mechanize->new( ) or die;
 $mech->timeout( 20 );
@@ -36,18 +31,16 @@ $mech->get( SURL );
 $mech->success or die $mech->response->status_line;
 
 $mech->submit_form(
-    form_id => 'sf',
-	fields    => { p => $keyword }
+    form_name => 'flpage',
+	fields    => { w => $keyword }
 );
 $mech->success or die $mech->response->status_line;
 
-$h->{'author'} = $cn->{'dbh'}->quote($mech->uri()->as_string) if($mech->uri);
+my $t = $ss->strip_result( $mech->content );
 
-my $t = $cn->strip_result( $mech->content );
+my $aoh = $ss->parse_result($t);
 
-my $aoh = $cn->parse_result($t);
-
-print Dumper($aoh);
+# print Dumper($aoh);
 
 my $json = JSON->new->allow_nonref;
 
@@ -55,6 +48,7 @@ my $json = JSON->new->allow_nonref;
 
 my $text = $json->encode($aoh);
 
+print "<br>\n$0<br>\n";
 print $text;
 exit 6;
 

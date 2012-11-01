@@ -12,8 +12,10 @@ sub new {
 	my $self = {};
 	# my ( $host, $user, $pass, $dsn ) = ( HOST, USER, PASS, DSN );
 	# $self->{dbh} = DBI->connect( $dsn, $user, $pass, { RaiseError => 1 } );
-	$self->{dbh} = DBI->connect( DSN, USER, PASS, { RaiseError => 1 } );
-	$self->{dbh}->do('SET NAMES "utf8"');
+	if(@args) {
+		$self->{dbh} = DBI->connect( DSN, USER, PASS, { RaiseError => 1 } );
+		$self->{dbh}->do('SET NAMES "utf8"');
+	}
 	bless $self, $type;
 	return $self;
 }
