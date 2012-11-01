@@ -5,7 +5,6 @@
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 </head>
 <body>
-<a href="javacript:;" onclick="return call_pl();">Call Perl </a>
 <h3>SOSO</h3><div id="soso"></div>
 <h3>YAHOO</h3><div id="yahoo"></div>
 <h3>BAIDU</h3><div id="baidu"></div>
@@ -24,7 +23,7 @@ $(function() {
 	//	$('#soso').load('./fork_soso.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
 
 	$.getJSON('./fork_gg.cgi', { 'q' : $('#q').val() }, function(data) {
-		var ary;
+		var ary = [];
 		$.each(data, function(key, val) {
 			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
 			ary.push(t);
@@ -32,7 +31,7 @@ $(function() {
 		$('#google').append(ary);
 	});
 	$.getJSON('./fork_yahoo.cgi', { 'q' : $('#q').val() }, function(data) {
-		var ary;
+		var ary = [];
 		$.each(data, function(key, val) {
 			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
 			ary.push(t);
@@ -43,13 +42,14 @@ $(function() {
 		$('#baidu').append(data);
 	});
 	$.getJSON('./fork_soso.cgi', { 'q' : $('#q').val() }, function(data) {
-		var ary;
+		var ary = [];
 		$.each(data, function(key, val) {
 			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
 			ary.push(t);
 		});
 		$('#soso').append(ary);
 	});
+  });
 });
 </script>
 <?php

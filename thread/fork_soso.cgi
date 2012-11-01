@@ -3,12 +3,13 @@
 use strict;
 use warnings;
 use utf8;
-use encoding 'utf8';
+#use encoding 'utf8';
 use WWW::Mechanize;
 use Data::Dumper;
-use CGI;
+use CGI qw(:standard);
 use JSON;
-use Encode qw(decode);
+use Encode qw(from_to encode decode);
+use Encode::CN;
 
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
@@ -16,11 +17,13 @@ use soso;
 
 use constant SURL => q{http://www.soso.com};
 
-print "Content-type: text/html; charset=utf-8\n\n";
+#print "Content-type: text/html; charset=utf-8\n\n";
+print header(-charset=>"UTF-8");
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
 #decode("utf-8", $keyword);
+#$keyword = decode("euc-cn", "$keyword");
 
 my $ss = new soso();
 
@@ -45,6 +48,7 @@ my $aoh = $ss->parse_result($t);
 my $json = JSON->new->allow_nonref;
 
 #my $text = encode_json $aoh;
+$aoh = ['soso.cgi', $keyword, $keyword];
 
 my $text = $json->encode($aoh);
 
