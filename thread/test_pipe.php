@@ -13,16 +13,44 @@
 <form class="well form-search" action="<?=$_SERVER['PHP_SELF'];?>" method="get" name="search1">
   <input type="text" name="q" id="q" class="search-query" style="width:399px" data-provide="typeahead" autocomplete="off" placeholder="请输入关键词" />
   <button type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i>搜索</button>
+  <button type="button" class="btn" id="search_button"><i class="icon-search icon-white"></i>查询关键词</button>
 </form>
 <script type="text/javascript">
-function call_pl() {
-	// work: $('#pp').load('./pp.php'); 
-	$('#google').load('./fork_gg.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
-	$('#baidu').load('./fork_baidu.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
-	$('#yahoo').load('./fork_yahoo.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
-	$('#soso').load('./fork_soso.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
-	return false;
-}
+$(function() {
+	$('#search_button').click(function() {
+	//	$('#google').load('./fork_gg.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
+	//	$('#baidu').load('./fork_baidu.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
+	//	$('#yahoo').load('./fork_yahoo.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
+	//	$('#soso').load('./fork_soso.cgi', { 'q' : $('#q').val() }, function(data) { console.log(data); });
+
+	$.getJSON('./fork_gg.cgi', { 'q' : $('#q').val() }, function(data) {
+		var ary;
+		$.each(data, function(key, val) {
+			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
+			ary.push(t);
+		});
+		$('#google').append(ary);
+	});
+	$.getJSON('./fork_yahoo.cgi', { 'q' : $('#q').val() }, function(data) {
+		var ary;
+		$.each(data, function(key, val) {
+			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
+			ary.push(t);
+		});
+		$('#yahoo').append(ary);
+	});
+	$.getJSON('./fork_baidu.cgi', { 'q' : $('#q').val() }, function(data) {
+		$('#baidu').append(data);
+	});
+	$.getJSON('./fork_soso.cgi', { 'q' : $('#q').val() }, function(data) {
+		var ary;
+		$.each(data, function(key, val) {
+			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
+			ary.push(t);
+		});
+		$('#soso').append(ary);
+	});
+});
 </script>
 <?php
 if(isset($_GET['qq'])) {
