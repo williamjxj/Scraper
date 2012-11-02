@@ -24,6 +24,7 @@ print header(-charset=>'utf-8');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
+$keyword .= '负面新闻';
 Encode::decode("gbk", $keyword);
 Encode::_utf8_on($keyword);
 # $keyword = Encode::_utf8_on($keyword);
