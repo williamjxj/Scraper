@@ -21,8 +21,7 @@ $(function() {
 		var kw = $('#q').val();
 		//	$('#if').attr('src','http://www.baidu.com/s?ie=utf-8&bs='+kw+'&f=8&rsv_bp=1&rsv_spt=3&wd='+ kw +'&inputT=0');
 
-		//$.getJSON('./baidu.cgi', { 'q' : kw }, function(data) { $('#baidu').append(data); });
-/*
+		$.getJSON('./baidu.cgi', { 'q' : kw }, function(data) { $('#baidu').append(data); });
 	$.getJSON('./google.cgi', { 'q' : kw }, function(data) {
 		var ary = [];
 		$.each(data, function(key, val) {
@@ -31,15 +30,6 @@ $(function() {
 		});
 		$('#google').append(ary);
 	});
-	$.getJSON('./yahoo.cgi', { 'q' : kw }, function(data) {
-		var ary = [];
-		$.each(data, function(key, val) {
-			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
-			ary.push(t);
-		});
-		$('#yahoo').append(ary);
-	});
-	*/
 	$.getJSON('./soso.cgi', { 'q' : kw }, function(data) {
 		var ary = [];
 		$.each(data, function(key, val) {
@@ -47,6 +37,14 @@ $(function() {
 			ary.push(t);
 		});
 		$('#soso').append(ary);
+	});
+	$.getJSON('./yahoo.cgi', { 'q' : kw }, function(data) {
+		var ary = [];
+		$.each(data, function(key, val) {
+			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
+			ary.push(t);
+		});
+		$('#yahoo').append(ary);
 	});
   });
 });

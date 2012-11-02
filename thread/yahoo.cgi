@@ -8,20 +8,13 @@ use WWW::Mechanize;
 use Data::Dumper;
 use CGI qw(:standard);
 use JSON;
-use Encode qw(decode);
+use Encode;
 
-BEGIN{
-	if ( $^O eq 'MSWin32' ) {
-		use lib qw(../lib/);
-	}
-	else {
-		use lib qw(/home/williamjxj/scraper/lib/);
-	}
-}
+use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 use yahoo;
 
-use constant SURL => q{http://search.yahoo.com/};
+use constant SURL => q{http://cn.search.yahoo.com/};
 
 #print "Content-type: text/html; charset=utf-8\n\n";
 print header(-charset=>"UTF-8");
@@ -29,6 +22,7 @@ print header(-charset=>"UTF-8");
 my $q = CGI->new;
 my $keyword = $q->param('q');
 #decode("utf-8", $keyword);
+Encode::_utf8_on($keyword);
 
 my $cn = new yahoo();
 
@@ -39,10 +33,16 @@ $mech->get( SURL );
 $mech->success or die $mech->response->status_line;
 
 $mech->submit_form(
-    form_id => 'sf',
-	fields    => { p => $keyword }
+    form_id => 'sbox1',
+	fields    => {
+		q => $keyword,
+		oq => $keyword,
+		bs => ''
+	}
 );
 $mech->success or die $mech->response->status_line;
+
+#$cn->write_file('yahoo.html', $mech->content);
 
 my $t = $cn->strip_result( $mech->content );
 

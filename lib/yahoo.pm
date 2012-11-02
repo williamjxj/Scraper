@@ -9,10 +9,11 @@ our ( $sth );
 sub new
 {
 	my ( $class, @args ) = @_;
+	my $self;
 	#if @args not set, auto set it true;
 	@args = (1) unless (@args);
-	my $self = $class->SUPER::new(@args);
-
+	# if($args[0] ne 'N') {}
+	$self = $class->SUPER::new(@args);
 	#no need to rebless $self, if parent already blessed: bless $self, $type;
 	return $self;
 }
