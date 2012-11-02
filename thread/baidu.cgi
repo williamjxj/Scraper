@@ -2,30 +2,38 @@
 
 use strict;
 use warnings;
-use utf8;
-use encoding 'utf8';
+#use utf8;
+#use encoding 'utf8';
 use WWW::Mechanize;
 use CGI qw(:standard);
 use JSON;
 use Data::Dumper;
 use Encode qw(from_to decode encode);
 
-#use lib qq{$ENV{HOME}/scraper/lib/};
 use lib qq{/home/williamjxj/scraper/lib/};
 use config;
 use common;
 
-binmode(STDIN, ":encoding(utf8)");
-binmode(STDOUT, ":encoding(utf8)");
+#binmode(STDIN, ":encoding(utf8)");
+#binmode(STDOUT, ":encoding(utf8)");
 
 use constant SURL => 'http://www.baidu.com';
 
-#print "Content-type: text/html; charset=utf-8\n\n";
-print header(-charset=>"UTF-8");
+print header(-charset=>"UTF-8"); #print "Content-type: text/html; charset=utf-8\n\n";
 
 my $q = CGI->new;
+=comment
+foreach my $name ($q->param) {
+	if (  $name =~ m/\_/ ) { next;
+	} else {
+		print "<p> [".$name."]\t=\t[".$q->param($name) . "]</p>\n";
+	}
+}
+=cut
+
 my $keyword = $q->param('q');
-#decode("utf-8", $keyword);
+Encode::decode("gbk", $keyword);
+Encode::_utf8_on($keyword);
 
 our $bd = new common() or die $!;
 
@@ -37,16 +45,20 @@ $mech->success or die $mech->response->status_line;
 
 $mech->submit_form(
     'form_name' => 'f',
-	'fields'    => { wd => $keyword }
+	'fields'    => {
+		wd => $keyword,
+		ie => 'utf-8',
+		'rsv_bp' => 1,
+		'bs' => $keyword
+	}
 );
 $mech->success or die $mech->response->status_line;
+
+# $bd->write_file('bd1.html',$mech->content); #display correctly.
 
 my $t = strip_result( $mech->content );
 
 my $aoh = parse_result($t);
-
-# print Dumper($aoh);
-#print "<br>\n$0<br>\n";
 
 my $json = JSON->new->allow_nonref;
 
@@ -102,7 +114,6 @@ sub parse_result
 {
     my ($html) = @_;
     my $aoh = [];
-
     while ($html =~ m {
     	<table
 		(?:.*?)
@@ -116,6 +127,8 @@ sub parse_result
 		(?:.*?)
 		</table>
     }sgix) {
+	   #$t = $1;
+	   #$t =~ s/<\S[^<>]*(?:>|$)//gs;
        push (@{$aoh}, $1);
     }
     return $aoh;

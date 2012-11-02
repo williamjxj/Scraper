@@ -5,10 +5,8 @@ use warnings;
 #use utf8;
 #use encoding 'gbk';
 use WWW::Mechanize;
-use Data::Dumper;
 use CGI qw(:standard);
 use JSON;
-#use Encode qw(from_to encode decode);
 use Encode;
 
 #binmode(STDIN, ":encoding(utf8)");
@@ -21,15 +19,13 @@ use soso;
 use constant SURL => q{http://www.soso.com};
 
 #print "Content-type: text/html; charset=utf-8\n\n";
-
-print header(-charset=>'gbk');
 #print header(-charset=>'utf-8');
+print header(-charset=>'gbk');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
-#encode("utf-8", $keyword);
-#$keyword = decode("euc-cn", "$keyword");
-#Encode::encode("gbk", $keyword);
+Encode::decode("gbk", $keyword);
+Encode::_utf8_on($keyword);
 
 # $keyword = Encode::_utf8_on($keyword);
 
