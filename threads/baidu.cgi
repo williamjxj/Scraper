@@ -10,7 +10,7 @@ use JSON;
 use Encode qw(decode encode);
 
 #binmode(STDIN, ":encoding(utf8)");
-#binmode(STDOUT, ":encoding(utf8)");
+binmode(STDOUT, ":encoding(utf8)");
 
 use constant SURL => 'http://www.baidu.com';
 

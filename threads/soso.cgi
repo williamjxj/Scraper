@@ -10,7 +10,7 @@ use JSON;
 use Encode;
 
 #binmode(STDIN, ":encoding(utf8)");
-#binmode(STDOUT, ":encoding(gbk)");
+binmode(STDOUT, ":encoding(utf8)");
 
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
