@@ -19,14 +19,13 @@ use soso;
 use constant SURL => q{http://www.soso.com};
 
 #print "Content-type: text/html; charset=utf-8\n\n";
-#print header(-charset=>'utf-8');
-print header(-charset=>'gbk');
+print header(-charset=>'utf-8');
+#print header(-charset=>'gbk');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
 Encode::decode("gbk", $keyword);
 Encode::_utf8_on($keyword);
-
 # $keyword = Encode::_utf8_on($keyword);
 
 my $ss = new soso();
@@ -39,17 +38,17 @@ $mech->success or die $mech->response->status_line;
 
 $mech->submit_form(
     form_name => 'flpage',
-	fields    => { w => $keyword }
+	fields    => { 
+		w => $keyword,
+		pid=> 's.idx',
+		cid=> 's.idx.se'
+	}
 );
 $mech->success or die $mech->response->status_line;
 
-$ss->write_file('soso1.html', $mech->content);
-
+# $ss->write_file('soso1.html', $mech->content);
 #my $html = Encode::decode("gbk", $mech->content);
 my $html = $mech->content;
-#print Dumper($html);
-
-exit;
 
 =comment
 eval {my $str2 = $html; Encode::decode("gbk", $str2, 1)};
@@ -69,9 +68,6 @@ my $t = $ss->strip_result( $html);
 
 my $aoh = $ss->parse_result($t);
 
-print Dumper($aoh);
-
-exit;
 my $json = JSON->new->allow_nonref;
 
 #my $text = encode_json $aoh; #$aoh = ['soso.cgi', $keyword, $keyword];
