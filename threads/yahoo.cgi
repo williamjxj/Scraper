@@ -15,6 +15,7 @@ use constant SURL => q{http://cn.search.yahoo.com/};
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
+$keyword .= ' è´Ÿé¢æ–°é—»';
 Encode::_utf8_on($keyword);
 
 my $mech = WWW::Mechanize->new( ) or die;
@@ -70,15 +71,15 @@ sub parse_result
 		<h3\sclass="title"
 		(?:.*?)
 		href="
-		(.*?)	#1.Á´½ÓµØÖ·
+		(.*?)	#1.ï¿½ï¿½ï¿½Óµï¿½Ö·
 		"
 		(?:.*?)
 		>
-		(.*?)	#2.±êÌâ
+		(.*?)	#2.ï¿½ï¿½ï¿½ï¿½
         </a>
         (?:.*?)
         <div (?:.*?) >
-        (.*?)	#3.ÕýÎÄ
+        (.*?)	#3.ï¿½ï¿½ï¿½ï¿½
 		</div>	
 		(?:.*?)
 		<span\sclass="date">
