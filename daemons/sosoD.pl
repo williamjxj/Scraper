@@ -78,13 +78,14 @@ while (1) {
 		$h->{'keyword'} = $dbh->quote($keyword);
 
 		$mech->get(SURL);
-		$mech->success or die $mech->response->status_line;
+		#$mech->success or die $mech->response->status_line;
+		$mech->success or next;
 
 		$mech->submit_form(
 			form_name => 'flpage',
 			fields    => { w => $keyword }
 		);
-		$mech->success or die $mech->response->status_line;
+		$mech->success or next; #die $mech->response->status_line;
 
 		# 保存查询的url, 上面有字符集, 查询数量等信息.
 		$h->{'author'} = $dbh->quote( $mech->uri()->as_string )
