@@ -8,7 +8,6 @@ use WWW::Mechanize;
 use CGI qw(:standard);
 use JSON;
 use Encode;
-use Data::Dumper;
 
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
