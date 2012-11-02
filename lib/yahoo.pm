@@ -12,7 +12,6 @@ sub new
 	my $self;
 	#if @args not set, auto set it true;
 	@args = (1) unless (@args);
-	# if($args[0] ne 'N') {}
 	$self = $class->SUPER::new(@args);
 	#no need to rebless $self, if parent already blessed: bless $self, $type;
 	return $self;
