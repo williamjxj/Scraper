@@ -15,7 +15,7 @@ use constant SURL => q{http://cn.search.yahoo.com/};
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
-$keyword .= ' 负面新闻';
+# $keyword .= ' 负面新闻';
 Encode::_utf8_on($keyword);
 
 my $mech = WWW::Mechanize->new( ) or die;
