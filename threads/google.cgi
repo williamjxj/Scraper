@@ -19,7 +19,7 @@ print header(-charset=>"UTF-8");
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
-$keyword .= ' 负面新闻';
+# $keyword .= ' 负面新闻';
 Encode::_utf8_on($keyword);
 
 my $gg = new google();
