@@ -18,7 +18,7 @@ print header(-charset=>"UTF-8"); #print "Content-type: text/html; charset=utf-8\
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
-#$keyword .= ' 负面新闻';
+$keyword .= ' 负面新闻';
 Encode::decode("gbk", $keyword);
 Encode::_utf8_on($keyword);
 
