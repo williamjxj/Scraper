@@ -148,6 +148,11 @@ while (1) {
 	}
 }
 
+my @time = localtime(time);
+my $nowdate = sprintf( "%4d-%02d-%02d", $time[5] + 1900, $time[4] + 1, $time[3] );
+my $nowtime = sprintf( " %02d:%02d:%02d", $time[2], $time[1], $time[0] );
+print $fh '[' . $nowdate.$nowtime . "]\n";
+
 close(FIFO);
 $yh->{'dbh'}->disconnect();
 exit 6;

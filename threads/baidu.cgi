@@ -66,6 +66,7 @@ sub parse_result
 {
     my ($html) = @_;
     my $aoh = [];
+	return unless defined $html;
     while ($html =~ m {
     	<table
 		(?:.*?)
