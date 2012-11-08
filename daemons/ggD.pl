@@ -110,6 +110,7 @@ while (1) {
 		if ($kid) {
 			my ( $rks, $html, $rkey, $rurl, $sql ) = ( [] );
 
+			# 可能返回为空，因为没有相关搜索。
 			$html = $gg->strip_related_keywords( $mech->content );
 
 			$rks = $gg->get_related_keywords($html) if $html;
