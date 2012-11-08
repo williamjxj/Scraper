@@ -168,6 +168,10 @@ while (1) {
 	}
 }
 
+# In scalar context, localtime() returns the ctime(3) value:
+my $now = localtime;
+print $fh '['.$now."]\n";
+
 close(FIFO);
 $dbh->disconnect();
 exit 6;
