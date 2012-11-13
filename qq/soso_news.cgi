@@ -43,7 +43,21 @@ $mech->submit_form(
 );
 $mech->success or die $mech->response->status_line;
 
-my $html = strip_result( $mech->content );
+my $html = $mech->content;
+
+eval {my $str2 = $html; Encode::decode("gbk", $str2, 1)};
+print "not gbk: $@\n" if $@;
+
+eval {my $str2 = $html; Encode::decode("utf8", $str2, 1)};
+print "not utf8: $@\n" if $@;
+
+eval {my $str2 = $html; Encode::decode("big5", $str2, 1)};
+print "not big5: $@\n" if $@;
+
+eval {my $str2 = $html; Encode::decode("gb2312", $str2, 1)};
+print "not gb2312: $@\n" if $@;
+
+$html = strip_result( $mech->content );
 
 my $aoh = parse_result($html);
 
