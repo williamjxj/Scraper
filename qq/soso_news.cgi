@@ -22,8 +22,8 @@ print header(-charset=>'utf-8');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
-Encode::decode("gb2312", $keyword);
-#Encode::_utf8_on($keyword);
+Encode::decode("utf-8", $keyword);
+Encode::_utf8_on($keyword);
 
 my $ss = new soso();
 
@@ -35,17 +35,24 @@ $mech->success or die $mech->response->status_line;
 
 $mech->submit_form(
     form_name => 'flpage',
-	fields    => { w => $keyword }
+	fields    => { 
+		ty => 'c',
+		sd => 0,
+		st => 'r',
+		usort => 'on',
+		pid=>'n.search.active',
+		w => $keyword
+	}
 );
 $mech->success or die $mech->response->status_line;
 
-
-$ss->write_file('soso.html', $mech->content);
+# $ss->write_file('soso.html', $mech->content);
 
 #print $mech->content;
 
-#my $t = $ss->strip_result( $mech->content );
-#echo $t;
+my $html = $ss->strip_result( $mech->content );
+
+$t = parse_result($html);
 
 exit 6;
 
@@ -58,7 +65,7 @@ sub strip_result
 	$html =~ m {
 			<div\sid="result"
 			.*?
-			<ol\s*>
+			<ol\sid="result_list">
 			(.*?)	#soso用ol->li来划分每条记录
 			</ol>
 	}six;
@@ -67,7 +74,7 @@ sub strip_result
 
 sub parse_result
 {
-    my ( $self, $html ) = @_;
+    my ( $html ) = @_;
     return unless $html;
     my $aoh = [];    
 	while ($html =~ m {
@@ -95,43 +102,3 @@ sub parse_result
     }
     return $aoh;
 }
-
-
-# 相关搜索。
-sub strip_related_keywords
-{
-	my ( $self, $html ) = @_;
-	$html =~ m{
-		<div
-		(?:.*?)
-		id="rel"
-		.*?
-		>
-		(.*?)
-		<div\sid="bSearch"
-	}six;
-	return $1;
-}
-sub get_related_keywords
-{
-	my ( $self, $html ) = @_;
-	return unless $html;
-	my $aoh;
-	
-	while($html =~ m{
-		<a
-		(?:.*?)
-		href="
-		(.*?)		#链接地址
-		">
-		(.*?)		#关键词
-		</a>
-	}sgix) {
-		my ($t1, $t2) = ($1, $2);
-		push (@{$aoh}, [$t1, $t2]);
-	}
-	return $aoh;
-}
-
-
-1;
