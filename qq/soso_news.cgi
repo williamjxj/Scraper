@@ -4,6 +4,7 @@ use strict;
 use warnings;
 #use utf8;
 #use encoding 'utf-8';
+#use encoding 'gb2312';
 use WWW::Mechanize;
 use CGI qw(:standard);
 use JSON;
@@ -14,20 +15,17 @@ binmode(STDOUT, ":encoding(utf8)");
 
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
-use soso;
 
 use constant SURL => q{http://news.soso.com/};
 
-#print header(-charset=>'gb2312');
 print header(-charset=>'utf-8');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
 
 Encode::decode("gb2312", $keyword);
+#$keyword = encode('gb2312', decode('gb2312', $keyword));
 Encode::_utf8_on($keyword);
-
-my $ss = new soso();
 
 my $mech = WWW::Mechanize->new( ) or die;
 $mech->timeout( 20 );
@@ -39,14 +37,11 @@ $mech->submit_form(
     form_name => 'flpage',
 	fields    => { 
 		ty => 'c',
+		pid=>'n.home.result',
 		w => $keyword
 	}
 );
 $mech->success or die $mech->response->status_line;
-
-$ss->write_file('soso.html', $mech->content);
-
-#print $mech->content;
 
 my $html = strip_result( $mech->content );
 
