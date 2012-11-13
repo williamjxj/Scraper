@@ -8,7 +8,6 @@ use WWW::Mechanize;
 use CGI qw(:standard);
 use JSON;
 use Encode;
-use Data::Dumper;
 
 #binmode(STDIN, ":encoding(utf8)");
 binmode(STDOUT, ":encoding(utf8)");
