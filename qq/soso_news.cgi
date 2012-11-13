@@ -3,13 +3,15 @@
 use strict;
 use warnings;
 #use utf8;
-#use encoding 'gb2312';
+#use encoding 'utf-8';
 use WWW::Mechanize;
 use CGI qw(:standard);
+use JSON;
 use Encode;
+use Data::Dumper;
 
 #binmode(STDIN, ":encoding(utf8)");
-#binmode(STDOUT, ":encoding(gb2312)");
+binmode(STDOUT, ":encoding(utf8)");
 
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
@@ -22,6 +24,7 @@ print header(-charset=>'utf-8');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
+
 Encode::decode("gb2312", $keyword);
 Encode::_utf8_on($keyword);
 
@@ -37,27 +40,24 @@ $mech->submit_form(
     form_name => 'flpage',
 	fields    => { 
 		ty => 'c',
-		sd => 0,
-		st => 'r',
-		usort => 'on',
-		pid=>'n.search.active',
 		w => $keyword
 	}
 );
 $mech->success or die $mech->response->status_line;
 
-# $ss->write_file('soso.html', $mech->content);
+$ss->write_file('soso.html', $mech->content);
 
 #print $mech->content;
 
 my $html = strip_result( $mech->content );
 
+my $aoh = parse_result($html);
 
-$t = parse_result($html);
+my $json = JSON->new->allow_nonref;
 
-print $t;
+print $json->encode($aoh);
+
 exit 6;
-
 
 ###########################
 #
