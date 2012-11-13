@@ -111,7 +111,7 @@ sub write_file {
 	$file = HTML . $file;
 	my $fh = FileHandle->new( $file, "w" );
 	die unless ( defined $fh );
-	binmode($fh, ":encoding(utf8)");
+	#binmode($fh, ":encoding(utf8)");
 	if ( ref $html ) {
 		print $fh Dumper($html);
 	}
