@@ -22,7 +22,7 @@ print header(-charset=>'utf-8');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
-Encode::decode("utf-8", $keyword);
+Encode::decode("gb2312", $keyword);
 Encode::_utf8_on($keyword);
 
 my $ss = new soso();
@@ -50,10 +50,12 @@ $mech->success or die $mech->response->status_line;
 
 #print $mech->content;
 
-my $html = $ss->strip_result( $mech->content );
+my $html = strip_result( $mech->content );
+
 
 $t = parse_result($html);
 
+print $t;
 exit 6;
 
 
@@ -88,17 +90,14 @@ sub parse_result
 		(.*?)	#2.标题
         </a>
         (?:.*?)
-        <p\sclass="ds">
+        <span(?:.*?)>
         (.*?)	#3.正文
-        </p>
+        </span>
         (?:.*?)
-        <cite>
-        (.*?)	#4.日期和网址
-        </cite>
+        </li>
     }sgix) {
-        my ($t1,$t2,$t3,$t4) = ($1,$2,$3,$4);
-        my @url_date = $t4 =~ m/(.*?)(?:\s|-|\.{1,3})(.*)/;
-        push (@{$aoh}, [$t1,$t2,$t3,$url_date[0], $url_date[1]]);
+        my ($t1,$t2,$t3) = ($1,$2,$3);
+        push (@{$aoh}, [$t1,$t2,$t3]);
     }
     return $aoh;
 }
