@@ -30,7 +30,7 @@ $(function() {
 		});
 		$('#google').append(ary);
 	});
-	$.getJSON('./soso.cgi', { 'q' : kw }, function(data) {
+	$.getJSON('/cgi-bin/soso_news.cgi', { 'q' : kw }, function(data) {
 		var ary = [];
 		$.each(data, function(key, val) {
 			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';

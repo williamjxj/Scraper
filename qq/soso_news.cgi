@@ -16,7 +16,7 @@ binmode(STDOUT, ":encoding(utf8)");
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 
-use constant SURL => q{http://www.soso.com/};
+use constant SURL => q{http://www.soso.com};
 
 print header(-charset=>'utf-8');
 
@@ -41,10 +41,6 @@ $mech->success or die $mech->response->status_line;
 $mech->submit_form(
     form_name => 'flpage',
 	fields    => { 
-		ty => 'c',
-		sd => 0,
-		st => 'r',
-		usort => 'on',
 		pid=>'n.home.result',
 		w => $keyword
 	}
