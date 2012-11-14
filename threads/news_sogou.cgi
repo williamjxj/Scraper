@@ -18,6 +18,7 @@ print header(-charset=>'utf-8');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
+$keyword = Encode::decode("gbk", $keyword);
 Encode::_utf8_on($keyword);
 
 my $mech = WWW::Mechanize->new( ) or die;
