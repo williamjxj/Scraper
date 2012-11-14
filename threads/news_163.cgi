@@ -72,7 +72,7 @@ sub parse_result
     return unless $html;
     my $aoh = [];    
   while ($html =~ m {
-    <li
+    <h3
     .*?
     href="
     (.*?) #1.链接地址
@@ -89,6 +89,7 @@ sub parse_result
         </li>
     }sgix) {
         my ($t1,$t2,$t3) = ($1,$2,$3);
+		$t3 =~ s/<nobr.*?<\/nobr>//gi;
         push (@{$aoh}, [$t1,$t2,$t3]);
     }
     return $aoh;

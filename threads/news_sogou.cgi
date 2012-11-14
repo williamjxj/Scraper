@@ -18,8 +18,10 @@ print header(-charset=>'utf-8');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
+
 $keyword = Encode::decode("gbk", $keyword);
 Encode::_utf8_on($keyword);
+#print $keyword; exit;
 
 my $mech = WWW::Mechanize->new( ) or die;
 $mech->timeout( 20 );
@@ -29,7 +31,11 @@ $mech->success or die $mech->response->status_line;
 
 $mech->submit_form(
     form_name => 'searchForm',
-    fields    => { query => $keyword }
+    fields    => {
+		query => $keyword,
+		p => '42040301',
+		mode => 1
+	}
 );
 $mech->success or die $mech->response->status_line;
 
@@ -39,6 +45,7 @@ $fh->autoflush(1);
 $fh->close();
 
 #my $html = Encode::decode("gbk", $mech->content);
+#$html = strip_result($html);
 my $html = strip_result($mech->content);
 
 my $aoh = parse_result($html);
@@ -55,11 +62,11 @@ sub strip_result
 {
   my ( $html ) = @_;
   $html =~ m {
-      <div\sid="result"
-      .*?
-      <ol\sid="result_list">
+      <div\sclass="results"
+	  .*?
+	  >
       (.*?) #soso用ol->li来划分每条记录
-      </ol>
+      <table\sclass="hint"
   }six;
   return $1;
 }
@@ -70,7 +77,7 @@ sub parse_result
     return unless $html;
     my $aoh = [];    
   while ($html =~ m {
-    <li
+    class="pt"
     .*?
     href="
     (.*?) #1.链接地址
@@ -80,13 +87,12 @@ sub parse_result
     (.*?) #2.标题
         </a>
         (?:.*?)
-        <span(?:.*?)>
+        <div\sclass="ft">
         (.*?) #3.正文
-        </span>
-        (?:.*?)
-        </li>
+        </div>
     }sgix) {
         my ($t1,$t2,$t3) = ($1,$2,$3);
+		$t3 =~ s/<a.*?<\/a>//ig;
         push (@{$aoh}, [$t1,$t2,$t3]);
     }
     return $aoh;

@@ -71,7 +71,7 @@ sub strip_result
   $html =~ m {
       <div\sid="result"
       .*?
-      <ol\sid="result_list">
+      <ol.*?>
       (.*?) #soso用ol->li来划分每条记录
       </ol>
   }six;
@@ -94,13 +94,12 @@ sub parse_result
     (.*?) #2.标题
         </a>
         (?:.*?)
-        <span(?:.*?)>
+        </h3>
         (.*?) #3.正文
-        </span>
-        (?:.*?)
         </li>
     }sgix) {
         my ($t1,$t2,$t3) = ($1,$2,$3);
+		$t3 =~ s/<div.*?<\/div>//gi;
         push (@{$aoh}, [$t1,$t2,$t3]);
     }
     return $aoh;
