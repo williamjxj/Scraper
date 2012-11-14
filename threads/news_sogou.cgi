@@ -2,26 +2,35 @@
 
 use strict;
 use warnings;
+#use utf8;
+#use encoding 'utf-8';
+#use encoding 'gb2312';
 use WWW::Mechanize;
-use CGI qw/:standard/;
-use encoding "euc-cn", STDOUT=>'utf-8';
+use CGI qw(:standard);
 use JSON;
 use Encode;
 
+#binmode(STDIN, ":encoding(utf8)");
 binmode(STDOUT, ":encoding(utf8)");
 
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 
-use constant SURL => q{http://news.soso.com/};
+use constant SURL => q{http://www.soso.com};
 
 print header(-charset=>'utf-8');
 
 my $q = CGI->new;
 
 my $keyword = $q->param('q');
+#Encode::decode("gb2312", $keyword);
 
 Encode::_utf8_on($keyword);
+
+#my $octets = decode('gb2312', $keyword);
+#$keyword = Encode::encode("gb2312", decode("utf8", $keyword));
+#$keyword = Encode::decode("utf8", $keyword);
+#my $octets = Encode::encode("gb2312", $keyword);
 
 my $mech = WWW::Mechanize->new( ) or die;
 $mech->timeout( 20 );
@@ -32,15 +41,16 @@ $mech->success or die $mech->response->status_line;
 $mech->submit_form(
     form_name => 'flpage',
   fields    => { 
+    ty => 'c',
+    sd => 0,
+    st => 'r',
+    usort => 'on',
     pid=>'n.home.result',
     w => $keyword
   }
 );
 $mech->success or die $mech->response->status_line;
 
-# use soso;
-# my $ss = new soso();
-# $ss->write_file('soso2.html', $mech->content);
 
 my $html = strip_result( $mech->content );
 

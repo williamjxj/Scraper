@@ -18,14 +18,10 @@ use soso;
 
 use constant SURL => q{http://news.soso.com};
 
-#print "Content-type: text/html; charset=utf-8\n\n";
 print header(-charset=>'utf-8');
-#print header(-charset=>'gbk');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
-#$keyword .= ' 负面新闻';
-Encode::decode("gbk", $keyword);
 Encode::_utf8_on($keyword);
 
 my $ss = new soso();
