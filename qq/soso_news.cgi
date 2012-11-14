@@ -16,16 +16,21 @@ binmode(STDOUT, ":encoding(utf8)");
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 
-use constant SURL => q{http://news.soso.com/};
+use constant SURL => q{http://www.soso.com/};
 
 print header(-charset=>'utf-8');
 
 my $q = CGI->new;
-my $keyword = $q->param('q');
 
-Encode::decode("gb2312", $keyword);
-#$keyword = encode('gb2312', decode('gb2312', $keyword));
+my $keyword = $q->param('q');
+Encode::decode("gbk", $keyword);
+
 Encode::_utf8_on($keyword);
+
+#my $octets = decode('gb2312', $keyword);
+#$keyword = Encode::encode("gb2312", decode("utf8", $keyword));
+#$keyword = Encode::decode("utf8", $keyword);
+#my $octets = Encode::encode("gb2312", $keyword);
 
 my $mech = WWW::Mechanize->new( ) or die;
 $mech->timeout( 20 );
@@ -37,27 +42,17 @@ $mech->submit_form(
     form_name => 'flpage',
 	fields    => { 
 		ty => 'c',
+		sd => 0,
+		st => 'r',
+		usort => 'on',
 		pid=>'n.home.result',
 		w => $keyword
 	}
 );
 $mech->success or die $mech->response->status_line;
 
-my $html = $mech->content;
 
-eval {my $str2 = $html; Encode::decode("gbk", $str2, 1)};
-print "not gbk: $@\n" if $@;
-
-eval {my $str2 = $html; Encode::decode("utf8", $str2, 1)};
-print "not utf8: $@\n" if $@;
-
-eval {my $str2 = $html; Encode::decode("big5", $str2, 1)};
-print "not big5: $@\n" if $@;
-
-eval {my $str2 = $html; Encode::decode("gb2312", $str2, 1)};
-print "not gb2312: $@\n" if $@;
-
-$html = strip_result( $mech->content );
+my $html = strip_result( $mech->content );
 
 my $aoh = parse_result($html);
 
