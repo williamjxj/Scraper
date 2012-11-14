@@ -57,11 +57,11 @@ sub strip_result
 {
   my ( $html ) = @_;
   $html =~ m {
-      <div\sid="result"
+      <ul\sid="results"
       .*?
-      <ol\sid="result_list">
+      >
       (.*?) #soso用ol->li来划分每条记录
-      </ol>
+      </ul>
   }six;
   return $1;
 }
@@ -82,9 +82,9 @@ sub parse_result
     (.*?) #2.标题
         </a>
         (?:.*?)
-        <span(?:.*?)>
+        <p>
         (.*?) #3.正文
-        </span>
+        </p>
         (?:.*?)
         </li>
     }sgix) {
