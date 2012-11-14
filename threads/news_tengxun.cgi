@@ -13,9 +13,6 @@ use Encode;
 #binmode(STDIN, ":encoding(utf8)");
 binmode(STDOUT, ":encoding(utf8)");
 
-use lib qw(/home/williamjxj/scraper/lib/);
-use config;
-
 use constant SURL => q{http://news.soso.com/};
 
 print header(-charset=>'utf-8');
@@ -39,7 +36,7 @@ $mech->get( SURL );
 $mech->success or die $mech->response->status_line;
 
 $mech->submit_form(
-    form_name => 'flpage',
+  form_name => 'flpage',
   fields    => { 
     ty => 'c',
     sd => 0,
@@ -51,7 +48,6 @@ $mech->submit_form(
 );
 $mech->success or die $mech->response->status_line;
 
-
 my $html = strip_result( $mech->content );
 
 my $aoh = parse_result($html);
@@ -60,7 +56,7 @@ my $json = JSON->new->allow_nonref;
 
 print $json->encode($aoh);
 
-exit 6;
+exit 7;
 
 ###########################
 

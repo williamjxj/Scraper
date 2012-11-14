@@ -10,10 +10,7 @@ use Encode;
 
 binmode(STDOUT, ":encoding(utf8)");
 
-use lib qw(/home/williamjxj/scraper/lib/);
-use config;
-
-use constant SURL => q{http://news.soso.com/};
+use constant SURL => q{http://news.youdao.com/};
 
 print header(-charset=>'utf-8');
 
@@ -29,18 +26,16 @@ $mech->timeout( 20 );
 $mech->get( SURL );
 $mech->success or die $mech->response->status_line;
 
+# if form_number is not specified, current-selected form is used.
 $mech->submit_form(
-    form_name => 'flpage',
   fields    => { 
-    pid=>'n.home.result',
-    w => $keyword
+    ue => 'utf8',
+    s => 'byrelevance',
+    q => $keyword
   }
 );
 $mech->success or die $mech->response->status_line;
 
-# use soso;
-# my $ss = new soso();
-# $ss->write_file('soso2.html', $mech->content);
 
 my $html = strip_result( $mech->content );
 
@@ -50,7 +45,7 @@ my $json = JSON->new->allow_nonref;
 
 print $json->encode($aoh);
 
-exit 6;
+exit 9;
 
 ###########################
 #
