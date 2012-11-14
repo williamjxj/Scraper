@@ -19,10 +19,8 @@ print header(-charset=>'utf-8');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
-Encode::decode("gbk", $keyword);
+#Encode::decode("gbk", $keyword);
 Encode::_utf8_on($keyword);
-
-my $ss = new soso();
 
 my $mech = WWW::Mechanize->new( ) or die;
 $mech->timeout( 20 );
@@ -42,6 +40,7 @@ $mech->success or die $mech->response->status_line;
 
 my $html = $mech->content;
 
+my $ss = new soso();
 my $t = $ss->strip_result( $html);
 
 my $aoh = $ss->parse_result($t);

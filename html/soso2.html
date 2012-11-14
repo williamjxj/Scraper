@@ -1,0 +1,479 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=gb2312" />
+		<meta http-equiv="X-UA-Compatible" content="IE=7" />
+		<title>abc - 搜搜新闻</title>
+		<script type="text/javascript">
+			var d0 = new Date();
+			var timePoint = 0;
+			var imgSendTimePoint;
+			function reportSpeed() {
+				var url = "http://isdspeed.qq.com/cgi-bin/r.cgi?flag1=7804&flag2=4&flag3=2&1=" + timePoint;
+				if (Math.random() < 0.1) {
+					imgSendTimePoint = new Image();
+					imgSendTimePoint.src = url;
+				}
+			}
+		</script>
+		<link rel="stylesheet" type="text/css" href="http://cache.soso.com/css/s_base_4.css" />
+<link rel="stylesheet" type="text/css" href="http://cache.soso.com/img/zixun/zx20120202.css" />	</head>
+	<body>
+		<div id="s_page">
+			<div id="s_header">
+	<div id="s_nav">
+		<ul id="s_bar">
+			<li class="channel_change"><a href="http://www.soso.com/q?sc=web&amp;ie=utf-8&amp;sd=0&amp;w=" onclick="return tp(this);">网页</a></li>
+			<li class="channel_change"><a href="http://www.soso.com/q?sc=img&amp;ie=utf-8&amp;w=" onclick="return tp(this);">图片</a></li>
+			<li class="channel_change"><a href="http://video.soso.com/search/?sc=vid&amp;ie=utf-8&amp;w=" onclick="return tp(this);">视频</a></li>
+			<li class="channel_change"><a href="http://music.soso.com/music.cgi?sc=mus&amp;ie=utf-8&amp;w=" onclick="return tp(this);">音乐</a></li>
+			<li class="channel_change"><a href="http://wenwen.soso.com/z/SearchSolved.e?sp=S" onclick="return tp(this);">问问</a></li>
+			<li><strong><a href="/?pid=n.result.home.bar" class="active">新闻</a></strong></li>
+			<li class="channel_change"><a href="http://map.soso.com/?pid=news.map&amp;ie=utf-8&amp;w=" onclick="return tp(this);">地图</a></li>
+			<li class="channel_change"><a href="http://www.soso.com/more.shtml?w=" onclick="return tp(this);">更多&raquo;</a></li>
+		</ul>
+		<ul id="s_user">
+        </ul>
+	</div>
+	<div id="s_search">
+		<h1 id="s_logo"><a href="/?pid=n.result.home.logo" id="head_front" title="到搜搜新闻首页"></a></h1>
+		<form name="flpage" action="/n.q" method="get" id="smart_img_form" >
+			<input type="hidden" name="ty" value="c" />
+			<input type="hidden" name="sd" value="0" />
+			<input type="hidden" name="st" value="r" />
+			<input type="hidden" name="usort" value="on" />
+			<input type="hidden" name="interval" value="" />
+			<input type="hidden" name="pid" value="n.search.active" />
+			<div class="s_search_form">
+				<input type="text" name="w" value="abc" maxlength="100" id="smart_input" class="search_input smart_input-noauto" />
+				<input value="搜 索" class="search_button" type="submit" />
+			</div>
+		</form>
+	</div>
+    <script type="text/javascript" src="/js/logo_polling.js"></script>
+</div>			<div id="s_main" keyword="abc" dirCode="0" time="1352855100" commentpos="0">
+				<div id="sNum">
+		搜索到约98955项结果
+	</div>				<div id="result_wrap">
+					<!--filter-->
+					<div id="filter" style="display:block" ss_c="news.show.cf">
+	<ul>
+		<li class="channel_change"><a href="http://www.soso.com/q?ch=news.cf.web&pid=news.cf&sd=0&sc=web&ie=utf-8&w=" onclick="this.href+=encodeURIComponent(document.flpage.w.value);">网页结果</a></li>
+		<li class="channel_change"><a href="http://image.soso.com/q?ch=news.cf.pic&pid=news.cf&sc=img&ie=utf-8&w=" onclick="this.href+=encodeURIComponent(document.flpage.w.value);">图片</a></li>
+		<li class="channel_change"><a href="http://video.soso.com/search/?ch=news.cf.vid&pid=news.cf&sc=video&ie=utf-8&w=" onclick="this.href+=encodeURIComponent(document.flpage.w.value);">视频</a></li>
+		<li><strong>新闻</strong></li>
+	</ul>
+	<ul>
+				<li><strong>全文</strong></li>
+		<li><a href="/n.q?w=abc&ty=t&pid=n.result.type.t&sd=0&st=r&qc=1&usort=on&interval=&ch=n.search.active">标题</a></li>
+		<li><a href="/n.q?w=abc&ty=p&pid=n.result.type.p&sd=0&st=r&qc=1&usort=on&interval=&ch=n.search.active" >图片新闻</a></li>
+			</ul>
+	<ul>
+				<li class="time_sort_li"><strong>全部时间</strong></li>
+		<li class="time_sort_li"><a href="/n.q?w=abc&pid=n.result.time.h&ty=c&sd=1&st=r&qc=1&usort=on&ch=n.search.active" >一小时内</a></li>
+		<li class="time_sort_li"><a href="/n.q?w=abc&pid=n.result.time.d&ty=c&sd=2&st=r&qc=1&usort=on&ch=n.search.active">一天内</a></li>
+		<li class="time_sort_li"><a href="/n.q?w=abc&pid=n.result.time.w&ty=c&sd=3&st=r&qc=1&usort=on&ch=n.search.active">一周内</a></li>
+		<li class="time_sort_li"><a href="/n.q?w=abc&pid=n.result.time.m&ty=c&sd=4&st=r&qc=1&usort=on&ch=n.search.active">一月内</a></li>
+        <li>
+            <a class="user_define_time" href="javascript:void(0);" id="user_define">自定义日期范围</a>
+            <ul class="customTime" style="display:none;">
+                <li><label>从：</label><input type="text" class="customTinp" value="" id="user_define_time1"></li>
+                <li><label>到：</label><input type="text" class="customTinp" value="" id="user_define_time2"></li>
+                <li><label>&nbsp;</label><input type="button" value="搜索" class="customTbtn" ch="n.search.active" id="user_define_search"></li>
+            </ul>
+        </li>
+			</ul>
+    <ul>
+                    <li><strong>打开个性化</strong></li>
+            <li><a href="/n.q?pid=n.result.personalized.c&&ty=c&sd=0&w=abc&st=r&qc=1&usort=off&interval=&ch=n.search.active">关闭个性化</a></li>
+            </ul>
+	<ul>
+                                <li id="sort_default"><strong>默认排序</strong></li>
+            <li id="sort_time"><a href="/n.q?pid=n.result.sort.t&ty=c&sd=0&w=abc&st=t&qc=1&usort=on&interval=&ch=n.search.active">按时间排序</a></li>
+                        <li id="sort_defined"><a href="javascript:void(0);">自定义排序</a></li>
+        	</ul>
+</div>					<!--result-->
+					<div id="result_right">
+						<div id="result">
+							<div id="filterControl" class="fHid"></div>
+							<dl class="customSort" id="customSort" style="display:none;">
+    <dt class="sortTit">自定义排序</dt>
+    <dd class="sortCon">
+        <div class="sortRelated">相关度优先</div>
+        <div class="sortLength"><div title="拖动调整新闻排序" class="sortControl" pos="0" style="left: 0px;"></div></div>
+        <div class="sortTime">时间优先</div>
+    </dd>
+    <dd title="关闭自定义排序" class="sortClose">关闭</dd>
+</dl>
+<a href="javascript:void(0);" class="latestNews" id="latestNewsTips" style="display:none"></a>
+														<!--result list-->
+                            <div class="liBg"></div>
+							<ol id="result_list">
+																								                                    								        <li id="9843169847507035754-res-li" adjust="">
+                                                                        <div class="image">
+																	<h3 id="9843169847507035754"><a href="http://news.china-ef.com/20121114/357474.html" id="9843169847507035754-title" onclick="send_click_info(this.href);reportQQLog(0,9843169847507035754, 1);pr_get(this.href,'ftx.click.result','1','news');" target="_blank" ><em>ABC</em>童装2012秋冬装《学院风格》橱窗秀</a></h3>
+									<div class="pic"><a href="http://news.china-ef.com/20121114/357474.html" onclick="reportQQLog(0,9843169847507035754, 1);pr_get(this.href,'ftx.click.result.singlepic','1','news');" target="_blank"><img src="http://image.news.soso.com/a/14/02/8705486862240217.jpg" id="9843169847507035754-image" style="width:150px;height:102px;"></a></div>                                    									    <span class="res_abstract su" id="9843169847507035754-content"><em>ABC</em>童装2012秋冬装《学院风格》橱窗秀 <em>ABC</em>秉持“因为爱”的品牌文化精神，以“帮助中国少年儿童健康成长”为己任;...</span>&nbsp;&nbsp;&nbsp;
+                                    									<div class="result_summary"><span class="preview" md="9843169847507035754" tit="&lt;em&gt;ABC&lt;/em&gt;童装2012秋冬装《学院风格》橱窗秀" lk="http%3A%2F%2Fnews.china-ef.com%2F20121114%2F357474.html" pos="1"><a class="yl">预览</a></span>&nbsp;&nbsp;<span class="summaryshare" id="9843169847507035754-share"><span onfocus="blur();"><a class="yl sharenode">分享<span
+                                    class="shareArr">&#9660;</span></a></span></span>
+									</div>
+									<div class="info"><cite id="9843169847507035754-site">中国品牌服装网</cite>&nbsp;&nbsp;20分钟前&nbsp;&nbsp;</div>
+								                                    </div>
+                                								</li>
+								                                    
+                                
+                                
+																								                                    								        <li id="4455449381756607664-res-li">
+                                    																	<h3 id="4455449381756607664"><a href="http://economy.gmw.cn/2012-11/13/content_5658509.htm" id="4455449381756607664-title" onclick="send_click_info(this.href);reportQQLog(0,4455449381756607664, 2);pr_get(this.href,'ftx.click.result','2','news');" target="_blank" ><em>ABC</em>资讯网发展路线 以真诚赢天下</a></h3>
+									                                    									    <span class="res_abstract su" id="4455449381756607664-content">以后<em>ABC</em> 资讯网可能会推广更多的固定广告。在这里我们有必要告诉玩家的是，我们的广告商一定是本网鉴定信誉毫无稳定的老牌公司。<em>ABC</em> 资讯网的未来将一直贯彻“以真诚赢天下”的发展路线。我们为玩家准备了行业诈骗预防中心，这个栏目主要文章...</span>&nbsp;&nbsp;&nbsp;
+                                    									<div class="result_summary"><span class="preview" md="4455449381756607664" tit="&lt;em&gt;ABC&lt;/em&gt;资讯网发展路线 以真诚赢天下" lk="http%3A%2F%2Feconomy.gmw.cn%2F2012-11%2F13%2Fcontent_5658509.htm" pos="2"><a class="yl">预览</a></span>&nbsp;&nbsp;<span class="summaryshare" id="4455449381756607664-share"><span onfocus="blur();"><a class="yl sharenode">分享<span
+                                    class="shareArr">&#9660;</span></a></span></span>
+									</div>
+									<div class="info"><cite id="4455449381756607664-site">光明网</cite>&nbsp;&nbsp;21小时前&nbsp;&nbsp;</div>
+																</li>
+								                                    
+                                
+                                
+																								                                    								        <li id="14964313937846648285-res-li" adjust="">
+                                                                        <div class="image">
+																	<h3 id="14964313937846648285"><a href="http://ent.xinmin.cn/2012/11/13/17157181.html" id="14964313937846648285-title" onclick="send_click_info(this.href);reportQQLog(0,14964313937846648285, 3);pr_get(this.href,'ftx.click.result','3','news');" target="_blank" >口碑新剧《音乐之乡》获全季预订 <em>ABC</em>力挺到底</a></h3>
+									<div class="pic"><a href="http://ent.xinmin.cn/2012/11/13/17157181.html" onclick="reportQQLog(0,14964313937846648285, 3);pr_get(this.href,'ftx.click.result.singlepic','3','news');" target="_blank"><img src="http://image.news.soso.com/a/18/18/4843334678053816.jpg" id="14964313937846648285-image" style="width:150px;height:79px;"></a></div>                                    									    <span class="res_abstract su" id="14964313937846648285-content"><em>ABC</em>对于《音乐之乡》力挺态度明确，从前期宣传到后期预订都全力以赴 时光网讯 随着越来越多剧集获得全季预订，...</span>&nbsp;&nbsp;&nbsp;
+                                    									<div class="result_summary"><span class="preview" md="14964313937846648285" tit="口碑新剧《音乐之乡》获全季预订 &lt;em&gt;ABC&lt;/em&gt;力挺到底" lk="http%3A%2F%2Fent.xinmin.cn%2F2012%2F11%2F13%2F17157181.html" pos="3"><a class="yl">预览</a></span>&nbsp;&nbsp;<span class="summaryshare" id="14964313937846648285-share"><span onfocus="blur();"><a class="yl sharenode">分享<span
+                                    class="shareArr">&#9660;</span></a></span></span>
+									</div>
+									<div class="info"><cite id="14964313937846648285-site">新民网</cite>&nbsp;&nbsp;22小时前&nbsp;&nbsp;<a class="O" href="/rel?pid=n.result.more&ty=s&simiid=2649307641300045430" target="_blank">2家媒体报道</a></div>
+								                                    </div>
+                                								</li>
+								                                    
+                                
+                                
+																								                                    								        <li id="8877492658915406116-res-li" adjust="">
+                                                                        <div class="image">
+																	<h3 id="8877492658915406116"><a href="http://news.china-ef.com/20121113/357369.html" id="8877492658915406116-title" onclick="send_click_info(this.href);reportQQLog(0,8877492658915406116, 4);pr_get(this.href,'ftx.click.result','4','news');" target="_blank" >打造儿童鞋服卖场标准样板街拍<em>ABC</em>童装丽水旗舰店</a></h3>
+									<div class="pic"><a href="http://news.china-ef.com/20121113/357369.html" onclick="reportQQLog(0,8877492658915406116, 4);pr_get(this.href,'ftx.click.result.singlepic','4','news');" target="_blank"><img src="http://image.news.soso.com/a/11/04/7106329138684983.jpg" id="8877492658915406116-image" style="width:150px;height:119px;"></a></div>                                    									    <span class="res_abstract su" id="8877492658915406116-content">这就是<em>ABC</em>童装位于浙江省丽水市继光街的第四代终端旗舰店<em>ABC</em>品牌丽水旗舰店。在小编看来，这间店无论是从店铺形象、...</span>&nbsp;&nbsp;&nbsp;
+                                    									<div class="result_summary"><span class="preview" md="8877492658915406116" tit="打造儿童鞋服卖场标准样板街拍&lt;em&gt;ABC&lt;/em&gt;童装丽水旗舰店" lk="http%3A%2F%2Fnews.china-ef.com%2F20121113%2F357369.html" pos="4"><a class="yl">预览</a></span>&nbsp;&nbsp;<span class="summaryshare" id="8877492658915406116-share"><span onfocus="blur();"><a class="yl sharenode">分享<span
+                                    class="shareArr">&#9660;</span></a></span></span>
+									</div>
+									<div class="info"><cite id="8877492658915406116-site">中国品牌服装网</cite>&nbsp;&nbsp;18小时前&nbsp;&nbsp;<a class="O" href="/rel?pid=n.result.more&ty=s&simiid=9567390795957199592" target="_blank">4家媒体报道</a></div>
+								                                    </div>
+                                								</li>
+								                                    
+                                
+                                
+																								                                    								        <li id="10012089311603956898-res-li">
+                                    																	<h3 id="10012089311603956898"><a href="http://www.ce.cn/culture/gd/201211/12/t20121112_23838269.shtml" id="10012089311603956898-title" onclick="send_click_info(this.href);reportQQLog(0,10012089311603956898, 5);pr_get(this.href,'ftx.click.result','5','news');" target="_blank" >收费电子报前景乐观 美国<em>ABC</em>协会公布统计数据</a></h3>
+									                                    									    <span class="res_abstract su" id="10012089311603956898-content">日前，美国调查报纸及杂志发行数量的团体<em>ABC</em>协会，公布了其掌握的美国各报社今年4月至9月的发行数量，其中包括收费电子报。数据显示，位于首位的《华尔街日报》发行量达到229万份，同比增长9.4%。位列第三的《纽约时报》发行量增长了40%。...</span>&nbsp;&nbsp;&nbsp;
+                                    									<div class="result_summary"><span class="preview" md="10012089311603956898" tit="收费电子报前景乐观 美国&lt;em&gt;ABC&lt;/em&gt;协会公布统计数据" lk="http%3A%2F%2Fwww.ce.cn%2Fculture%2Fgd%2F201211%2F12%2Ft20121112_23838269.shtml" pos="5"><a class="yl">预览</a></span>&nbsp;&nbsp;<span class="summaryshare" id="10012089311603956898-share"><span onfocus="blur();"><a class="yl sharenode">分享<span
+                                    class="shareArr">&#9660;</span></a></span></span>
+									</div>
+									<div class="info"><cite id="10012089311603956898-site">中国经济网</cite>&nbsp;&nbsp;11-12 02:47&nbsp;&nbsp;<a class="O" href="/rel?pid=n.result.more&ty=s&simiid=4263992982321065828" target="_blank">18家媒体报道</a></div>
+																</li>
+								                                    
+                                
+                                
+																								                                    								        <li id="7968471637273678633-res-li" adjust="">
+                                                                        <div class="image">
+																	<h3 id="7968471637273678633"><a href="http://baby.qq.com/a/20121102/000015.htm" id="7968471637273678633-title" onclick="send_click_info(this.href);reportQQLog(0,7968471637273678633, 6);pr_get(this.href,'ftx.click.result','6','news');" target="_blank" >温馨十月，美梦洛城<em>ABC</em>俱乐部活动进行中</a></h3>
+									<div class="pic"><a href="http://baby.qq.com/a/20121102/000015.htm" onclick="reportQQLog(0,7968471637273678633, 6);pr_get(this.href,'ftx.click.result.singlepic','6','news');" target="_blank"><img src="http://image.news.soso.com/a/26/74/031342125912140.jpg" id="7968471637273678633-image" style="width:150px;height:91px;"></a></div>                                    									    <span class="res_abstract su" id="7968471637273678633-content">10月28日,位于北京佳酩汇法式餐厅，美梦洛城<em>ABC</em>俱乐部北京联谊会正式举行，会场气氛热烈、温馨，来自美梦洛城香水湾的赴...</span>&nbsp;&nbsp;&nbsp;
+                                    									<div class="result_summary"><span class="preview" md="7968471637273678633" tit="温馨十月，美梦洛城&lt;em&gt;ABC&lt;/em&gt;俱乐部活动进行中" lk="http%3A%2F%2Fbaby.qq.com%2Fa%2F20121102%2F000015.htm" pos="6"><a class="yl">预览</a></span>&nbsp;&nbsp;<span class="summaryshare" id="7968471637273678633-share"><span onfocus="blur();"><a class="yl sharenode">分享<span
+                                    class="shareArr">&#9660;</span></a></span></span>
+									</div>
+									<div class="info"><cite id="7968471637273678633-site">腾讯网</cite>&nbsp;&nbsp;11-01 17:03&nbsp;&nbsp;<a class="O" href="/rel?pid=n.result.more&ty=s&simiid=14584205938854763006" target="_blank">8家媒体报道</a></div>
+								                                    </div>
+                                								</li>
+								                                    
+                                
+                                
+																								                                    								        <li id="5033251722921789447-res-li">
+                                    																	<h3 id="5033251722921789447"><a href="http://roll.sohu.com/20121101/n356382713.shtml" id="5033251722921789447-title" onclick="send_click_info(this.href);reportQQLog(0,5033251722921789447, 7);pr_get(this.href,'ftx.click.result','7','news');" target="_blank" >另类中的另类？<em>ABC</em>的美臀style(组图)</a></h3>
+									                                    									    <span class="res_abstract su" id="5033251722921789447-content">这也被近日在网上大热的<em>ABC</em>卫生巾广告所证实。在卫生巾广告铺天盖地轰炸消费者眼球之时，<em>ABC</em>大胆创新，用不同的青春阳光的女性臀部，结合女性衣食住行等不同的场景画面，吸引观众眼球，将<em>ABC</em>品牌给女人带来的5c清新、舒适、快乐、自信、...</span>&nbsp;&nbsp;&nbsp;
+                                    									<div class="result_summary"><span class="preview" md="5033251722921789447" tit="另类中的另类？&lt;em&gt;ABC&lt;/em&gt;的美臀style(组图)" lk="http%3A%2F%2Froll.sohu.com%2F20121101%2Fn356382713.shtml" pos="7"><a class="yl">预览</a></span>&nbsp;&nbsp;<span class="summaryshare" id="5033251722921789447-share"><span onfocus="blur();"><a class="yl sharenode">分享<span
+                                    class="shareArr">&#9660;</span></a></span></span>
+									</div>
+									<div class="info"><cite id="5033251722921789447-site">搜狐网</cite>&nbsp;&nbsp;11-01 15:23&nbsp;&nbsp;<a class="O" href="/rel?pid=n.result.more&ty=s&simiid=3332649406470550117" target="_blank">2家媒体报道</a></div>
+																</li>
+								                                    
+                                
+                                
+																								                                    								        <li id="10722000142007713173-res-li" adjust="">
+                                                                        <div class="image">
+																	<h3 id="10722000142007713173"><a href="http://roll.sohu.com/20121105/n356729767.shtml" id="10722000142007713173-title" onclick="send_click_info(this.href);reportQQLog(0,10722000142007713173, 8);pr_get(this.href,'ftx.click.result','8','news');" target="_blank" ><em>ABC</em>2012冬季新款 演绎时尚经典(组图)</a></h3>
+									<div class="pic"><a href="http://roll.sohu.com/20121105/n356729767.shtml" onclick="reportQQLog(0,10722000142007713173, 8);pr_get(this.href,'ftx.click.result.singlepic','8','news');" target="_blank"><img src="http://image.news.soso.com/a/22/02/868415472777510.jpg" id="10722000142007713173-image" style="width:119px;height:150px;"></a></div>                                    									    <span class="res_abstract su" id="10722000142007713173-content"><em>ABC</em>2012冬季潮流新品，与简约、时尚搭档，将跳跃的色彩以单色、拼色的形式自然展示，把繁复的设计融入简约的款式当中，...</span>&nbsp;&nbsp;&nbsp;
+                                    									<div class="result_summary"><span class="preview" md="10722000142007713173" tit="&lt;em&gt;ABC&lt;/em&gt;2012冬季新款 演绎时尚经典(组图)" lk="http%3A%2F%2Froll.sohu.com%2F20121105%2Fn356729767.shtml" pos="8"><a class="yl">预览</a></span>&nbsp;&nbsp;<span class="summaryshare" id="10722000142007713173-share"><span onfocus="blur();"><a class="yl sharenode">分享<span
+                                    class="shareArr">&#9660;</span></a></span></span>
+									</div>
+									<div class="info"><cite id="10722000142007713173-site">搜狐网</cite>&nbsp;&nbsp;11-05 09:43&nbsp;&nbsp;<a class="O" href="/rel?pid=n.result.more&ty=s&simiid=4627471466896736012" target="_blank">19家媒体报道</a></div>
+								                                    </div>
+                                								</li>
+								                                    
+                                
+                                
+																								                                    								        <li id="17696963466689495578-res-li" adjust="">
+                                                                        <div class="image">
+																	<h3 id="17696963466689495578"><a href="http://discovery.163.com/12/1029/09/8EVMDCA1000125LI.html" id="17696963466689495578-title" onclick="send_click_info(this.href);reportQQLog(0,17696963466689495578, 9);pr_get(this.href,'ftx.click.result','9','news');" target="_blank" >日本数学家称证明<em>ABC</em>猜想 论文几乎无人能懂</a></h3>
+									<div class="pic"><a href="http://discovery.163.com/12/1029/09/8EVMDCA1000125LI.html" onclick="reportQQLog(0,17696963466689495578, 9);pr_get(this.href,'ftx.click.result.singlepic','9','news');" target="_blank"><img src="http://image.news.soso.com/a/80/82/064284998954317.jpg" id="17696963466689495578-image" style="width:150px;height:100px;"></a></div>                                    									    <span class="res_abstract su" id="17696963466689495578-content">摘 要 倘若你在数学文献中看到一个以“<em>ABC</em>”命名的猜想<em>ABC</em>猜想，千万不要以为那是一个“入门”级别的猜想。...</span>&nbsp;&nbsp;&nbsp;
+                                    									<div class="result_summary"><span class="preview" md="17696963466689495578" tit="日本数学家称证明&lt;em&gt;ABC&lt;/em&gt;猜想 论文几乎无人能懂" lk="http%3A%2F%2Fdiscovery.163.com%2F12%2F1029%2F09%2F8EVMDCA1000125LI.html" pos="9"><a class="yl">预览</a></span>&nbsp;&nbsp;<span class="summaryshare" id="17696963466689495578-share"><span onfocus="blur();"><a class="yl sharenode">分享<span
+                                    class="shareArr">&#9660;</span></a></span></span>
+									</div>
+									<div class="info"><cite id="17696963466689495578-site">网易</cite>&nbsp;&nbsp;10-26 10:00&nbsp;&nbsp;<a class="O" href="/rel?pid=n.result.more&ty=s&simiid=4824558557706489049" target="_blank">2家媒体报道</a></div>
+								                                    </div>
+                                								</li>
+								                                    
+                                
+                                
+																								                                    								        <li id="15774649665276604345-res-li">
+                                    																	<h3 id="15774649665276604345"><a href="http://roll.sohu.com/20121103/n356533884.shtml" id="15774649665276604345-title" onclick="send_click_info(this.href);reportQQLog(0,15774649665276604345, 10);pr_get(this.href,'ftx.click.result','10','news');" target="_blank" >让孩子乐观的<em>ABC</em>法则</a></h3>
+									                                    									    <span class="res_abstract su" id="15774649665276604345-content">时间长了不去正确引导和疏解还可能造成孩子心理不成熟和不稳定，多表现为偏激或心情多变等。父母们怎样才能让孩子们变得乐观起来似乎可以尝试学习乐观的认知技能<em>ABC</em>法则。(Adversity)代表负面、不好的事件；B(Belief)代表负面事件发生时内心...</span>&nbsp;&nbsp;&nbsp;
+                                    									<div class="result_summary"><span class="preview" md="15774649665276604345" tit="让孩子乐观的&lt;em&gt;ABC&lt;/em&gt;法则" lk="http%3A%2F%2Froll.sohu.com%2F20121103%2Fn356533884.shtml" pos="10"><a class="yl">预览</a></span>&nbsp;&nbsp;<span class="summaryshare" id="15774649665276604345-share"><span onfocus="blur();"><a class="yl sharenode">分享<span
+                                    class="shareArr">&#9660;</span></a></span></span>
+									</div>
+									<div class="info"><cite id="15774649665276604345-site">搜狐网</cite>&nbsp;&nbsp;11-03 07:25&nbsp;&nbsp;<a class="O" href="/rel?pid=n.result.more&ty=s&simiid=11683269276951451530" target="_blank">2家媒体报道</a></div>
+																</li>
+								                                    
+                                
+                                
+															</ol>
+							<!--page-->
+							<div id="page"><div class="pg" id="pg_list"><span class="current">1</span><a href='/n.q?pid=n.ftx.page&amp;ch=n.search.active&amp;ty=c&amp;w=abc&amp;sd=0&st=r&qc=1&interval=&usort=on&pg=2'>2</a><a href='/n.q?pid=n.ftx.page&amp;ch=n.search.active&amp;ty=c&amp;w=abc&amp;sd=0&st=r&qc=1&interval=&usort=on&pg=3'>3</a><a href='/n.q?pid=n.ftx.page&amp;ch=n.search.active&amp;ty=c&amp;w=abc&amp;sd=0&st=r&qc=1&interval=&usort=on&pg=4'>4</a><a href='/n.q?pid=n.ftx.page&amp;ch=n.search.active&amp;ty=c&amp;w=abc&amp;sd=0&st=r&qc=1&interval=&usort=on&pg=5'>5</a><a href='/n.q?pid=n.ftx.page&amp;ch=n.search.active&amp;ty=c&amp;w=abc&amp;sd=0&st=r&qc=1&interval=&usort=on&pg=6'>6</a><a href='/n.q?pid=n.ftx.page&amp;ch=n.search.active&amp;ty=c&amp;w=abc&amp;sd=0&st=r&qc=1&interval=&usort=on&pg=7'>7</a><a href='/n.q?pid=n.ftx.page&amp;ch=n.search.active&amp;ty=c&amp;w=abc&amp;sd=0&st=r&qc=1&interval=&usort=on&pg=8'>8</a><a href='/n.q?pid=n.ftx.page&amp;ch=n.search.active&amp;ty=c&amp;w=abc&amp;sd=0&st=r&qc=1&interval=&usort=on&pg=9'>9</a><a href='/n.q?pid=n.ftx.page&amp;ch=n.search.active&amp;ty=c&amp;w=abc&amp;sd=0&st=r&qc=1&interval=&usort=on&pg=10'>10</a><a href='/n.q?pid=n.ftx.page&amp;ch=n.search.active&amp;ty=c&amp;w=abc&amp;sd=0&st=r&qc=1&interval=&usort=on&pg=2' class='next'>下一页></a></div></div>
+						</div>
+						<div id="result_side">
+	<div class="tNews" style="display:none" id="right_tcomment_area">
+		<h3 class="tTit">
+		</h3>
+				<a href="javascript:;" class="toggleOl" id="mBlogToggle">收起&uarr;</a>
+		<ol id="result_ol">
+				</ol>
+        <div class="tSayPop rtPop" style="left:43px;top:143px;display:none;" id="right_tcomment_zhuan_div"><span class="arr" style="margin-right:38px;"></span><div class="tbox_click_noclose"><h5 class="tbox_click_noclose">转发此微博到：</h5><p><span class="tQQ right_tcomment_zhuan_qq">&nbsp;</span><a target="_blank" type="qq" class="right_tcomment_zhuan_qq" href="javascript:;">腾讯微博</a>&nbsp;&nbsp;<span class="tSohu right_tcomment_zhuan_sohu">&nbsp;</span><a target="_blank" class="right_tcomment_zhuan_sohu" href="javascript:;">搜狐微博</a></p></div></div>
+	</div>
+
+	<div class="eNews" style="display:none">
+        <h3 class="tTit"><em>abc</em>新闻追踪</h3>
+        <a href="javascript:;" class="toggleOl" id="chartToggle">收起&uarr;</a>
+        <!--小图表区域开始-->
+        <div class="eChart">
+            <div class="eChartImg" id="chartImage"></div>
+            <div class="eChartDot" id="chartDot"></div>
+            <div class="eAxis" id="chartTime"></div>
+            <div class="eYt">报道数</div>
+        </div>
+        <!--小图表区域结束-->
+        <ol id="chartNews">
+        </ol>
+    </div>
+
+		<div class="interest" style="display:none">如果您的新闻站点没有被收录，<br />请立刻<a href="/newsjoin.html" target="_blank">申请加入</a></div>
+			<!--订阅开始-->
+	<div class="interest" style="padding-top:12px; display:none;" >
+		<span class="dy">&nbsp;</span><a href="javascript:void(0);" onClick="pr_get(this.href,'n.click.rssopen','','news');return false;" class="dytoggle">订阅 "<em>abc</em>" 的新闻结果</a>
+		<ul class="drop_dymenu">
+			<li><a href="http://vdap.soso.com/rss?w=abc&kd=n&sd=0&nu=20&src=-12" onClick="pr_get(this.href,'n.click.rss','','news');" target="_blank">查看RSS地址</a></li>
+			<li><a href="http://my.soso.com/keysub/index/jump/key/abc" onClick="pr_get(this.href,'n.click.rsssoso','','news');" target="_blank"><cite class="rss_soso">&nbsp;</cite>订阅到搜搜个人中心</a></li>
+			<li><a href="http://mail.qq.com/cgi-bin/feed?u=http://vdap.soso.com/rss?w=abc&kd=n&sd=0&nu=20&src=-12" onClick="pr_get(this.href,'n.click.rssqqmail','','news');" target="_blank"><cite class="rss_qqmain">&nbsp;</cite>订阅到QQ邮箱</a></li>
+			<li><a href="http://fusion.google.com/add?feedurl=http%3A%2F%2Fvdap.soso.com%2Frss%3Fw%3Dabc%26kd%3Dn%26sd%3D0%26nu%3D20%26src%3D-12" onClick="pr_get(this.href,'n.click.rssgooglereader','','news');" target="_blank"><cite class="rss_google">&nbsp;</cite>订阅到Google Reader</a></li>
+			<li><a href="http://reader.youdao.com/b.do?url=http%3A%2F%2Fvdap.soso.com%2Frss%3Fw%3Dabc%26kd%3Dn%26sd%3D0%26nu%3D20%26src%3D-12" onClick="pr_get(this.href,'n.click.rssyoudao','','news');" target="_blank"><cite class="rss_yd">&nbsp;</cite>订阅到有道</a></li>
+			<li><a href="http://www.zhuaxia.com/add_channel.php?url=http%3A%2F%2Fvdap.soso.com%2Frss%3Fw%3Dabc%26kd%3Dn%26sd%3D0%26nu%3D20%26src%3D-12" onClick="pr_get(this.href,'n.click.rsszhuaxia','','news');" target="_blank"><cite class="rss_zx">&nbsp;</cite>订阅到抓虾</a></li>
+			<li><a href="http://www.xianguo.com/subscribe.php?url=http%3A%2F%2Fvdap.soso.com%2Frss%3Fw%3Dabc%26kd%3Dn%26sd%3D0%26nu%3D20%26src%3D-12" onClick="pr_get(this.href,'n.click.rssxianguo','','news');" target="_blank"><cite class="rss_xg">&nbsp;</cite>订阅到鲜果</a></li>
+		</ul>
+	</div>
+	<!--订阅结束-->
+	</div>					</div>
+				</div>
+				<!--relatedSearch-->
+				  
+<div class="interrelated_search" ss_c="news.show.rs" id="relatedSearch">
+	<table>
+		<tr>
+			<th rowspan="2">相关搜索：</th>
+                          <td><a href="/n.q?w=%C6%B7%C5%C6%20abc&pid=n.result.r.hint&ch=n.search.active&ty=c&sd=0&st=r&interval=" onclick="pr_get(this.href,'news.click.rs','0','news');">品牌 abc</a></td>
+									              <td><a href="/n.q?w=%D3%C3%C6%B7%20abc&pid=n.result.r.hint&ch=n.search.active&ty=c&sd=0&st=r&interval=" onclick="pr_get(this.href,'news.click.rs','0','news');">用品 abc</a></td>
+									              <td><a href="/n.q?w=%B6%F9%CD%AF%20abc&pid=n.result.r.hint&ch=n.search.active&ty=c&sd=0&st=r&interval=" onclick="pr_get(this.href,'news.click.rs','0','news');">儿童 abc</a></td>
+									              <td><a href="/n.q?w=%D6%C7%C4%DCabc&pid=n.result.r.hint&ch=n.search.active&ty=c&sd=0&st=r&interval=" onclick="pr_get(this.href,'news.click.rs','0','news');">智能abc</a></td>
+									              <td><a href="/n.q?w=abc%D6%D0%B9%FA%C5%A9%D2%B5%D2%F8%D0%D0&pid=n.result.r.hint&ch=n.search.active&ty=c&sd=0&st=r&interval=" onclick="pr_get(this.href,'news.click.rs','0','news');">abc中国农业银行</a></td>
+			         </tr>
+			<tr>						              <td><a href="/n.q?w=%D6%C7%C4%DCabc%CA%E4%C8%EB%B7%A8&pid=n.result.r.hint&ch=n.search.active&ty=c&sd=0&st=r&interval=" onclick="pr_get(this.href,'news.click.rs','0','news');">智能abc输入法</a></td>
+									              <td><a href="/n.q?w=abc%B6%F9%B8%E8&pid=n.result.r.hint&ch=n.search.active&ty=c&sd=0&st=r&interval=" onclick="pr_get(this.href,'news.click.rs','0','news');">abc儿歌</a></td>
+									              <td><a href="/n.q?w=abc%CA%C7%CA%B2%C3%B4%D2%E2%CB%BC&pid=n.result.r.hint&ch=n.search.active&ty=c&sd=0&st=r&interval=" onclick="pr_get(this.href,'news.click.rs','0','news');">abc是什么意思</a></td>
+									              <td><a href="/n.q?w=abc%CE%C0%C9%FA%BD%ED&pid=n.result.r.hint&ch=n.search.active&ty=c&sd=0&st=r&interval=" onclick="pr_get(this.href,'news.click.rs','0','news');">abc卫生巾</a></td>
+									              <td><a href="/n.q?w=abc%CA%E4%C8%EB%B7%A8%CF%C2%D4%D8&pid=n.result.r.hint&ch=n.search.active&ty=c&sd=0&st=r&interval=" onclick="pr_get(this.href,'news.click.rs','0','news');">abc输入法下载</a></td>
+											</tr>
+	</table>
+</div>
+				<!--bottom_search-->
+				<div class="s_bottom">
+	<div class="s_search_form">
+		<form name="flso" action="/n.q">
+			<input type="hidden" name="ty" value="c" />
+			<input type="hidden" name="sd" value="0" />
+			<input type="hidden" name="pid" value="n.search.active" />
+			<input type="hidden" name="st" value="r" />
+			<input type="hidden" name="usort" value="on" />
+			<input type="hidden" name="interval" value="" />
+			<input type="text"  name="w" value="abc" maxlength="100" id="smart_input" class="search_input" size="43" />
+			<input class="search_button" type="submit" value="搜 索" />
+		</form>
+	</div>
+</div>			</div>
+			<!--footer-->
+			<div id="s_footer">
+	<ul id="s_service">
+        <li><a href="http://support.qq.com/portal/discuss_pdt/455_1.html " target="_blank">提意见</a></li>
+    </ul>
+	<p id="s_copyright">Copyright &copy; 1998 &ndash; 2012 Tencent. All Rights Reserved.</p>
+    <div id="shadow" style="display:none;"></div><div id="login_div" style="display:none;"><iframe id="login_iframe" name="login_iframe" frameborder="0"></iframe></div>
+</div>		</div>
+		<div id="prv_mod" class="preview_cont">
+			<div id="view1" class="content" style="left:280px;top:0px;width:530px;">
+				<div id="stat1" class="cont1">
+					<div class="cont3">
+						<div class="title">
+							<a id="close_prv" class="title_close">关闭</a>
+							<a id="pre_tit" class="title_a" style="" target="_blank" href=""></a>
+						</div>
+						<div id="view_content1" class="cont2" style="height:360px;"></div>
+					</div>
+                    <div class="shad"><div class="o1 w1"></div><div class="o2 w2"></div><div class="o3 w3"></div><div class="o4 w4"></div><div class="o5 w5"></div></div>
+                    <div class="shadT"><div class="o1 h1"></div><div class="o2 h2"></div><div class="o3 h3"></div><div          class="o4 h4"></div><div class="o5 h5"></div></div>
+				</div>
+			</div>
+            <div id="previewArrow" class="previewArrow"></div>
+		</div>
+		<div id="shadow"></div>
+<div class="eFloat" id="eFloatFtxChart">
+	<div class="eFloatTit"><span class="eAE">D</span>《日本地震》福岛核电长20公里范围被划为警戒区…</div>
+    <a href="javacript:void(0);" class="eFloatPrev">上一页</a>
+    <a href="javacript:void(0);" class="eFloatNext">下一页</a>
+    <div class="eFloatClose">关闭</div>
+    <div class="eFloatCon">
+    	<!--大图表区域开始-->
+        <div class="eChart eBig float_eChart">
+            <div class="eChartImg" id="floatChartImg"></div>
+            <div class="eChartDot" id="floatChartDot">
+            </div>
+            <div class="eAxis" id="floatChartTime">
+            </div>
+            <div class="eYt">报道数</div>
+            <ul class="eTxt" id="floatChartTxt"></ul>
+        </div>
+        <!--大图表区域结束-->
+        <div class="eArticle">
+        </div>
+    </div>
+</div>		<span class="footer_js">
+            <script type="text/javascript">
+                ftx_mdString = '9843169847507035754::10553958316216374917-4455449381756607664::12034042959006261019-14964313937846648285::2649307641300045430-8877492658915406116::9567390795957199592-10012089311603956898::4263992982321065828-7968471637273678633::14584205938854763006-5033251722921789447::3332649406470550117-10722000142007713173::4627471466896736012-17696963466689495578::4824558557706489049-15774649665276604345::11683269276951451530'; 
+            </script>
+		    <script type="text/javascript" src="/js/sosobase_1_0.js"></script>
+<script type="text/javascript" src="/js/ajax.js"></script>
+<script type="text/javascript" src="/js/cookie.js"></script>
+<script type="text/javascript" src="/js/login.js"></script>
+
+<script type="text/javascript" src="http://cache.soso.com/30d/js/common/jquery_1_3_2_plus_1.js"></script>
+<script type="text/javascript" src="http://cache.soso.com/news/js/jquery.livequery.js"></script>
+
+<script type="text/javascript" src="/js/slide.js"></script>
+<script type="text/javascript" src="/js/news_smartbox_dev.js"></script>
+<script type="text/javascript" src="/js/filter_dev.js"></script>
+
+<script type="text/javascript" src="/js/chart/excanvas.js"></script>
+<script type="text/javascript" src="/js/chart/chart.js"></script>
+<script type="text/javascript" src="/js/chart/canvaschartpainter.js"></script>
+
+<script type="text/javascript" src="/js/fx-source.js"></script>
+<script type="text/javascript" src="/js/dynamic.js"></script>
+<script type="text/javascript" src="/js/ftx_box.js"></script>
+<script type="text/javascript" src="/js/ftx_right_dev.js"></script>
+<script type="text/javascript" src="/js/preview_dev.js"></script>
+
+<script type="text/javascript" src="http://cache.soso.com/js/pr_get.js"></script>
+<script type="text/javascript" src="http://cache.soso.com/js/an.js"></script>
+<script type="text/javascript" src="http://pingjs.qq.com/ping.js"></script>			<script type="text/javascript">
+				$(function() {
+					var query_input = encodeURIComponent(document.flpage.w.value);
+						timePoint = new Date() - d0;
+					reportSpeed();
+					$('body').click(function() {
+						$('.drop_dymenu').hide();
+					});
+					$('.dytoggle').click(function(event) {
+						$('.drop_dymenu').show();
+						event.stopPropagation();
+					});
+					$(".image").each(function() {
+						if ($(this).height() < $(this).find("img").outerHeight(true)) {
+							$(this).css("height", '78px');
+						}
+					});
+					
+					$(".one").each(function() {
+						$img = $(this).find("img");
+						$span = $(this).find("a").find("span");
+						$pic_height = $img.height() + $span.height();
+						if ($(this).height() < $pic_height) {
+							$(this).css("height", $pic_height - 13);
+						}
+					});
+                    /*micro blog area*/
+					var cookieOptions = {};
+					cookieOptions.expires = 2*365;
+					cookieOptions.path = '/';
+					cookieOptions.domain = 'soso.com';
+					cookieOptions.secure = false;
+					var $tNewsCon = $('.tNews ol');
+					var $toggleOl = $('#mBlogToggle');
+					var $tImgs = $('.tImgs')
+					$toggleOl.click(function() {
+						if ($tNewsCon.is(":visible")) {
+							$tNewsCon.hide();
+							$toggleOl.html('展开&darr;');
+							$.cookie('tsosoContent', "hidden", cookieOptions);
+						} else {
+							$tNewsCon.show();
+							$toggleOl.html('收起&uarr;');
+							$.cookie('tsosoContent', "show", cookieOptions);
+						}
+					});
+					if ($.browser.msie && parseInt($.browser.version) <= 6) {
+						//微博图片大小ie最小宽限制
+						var $tImgsW = $tImgs.width();
+						if ($tImgsW > 160) {
+							$tImgs.css('width',160);
+						}
+					}
+
+                    /*smart box*/
+                    function getUrlParam(name) {
+                        var urlParts = window.location.href.split('?');
+                        var parts = newsResult.gvar.urlPath.split('&');
+                        for(var i=0; i<parts.length; i++) {
+                            var maps = parts[i].split('=');
+                            if(maps[0]==name) {
+                                return maps[1];
+                            }
+                        }
+                        return '';
+                    }
+                    window.Smartbox({0: {from: "/smart.php?w=", nodesc: 1, callback:function(word,hint) {
+                        var ty = getUrlParam('ty');
+                        var sd = getUrlParam('sd');
+                        var st = getUrlParam('st');
+                        var usort = getUrlParam('usort');
+                        var interval = getUrlParam('interval');
+                        var url = 'http://' + window.location.host + '/n.q?ch=n.smartbox&pid=n.smartbox&w=' + realEscape(word) + '&ty=' + ty +  '&sd=' + sd + '&st=' + st;
+                        if( usort != '' ) {
+                            url = url + '&usort=' + usort;
+                        }
+                        if( interval != '' ) {
+                            url = url + '&interval=' + interval;
+                        }
+                        window.location.href = url;
+                    }}});
+                    $('#smart_img_form').submit(function() {
+                        var tmpImg=new Image();
+                        tmpImg.src='http://v.dr.soso.com?_pid=news&button_click=1';
+                        return true;
+                    });
+				});				
+			</script>
+		</span>
+        <!--searchid: 196a8b8ac9b04e8b45c8d5472f638b68-->
+	</body>
+</html>

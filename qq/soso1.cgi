@@ -3,7 +3,8 @@
 use strict;
 use warnings;
 use WWW::Mechanize;
-use CGI qw(:standard);
+use CGI qw/:standard/;
+use encoding "euc-cn", STDOUT=>'utf-8';
 use JSON;
 use Encode;
 
@@ -12,7 +13,7 @@ binmode(STDOUT, ":encoding(utf8)");
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 
-use constant SURL => q{http://www.soso.com};
+use constant SURL => q{http://news.soso.com/};
 
 print header(-charset=>'utf-8');
 
@@ -31,16 +32,15 @@ $mech->success or die $mech->response->status_line;
 $mech->submit_form(
     form_name => 'flpage',
 	fields    => { 
-		ty => 'c',
-		sd => 0,
-		st => 'r',
-		usort => 'on',
 		pid=>'n.home.result',
 		w => $keyword
 	}
 );
 $mech->success or die $mech->response->status_line;
 
+# use soso;
+# my $ss = new soso();
+# $ss->write_file('soso2.html', $mech->content);
 
 my $html = strip_result( $mech->content );
 
