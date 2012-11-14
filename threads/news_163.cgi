@@ -36,6 +36,10 @@ $mech->submit_form(
 );
 $mech->success or die $mech->response->status_line;
 
+my $fh = FileHandle->new('../html/t1.html', "w" );
+print $fh $mech->content;
+$fh->autoflush(1);
+$fh->close();
 
 my $html = strip_result( $mech->content );
 

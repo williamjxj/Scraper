@@ -12,7 +12,7 @@ use Encode;
 #binmode(STDIN, ":encoding(utf8)");
 binmode(STDOUT, ":encoding(utf8)");
 
-use constant SURL => q{http://news.sosgou.com};
+use constant SURL => q{http://news.sogou.com};
 
 print header(-charset=>'utf-8');
 
@@ -31,6 +31,11 @@ $mech->submit_form(
     fields    => { query => $keyword }
 );
 $mech->success or die $mech->response->status_line;
+
+my $fh = FileHandle->new('../html/t2.html', "w" );
+print $fh $mech->content;
+$fh->autoflush(1);
+$fh->close();
 
 #my $html = Encode::decode("gbk", $mech->content);
 my $html = strip_result($mech->content);
