@@ -13,7 +13,7 @@ use Encode;
 
 binmode(STDOUT, ":utf8");
 
-use constant SURL => q{http://news.soso.com/};
+use constant SURL => 'http://news.soso.com/';
 
 print header(-charset=>'utf-8');
 
@@ -38,12 +38,14 @@ $mech->timeout( 20 );
 $mech->get( SURL );
 $mech->success or die $mech->response->status_line;
 
+$keyword = '王波';
+
 $mech->submit_form(
   form_name => 'flpage',
   fields    => { 
     ty => 'c',
     pid=>'n.home.result',
-    w => '王波'
+    w => $keyword
   }
 );
 $mech->success or die $mech->response->status_line;
