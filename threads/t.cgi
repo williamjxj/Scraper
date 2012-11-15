@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Encode;
 use CGI qw/:standard/;
+use URI::Escape;
 
 print header(-charset=>'utf-8');
 
@@ -27,13 +28,13 @@ print uri_escape($str);
 print "<br>\n";
 
 # 从utf8编码得到中文
-$utf8_str = uri_escape("收");
+my $utf8_str = uri_escape("收");
 print uri_unescape($str);
 print "<br>\n";
 
 # 从中文得到perl unicode
 utf8::decode($str);
-@chars = split //, $str;
+my @chars = split //, $str;
 foreach (@chars) {
     printf "%x ", ord($_);
 }
