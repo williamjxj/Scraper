@@ -18,7 +18,7 @@ use soso;
 use constant SURL => q{http://www.soso.com};
 
 die "usage: $0 keyword" if ($#ARGV != 0);
-our $keyword = decode("utf-8", $ARGV[0]);
+our $keyword = decode("utf8", $ARGV[0]);
 
 our $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
 

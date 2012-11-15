@@ -20,7 +20,7 @@ use constant SURL => 'http://www.baidu.com';
 
 die "usage: $0 keyword" if ($#ARGV != 0);
 our $keyword = $ARGV[0];
-$keyword = decode("utf-8", $keyword);
+$keyword = decode("utf8", $keyword);
 
 our $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
 

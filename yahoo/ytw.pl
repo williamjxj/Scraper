@@ -23,7 +23,7 @@ use yahoo;
 use constant SURL => q{http://tw.search.yahoo.com/};
 
 die "usage: $0 keyword" if ($#ARGV != 0);
-our $keyword = decode("utf-8", $ARGV[0]);
+our $keyword = decode("utf8", $ARGV[0]);
 
 my $tw = new yahoo();
 

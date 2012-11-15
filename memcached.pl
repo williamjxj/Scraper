@@ -21,7 +21,7 @@ my $cmdline = join(' ', @ARGV);
 #utf8::decode($cmdline);
 #print $cmdline . "\n";
 
-$cmdline = decode("utf-8", $cmdline);
+$cmdline = decode("utf8", $cmdline);
 my $include = $cache->get($cmdline);
 print Dumper($include);
 

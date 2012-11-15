@@ -76,7 +76,7 @@ while (1) {
 	if ($php_input) {
 		my $keyword = $php_input;
 		print $fh $keyword . "\n";
-		$keyword = decode( "utf-8", $keyword );
+		$keyword = decode( "utf8", $keyword );
 		$h->{'keyword'} = $dbh->quote($keyword);
 
 		$mech->get(SURL);

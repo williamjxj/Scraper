@@ -91,7 +91,7 @@ foreach $rd (@{$bd->{'focus'}}) {
 		$t5 = decode("euc-cn", "$t5");
 		$t6 = decode("euc-cn", "$t6");
 	
-		# $h->{'title'} = encode("utf-8", decode("gb2312", $aref->[0])); 
+		# $h->{'title'} = encode("utf8", decode("gb2312", $aref->[0])); 
 		# if (is_utf8($h->{'title'}, Encode::FB_CROAK)) { print "UTF-8\n"; }
 		# $h->{'title'} = encode_utf8(decode("gb2312", $aref->[0]));
 		# $t3 = from_to($t3, 'gb2312', 'utf8');
