@@ -74,6 +74,8 @@ sub write_log {
 	my ( $self, $msg, $varname ) = @_;
 	return unless $msg;
 
+binmode $self->{log}, ':utf8';
+
 	if ( ref $msg ) {
 		$Data::Dumper::Varname = $varname || __PACKAGE__;
 		print { $self->{log} } Dumper($msg);
