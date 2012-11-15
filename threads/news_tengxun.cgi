@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-#use utf8;
+use utf8;
 #use encoding 'utf-8';
 #use encoding 'gb2312';
 #use encoding "euc-cn";
@@ -43,7 +43,7 @@ $mech->submit_form(
   fields    => { 
     ty => 'c',
     pid=>'n.home.result',
-    w => Encode::encode("euc-cn", "$keyword")
+    w => '王波'
   }
 );
 $mech->success or die $mech->response->status_line;
