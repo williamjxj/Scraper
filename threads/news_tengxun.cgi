@@ -2,9 +2,9 @@
 
 use strict;
 use warnings;
-#use utf8;
+use utf8;
 #use encoding 'utf-8';
-use encoding 'gb2312';
+#use encoding 'gb2312';
 #use encoding "euc-cn";
 use WWW::Mechanize;
 use CGI qw(:standard);
@@ -13,7 +13,7 @@ use Encode;
 
 binmode(STDOUT, ":utf8");
 
-use constant SURL => 'http://news.soso.com/';
+use constant SURL => q{http://news.soso.com/};
 
 print header(-charset=>'utf-8');
 
@@ -38,17 +38,24 @@ $mech->timeout( 20 );
 $mech->get( SURL );
 $mech->success or die $mech->response->status_line;
 
-$keyword = '王波';
-
 $mech->submit_form(
   form_name => 'flpage',
   fields    => { 
     ty => 'c',
     pid=>'n.home.result',
-    w => $keyword
+    w => '王波'
   }
 );
 $mech->success or die $mech->response->status_line;
+
+=comment
+my $fh = FileHandle->new('../html/t3.html', "w" );
+#binmode($fh, ":encoding(utf8)");
+binmode($fh, ":utf8");
+print $fh $mech->content;
+$fh->autoflush(1);
+$fh->close();
+=cut
 
 my $html = strip_result( $mech->content );
 
