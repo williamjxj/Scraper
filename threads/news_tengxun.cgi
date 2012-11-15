@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use utf8;
+#use utf8;
 #use encoding 'utf-8';
 #use encoding 'gb2312';
 #use encoding "euc-cn";
@@ -19,7 +19,18 @@ print header(-charset=>'utf-8');
 
 my $q = CGI->new;
 
-my $keyword = '王波';
+my $keyword = $q->param('q');
+
+Encode::_utf8_on($keyword);
+# yes: with or without use utf8;
+#print $keyword; exit;
+
+#$keyword = Encode::encode("gb2312", "$keyword");
+#$keyword = encode("gb2312", decode("euc-cn", "$keyword"));
+#$keyword = encode("euc-cn", $keyword);
+
+# the UTF8 flag is on.
+# $keyword = decode("gb2312", $keyword);
 
 my $mech = WWW::Mechanize->new( ) or die;
 $mech->timeout( 20 );
@@ -32,11 +43,19 @@ $mech->submit_form(
   fields    => { 
     ty => 'c',
     pid=>'n.home.result',
-    w => $keyword
+    w => Encode::encode("euc-cn", "$keyword")
   }
 );
 $mech->success or die $mech->response->status_line;
 
+=comment
+my $fh = FileHandle->new('../html/t3.html', "w" );
+#binmode($fh, ":encoding(utf8)");
+binmode($fh, ":utf8");
+print $fh $mech->content;
+$fh->autoflush(1);
+$fh->close();
+=cut
 
 my $html = strip_result( $mech->content );
 
@@ -84,7 +103,7 @@ sub parse_result
         </li>
     }sgix) {
         my ($t1,$t2,$t3) = ($1,$2,$3);
-    $t3 =~ s/<div.*?<\/div>//gi;
+		$t3 =~ s/<div.*?<\/div>//gi;
         push (@{$aoh}, [$t1,$t2,$t3]);
     }
     return $aoh;
