@@ -53,7 +53,7 @@ $(function() {
 if(isset($_GET['qq'])) {
 	session_start();
 	error_reporting(E_ALL);
-	define("ROOT", "../");
+	define("ROOT", "../fmxw/");
 	require_once (ROOT . "configs/config.inc.php");
 	global $config;
 	

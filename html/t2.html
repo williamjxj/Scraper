@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=GBK">
-<title>搜狗新闻搜索：閻滃灏?</title>
+<title>搜狗新闻搜索：涓浗</title>
 <script language="javascript"> 
 var $s = (function(){
 	var version = "0.1.0",
@@ -348,12 +348,62 @@ $s.wait("searchnav", function(){
 var orow = '';
 var olymw = '03022200';
 
+function createCookie(name,value,secs){
+	if(secs){
+		var date=new Date();
+		date.setTime(date.getTime()+(secs*1000));
+		var expires="; expires="+date.toGMTString();
+	}else{var expires= "";}
+	document.cookie = name+"="+value+expires+"; path=/";
+}
+function readCookie(name){
+	var nameEQ=name+"=";
+	var ca=document.cookie.split(';');
+	for(var i=0;i<ca.length;i++){
+		var c=ca[i];
+		while(c.charAt(0)==' ') c=c.substring(1,c.length);
+		if(c.indexOf(nameEQ)==0) return c.substring(nameEQ.length,c.length);
+	}
+	return null;
+}
+var no=readCookie("no");
+function cc(){
+	if(no){no++;}
+	else{no=1;}
+	createCookie("no",no,false);
+	return no;
+}
+var uid=readCookie("uid");
+function getuid(){
+	if(uid==null){
+		uid=Math.random();
+		createCookie("uid",uid,false);
+		return uid;
+	}else{
+		return uid;
+	}
+}
+
+
 function l(param){}
 
 function oo(u,r){}
 
 //--></script>
+<script language="javascript"><!--
+var oldQuery="涓浗";
+var omQuery="涓浗";
+var keywords=new Array();
 
+function searchInResult(id){
+var form=document.searchForm1[id];
+if(oldQuery!=form.query.value)
+form.query.value=oldQuery+' '+form.query.value;
+form.submit();
+return true;
+}
+
+//--></script>
 </head>
 
 <body><script>fixBodyClass();</script>
@@ -373,20 +423,20 @@ function navSubmit(el, target, pval, wval) {
 	f.submit();
 	return false;
 }
-</script><ul class="topnav"><li>新闻</li><li><a href="http://www.sogou.com/web?query=%E9%90%9C%E5%AC%AB%E5%B0%3F&w=03021800" id="news_www" onclick="navSubmit(this,'http://www.sogou.com/web','','03021800');return false;">网页</a></li><li><a href="http://mp3.sogou.com/music.so?query=%E9%90%9C%E5%AC%AB%E5%B0%3F&w=03021800" id="news_music" onclick="navSubmit(this,'http://mp3.sogou.com/music.so','','03021800');return false;">音乐</a></li><li><a href="http://pic.sogou.com/pics?query=%E9%90%9C%E5%AC%AB%E5%B0%3F&w=03021800" id="news_pic" onclick="navSubmit(this,'http://pic.sogou.com/pics','','03021800');return false;">图片</a></li><li><a href="http://v.sogou.com/v?query=%E9%90%9C%E5%AC%AB%E5%B0%3F" id="news_video" onclick="navSubmit(this,'http://v.sogou.com/v','','03021800');return false;">视频</a></li><li><a href="http://map.sogou.com/#lq=%E9%90%9C%E5%AC%AB%E5%B0%3F" id="news_map" onclick="navBar(this,'#lq=','')">地图</a></li><li><a href="http://zhishi.sogou.com/zhishi?query=%E9%90%9C%E5%AC%AB%E5%B0%3F&p=58041300" id="news_zhishi" onclick="navSubmit(this,'http://zhishi.sogou.com/zhishi','','03021800');return false;">知识</a></li><li><a href="http://gouwu.sogou.com/shop?query=%E9%90%9C%E5%AC%AB%E5%B0%3F&p=58041300" id="news_gouwu" onclick="navSubmit(this,'http://gouwu.sogou.com/shop','','03021800');return false;">购物</a></li><li><a href="http://www.sogou.com/docs/more.htm">更多&gt;&gt;</a></li></ul>
+</script><ul class="topnav"><li>新闻</li><li><a href="http://www.sogou.com/web?query=%E4%B8%AD%E5%9B%BD&w=03021800" id="news_www" onclick="navSubmit(this,'http://www.sogou.com/web','','03021800');return false;">网页</a></li><li><a href="http://mp3.sogou.com/music.so?query=%E4%B8%AD%E5%9B%BD&w=03021800" id="news_music" onclick="navSubmit(this,'http://mp3.sogou.com/music.so','','03021800');return false;">音乐</a></li><li><a href="http://pic.sogou.com/pics?query=%E4%B8%AD%E5%9B%BD&w=03021800" id="news_pic" onclick="navSubmit(this,'http://pic.sogou.com/pics','','03021800');return false;">图片</a></li><li><a href="http://v.sogou.com/v?query=%E4%B8%AD%E5%9B%BD" id="news_video" onclick="navSubmit(this,'http://v.sogou.com/v','','03021800');return false;">视频</a></li><li><a href="http://map.sogou.com/#lq=%E4%B8%AD%E5%9B%BD" id="news_map" onclick="navBar(this,'#lq=','')">地图</a></li><li><a href="http://zhishi.sogou.com/zhishi?query=%E4%B8%AD%E5%9B%BD&p=58041300" id="news_zhishi" onclick="navSubmit(this,'http://zhishi.sogou.com/zhishi','','03021800');return false;">知识</a></li><li><a href="http://gouwu.sogou.com/shop?query=%E4%B8%AD%E5%9B%BD&p=58041300" id="news_gouwu" onclick="navSubmit(this,'http://gouwu.sogou.com/shop','','03021800');return false;">购物</a></li><li><a href="http://www.sogou.com/docs/more.htm">更多&gt;&gt;</a></li></ul>
 </div>
 <div id="header">
 	<a class="logo logo_n" href="http://news.sogou.com/?w=03021800" title="回到搜狗新闻首页">回到搜狗新闻首页</a>
 	<form name="searchForm" id="searchForm" >
 		<div class="querybox">    	
 			<div class="qborder">
-				<input name="query" id="upquery" type="text" class="query" value="閻滃灏?" autocomplete="off"/>
+				<input name="query" id="upquery" type="text" class="query" value="涓浗" autocomplete="off"/>
 			</div>
-			<input type="submit" id="searchBtn" onmousedown="this.className='btnactive'" onmouseup="this.className='sbtn1'" onmouseout="this.className='sbtn1'" uigs="click=searchBtn" class="sbtn1" value="搜狗搜索"><input type="hidden" name="p" value="42040301"><input type="hidden" name="dp" value="1"><input type="hidden" name="_ast" value="1352962543"><input type="hidden" name="_asf" value="news.sogou.com"><input type="hidden" name="time" value="0"><input type="hidden" name="w" value="03009900"><input type="hidden" name="sort" value="0"><input type="hidden" name="mode" id="mode" value="1"><input type="hidden" name="manual" value=""/>
+			<input type="submit" id="searchBtn" onmousedown="this.className='btnactive'" onmouseup="this.className='sbtn1'" onmouseout="this.className='sbtn1'" uigs="click=searchBtn" class="sbtn1" value="搜狗搜索"><input type="hidden" name="p" value="42040301"><input type="hidden" name="dp" value="1"><input type="hidden" name="_ast" value="1353017144"><input type="hidden" name="_asf" value="news.sogou.com"><input type="hidden" name="time" value="0"><input type="hidden" name="w" value="03009900"><input type="hidden" name="sort" value="0"><input type="hidden" name="mode" id="mode" value="1"><input type="hidden" name="manual" value=""/>
 		</div>
 	</form>
 </div>
-<div class="searchnavbox"><ul id="searchnav" class="searchnav"><li><a id="inttab_61_0" href="http://www.sogou.com/web?query=%D1%D6%9C%E5%AC%AB%E5%B0%3F&sourceid=inttab_news" hidefocus>网页</a></li><li><a id="inttab_39_1" href="http://www.sogou.com/web?query=%D1%D6%9C%E5%AC%AB%E5%B0%3F&interation=196647&chuidq=39&sourceid=inttab_news" hidefocus>博客</a></li><li><a id="inttab_43_2" href="http://www.sogou.com/web?query=%D1%D6%9C%E5%AC%AB%E5%B0%3F&interation=196651&chuidq=43&sourceid=inttab_news" hidefocus>百科</a></li><li class="cur"><span>新闻</span></li><li><a id="inttab_40_4" href="http://www.sogou.com/web?query=%D1%D6%9C%E5%AC%AB%E5%B0%3F&interation=196648&chuidq=40&sourceid=inttab_news" hidefocus>论坛</a></li><li><a id="inttab_28_5" href="http://zhishi.sogou.com/zhishi?query=%D1%D6%9C%E5%AC%AB%E5%B0%3F&sourceid=inttab_news" hidefocus>知识</a></li><li class="moresearch"><a id="navibtn" href="#" hidefocus>更多</a><div id="navimore" class="moremenu" style="display:none"><a id="inttab_18_6" href="http://www.sogou.com/web?query=%D1%D6%9C%E5%AC%AB%E5%B0%3F&interation=196626&chuidq=18&sourceid=inttab_news" hidefocus>快播</a><a id="inttab_9_7" href="http://www.sogou.com/web?query=%D1%D6%9C%E5%AC%AB%E5%B0%3F&interation=196617&chuidq=9&sourceid=inttab_news" hidefocus>文档</a><a id="inttab_29_8" href="http://quan.sogou.com/quan?qt=zhaopin&query=%D1%D6%9C%E5%AC%AB%E5%B0%3F&sourceid=inttab_news" hidefocus>招聘</a><a id="inttab_30_9" href="http://gouwu.sogou.com/shop?query=%D1%D6%9C%E5%AC%AB%E5%B0%3F&sourceid=inttab_news" hidefocus>购物</a><a id="inttab_45_10" href="http://quan.sogou.com/quan?qt=fangchan.esf&query=%D1%D6%9C%E5%AC%AB%E5%B0%3F&sourceid=inttab_news" hidefocus>二手房</a><a id="inttab_62_11" href="http://www.sogou.com/docs/more.htm" class="pro" target="_blank" hidefocus>产品大全</a></div></li></ul><div class="rststat">找到约 <span id="scd_num">0</span> 条结果</div></div><div id="wrapper"><span class="switcher" id="switchcolimg"></span><div id="sidebar"><ul class="sidenav1"><li><strong>按相关性排序</strong></li><li><a id="news_sortbytime" href="#" onclick="switchsort(this);return false;">按时间排序</a></li></ul><ul class="sidenav1"><li><strong>全部网站</strong></li><li><a href="?query=site:sohu.com%20%E9%90%9C%E5%AC%AB%E5%B0%3F&manual=true&mode=1&sort=0&p=42230302">搜狐</a></li><li><a href="?query=site:ifeng.com%20%E9%90%9C%E5%AC%AB%E5%B0%3F&manual=true&mode=1&sort=0&p=42230302">凤凰</a></li><li><a href="?query=site:163.com%20%E9%90%9C%E5%AC%AB%E5%B0%3F&manual=true&mode=1&sort=0&p=42230302">网易</a></li><li><a href="?query=site:qq.com%20%E9%90%9C%E5%AC%AB%E5%B0%3F&manual=true&mode=1&sort=0&p=42230302">腾讯</a></li></ul><div class="reset2"><a href="?query=%E9%90%9C%E5%AC%AB%E5%B0%3F&mode=1&sort=0&p=42230311" class="reset2">重置搜索选项</a></div></div>
+<div class="searchnavbox"><ul id="searchnav" class="searchnav"><li><a id="inttab_61_0" href="http://www.sogou.com/web?query=%E4%B8%AD%E5%9B%BD&sourceid=inttab_news" hidefocus>网页</a></li><li><a id="inttab_9_1" href="http://www.sogou.com/web?query=%E4%B8%AD%E5%9B%BD&interation=196617&chuidq=9&sourceid=inttab_news" hidefocus>文档</a></li><li class="cur"><span>新闻</span></li><li><a id="inttab_40_3" href="http://www.sogou.com/web?query=%E4%B8%AD%E5%9B%BD&interation=196648&chuidq=40&sourceid=inttab_news" hidefocus>论坛</a></li><li><a id="inttab_28_4" href="http://zhishi.sogou.com/zhishi?query=%E4%B8%AD%E5%9B%BD&sourceid=inttab_news" hidefocus>知识</a></li><li><a id="inttab_39_5" href="http://www.sogou.com/web?query=%E4%B8%AD%E5%9B%BD&interation=196647&chuidq=39&sourceid=inttab_news" hidefocus>博客</a></li><li class="moresearch"><a id="navibtn" href="#" hidefocus>更多</a><div id="navimore" class="moremenu" style="display:none"><a id="inttab_43_6" href="http://www.sogou.com/web?query=%E4%B8%AD%E5%9B%BD&interation=196651&chuidq=43&sourceid=inttab_news" hidefocus>百科</a><a id="inttab_18_7" href="http://www.sogou.com/web?query=%E4%B8%AD%E5%9B%BD&interation=196626&chuidq=18&sourceid=inttab_news" hidefocus>快播</a><a id="inttab_29_8" href="http://quan.sogou.com/quan?qt=zhaopin&query=%E4%B8%AD%E5%9B%BD&sourceid=inttab_news" hidefocus>招聘</a><a id="inttab_30_9" href="http://gouwu.sogou.com/shop?query=%E4%B8%AD%E5%9B%BD&sourceid=inttab_news" hidefocus>购物</a><a id="inttab_45_10" href="http://quan.sogou.com/quan?qt=fangchan.esf&query=%E4%B8%AD%E5%9B%BD&sourceid=inttab_news" hidefocus>二手房</a><a id="inttab_62_11" href="http://www.sogou.com/docs/more.htm" class="pro" target="_blank" hidefocus>产品大全</a></div></li></ul><div class="rststat">找到约 <span id="scd_num">44</span> 条结果</div></div><div id="wrapper"><span class="switcher" id="switchcolimg"></span><div id="sidebar"><ul class="sidenav1"><li><strong>按相关性排序</strong></li><li><a id="news_sortbytime" href="#" onclick="switchsort(this);return false;">按时间排序</a></li></ul><ul class="sidenav1"><li><strong>全部网站</strong></li><li><a href="?query=site:sohu.com%20%E4%B8%AD%E5%9B%BD&manual=true&mode=1&sort=0&p=42230302">搜狐</a></li><li><a href="?query=site:ifeng.com%20%E4%B8%AD%E5%9B%BD&manual=true&mode=1&sort=0&p=42230302">凤凰</a></li><li><a href="?query=site:163.com%20%E4%B8%AD%E5%9B%BD&manual=true&mode=1&sort=0&p=42230302">网易</a></li><li><a href="?query=site:qq.com%20%E4%B8%AD%E5%9B%BD&manual=true&mode=1&sort=0&p=42230302">腾讯</a></li></ul><div class="reset2"><a href="?query=%E4%B8%AD%E5%9B%BD&mode=1&sort=0&p=42230311" class="reset2">重置搜索选项</a></div></div>
 	<script type="text/javascript">
 		function showBrandAD(pid, pos, callback) {
 		    var div = "sogouFrag_" + pos;
@@ -405,7 +455,7 @@ function navSubmit(el, target, pval, wval) {
 		        urlBuff.push("&suid=");
 		        urlBuff.push(getCookie("SUID"));
 		        urlBuff.push("&page_id=");
-		        urlBuff.push("df97163c-3bf0-4f4c-933b-bacdafd3fce2");
+		        urlBuff.push("2af827c5-c4c3-420d-ac35-1503db54e4e8");
 		        urlBuff.push("&ads_cnt=3");
 		        urlBuff.push("&url=");
 		        urlBuff.push(escape(window.location.href));
@@ -460,23 +510,250 @@ function navSubmit(el, target, pval, wval) {
 
 
 
-<div class="no-result">没有找到与“ <FONT color="#cc0033">閻滃灏?</FONT> ”相关的新闻。</div>
-<div class="no-result-info"><strong>建议您:</strong>
-<ol>
-<li>1.请检查您输入的关键词是否有错误;</li>
-<li>2.换另一个相似的词，或常见的词试试;</li>
-<li>3.您可以查看<a href="http://www.sogou.com/help.html" id=news_help>搜狗帮助</a>，或向我们<a href="http://www.sogou.com/feedback/?product=%D0%C2%CE%C5%CB%D1%CB%F7&w=03021800">提出建议</a>。</li>
-</ol></div>
+<div class="results">
+
+	<!--a-->
+<!--m-->
+<div class="rb">
+ <table>
+	<tr>
+		<td width="0" id="nimgdiv0">
+		
+	</td>
+	<td>
+       	<h3 class="pt">
+       		<a class="pp" href="http://tech.hexun.com/2012-11-01/147491286.html" id="uigs_0" target=_blank> <b><font color=#cc0033><!--red_beg-->涓浗<!--red_end--></font>阃氢俊瀛细钻h幏绗崄锲涘众<font color=#cc0033><!--red_beg-->涓浗<!--red_end--></font>绉戝岗骞翠细瀛湳...</b></a><cite>和讯网 2012-11-01 14:54<!--resultinfodate:2012-11-01-->
+</cite></h3>
+        			<div class="ft">
+2012骞?0链?0镞紝<font color=#cc0033><!--red_beg-->涓浗<!--red_end--></font>绉戝岗骞翠细锷炲叕瀹湪鍖椾含绉戞妧浼氩爞鍙紑浜嗏灭鍗佸洓灞娄腑锲界鍗忓勾浼氩链氦娴佸垎浼氩満镐荤粨浼氲钬濄?br&gt; 链众绉戝岗骞翠细瀛湳浜祦娲诲姩鍏辫绔?1涓垎浼氩満锛屼腑锲介氢俊瀛细缁忕鍗忔壒鍑嗘圹锷炵20鍒嗕细鍦恒傛抵鎹娄腑锲界鍗...
+</div></td></tr>
+</table></div>
+
+<!--n-->
+<!--m-->
+<div class="rb">
+ <table>
+	<tr>
+		<td width="0" id="nimgdiv1">
+		
+		<div class="nimgbox" id="imgboxID1" style="display:none">
+			<a class="show_his" href="http://cyxw.cn/News/HBYW/43954.html" target=_blank><img id="imgID1" title="查看新闻" border="0" class="nimg"></a>
+		</div>
+		<script lang=javascript>
+		$('#imgID1')
+			.load(function(){ $('#imgboxID1').css('display', 'block'); })
+			.attr('src', 'http://img02.store.sogou.com/net/a/04/link?&url=http%253A%252F%252Fcyxw.cn%252Fupload%252FNews%252F201211%252F20121105144956379915.jpg&appid=14');
+		</script>
+		
+	</td>
+	<td>
+       	<h3 class="pt">
+       		<a class="pp" href="http://cyxw.cn/News/HBYW/43954.html" id="uigs_1" target=_blank> <b>涓叡鍗佷竷灞娄竷涓叏浼氩湪鍖椾含涓捐 鑳￠敠娑涗...</b></a><cite>中国崇阳网 2012-11-05 14:49<!--resultinfodate:2012-11-05-->
+</cite></h3>
+        			<div class="ft">
+銆銆浼氲 鐢变腑澶 敛娌诲眬涓绘寔 涓 ぎ濮斿憳浼氭讳功璁拌儭阌稕浣滈吨瑕佽 璇?/strong&gt; 銆銆鍐冲畾<font color=#cc0033><!--red_beg-->涓 浗<!--red_end--></font>鍏变骇鍏氱 鍗佸叓娆″叏锲戒唬琛ㄥぇ浼氢簬11链?镞ュ湪鍖椾含鍙 紑璁ㄨ 骞堕氲绷涓 ぎ濮斿憳浼氩悜鍗佸叓澶х殑鎶ュ憡鍜屻娄腑锲藉叡浜у厷绔犵锛堜慨姝f 锛夈...
+</div></td></tr>
+</table></div>
+
+<!--n-->
+<!--m-->
+<div class="rb">
+ <table>
+	<tr>
+		<td width="0" id="nimgdiv2">
+		
+	</td>
+	<td>
+       	<h3 class="pt">
+       		<a class="pp" href="http://finance.ifeng.com/roll/20121020/7175770.shtml" id="uigs_2" target=_blank> <b>2012<font color=#cc0033><!--red_beg-->涓浗<!--red_end--></font>涓婂竞鍏徃鍙g姒沧彮鏅</b></a><cite>凤凰网 2012-10-20 00:54<!--resultinfodate:2012-10-20-->
+</cite></h3>
+        			<div class="ft">
+钸呮渶鍏风珵浜変紭锷匡细涓囩銆侀噾铻宠瀭銆佹磱娌宠偂浠姐佹亽鐟炲尰钻佸ぉ澹姏銆佺儫鍙颁竾鍗庛佷簲绮恫銆佷笢阒块樋鑳躲侀搴旈緳銆佹牸锷涚数鍣 钸呮渶浣冲唴閮ㄦ不鐞嗭细姘戠敓阈惰銆侀潚宀涙捣灏斻佸崕渚ㄥ煄銆佹掣宸炶佺獤銆佸紶瑁曘佹郸鍙戦摱琛屻佸崕璋婂...
+</div></td></tr>
+</table></div>
+
+<!--n-->
+<!--m-->
+<div class="rb">
+ <table>
+	<tr>
+		<td width="0" id="nimgdiv3">
+		
+	</td>
+	<td>
+       	<h3 class="pt">
+       		<a class="pp" href="http://news.hexun.com/2012-09-27/146312838.html" id="uigs_3" target=_blank> <b><font color=#cc0033><!--red_beg-->涓浗<!--red_end--></font>鎷熻瀹氩织镒挎湇锷¤褰曢昵链熶缭瀛?链粡鍚屾剰绂...</b></a><cite>和讯网 2012-09-27 10:38<!--resultinfodate:2012-09-27-->
+</cite></h3>
+        			<div class="ft">
+000灏忔椂鍜?500灏忔椂镄勫织镒胯咃紝鍙互渚濇鐢宠璇勫畾涓轰竴鏄熺骇銆佷簩鏄熺骇銆佷笁鏄熺骇銆佸洓鏄熺骇銆佷簲鏄熺骇蹇楁効钥呫?/p&gt; 鏂囩珷鏉簮: <font color=#cc0033><!--red_beg-->涓浗<!--red_end--></font>缃?/td&gt; 璐d换缂栬緫: 鑻 瀹樻柟寰崥[鎴戣绾犻敊] [鎺崘] [鏀惰棌] [镓揿嵃] [澶?/a&gt; 涓?/a&gt; 灏?/a&gt;] [鍏抽棴]
+</div></td></tr>
+</table></div>
+
+<!--n-->
+<!--m-->
+<div class="rb">
+ <table>
+	<tr>
+		<td width="0" id="nimgdiv4">
+		
+	</td>
+	<td>
+       	<h3 class="pt">
+       		<a class="pp" href="http://news.sina.com.cn/o/2012-08-16/132924980041.shtml" id="uigs_4" target=_blank> <b>锲介台甯傚満閲嶅绩杞 Щ 鎴戝浗涓婂崐骞磋憽钀勯厌杩...</b></a><cite>新浪 2012-08-16 13:29<!--resultinfodate:2012-08-16-->
+</cite></h3>
+        			<div class="ft">
+灏界 <font color=#cc0033><!--red_beg-->涓 浗<!--red_end--></font>钁¤悇閰掑竞鍦哄彂灞曡繀阃燂紝浣嗘垜锲戒汉鍧囱憽钀勯厌娑堣垂閲忥紝浠嶈繙杩滆惤鍚庝簬鍏朵粬钁¤悇閰掑ぇ锲姐备粠娑堣垂缁撴瀯鏉ョ湅锛岀洰鍓嶆垜锲借憽钀勯厌锻埚掗噾瀛楀 缁撴瀯锛屼富瑕佷负楂樼 鍟嗗姟浜虹兢娑堣垂锛屽洜姝わ紝浠婂悗镄勪竴娈垫椂闂...
+</div></td></tr>
+</table></div>
+
+<!--n-->
+<!--m-->
+<div class="rb">
+ <table>
+	<tr>
+		<td width="0" id="nimgdiv5">
+		
+	</td>
+	<td>
+       	<h3 class="pt">
+       		<a class="pp" href="http://news.163.com/12/1112/06/8G3DOFR700014AED.html" id="uigs_5" target=_blank> <b>涓归害鍙栨秷钬滆伟鑳栫钬?/td&gt;</b></a><cite>网易 2012-11-12 06:27<!--resultinfodate:2012-11-12-->
+</cite></h3>
+        			<div class="ft">
+铡诲勾10链堬紝涓归害鎴愪负鍏笘鐣岀涓涓緛鏀垛滆伟鑳栫钬濈殑锲藉銆备絾鐢鏀舵潵甯侄姘戜紬锅悍鐢熸椿镄勬兂娉曚技涔庡苟娌℃湁璧峰埌浣灭敤锛屼竴骞翠箣鍚庯紝涓归害鏀垮簻鍙埚喅瀹氩彇娑堣繖涓绋庣銆?/P&gt; 涓归害绋庡姟閮湪10镞彂琛殑涓椤瑰0鏄庝腑璇达紝鐢变簬...
+</div></td></tr>
+</table></div>
+
+<!--n-->
+<!--m-->
+<div class="rb">
+ <table>
+	<tr>
+		<td width="0" id="nimgdiv6">
+		
+	</td>
+	<td>
+       	<h3 class="pt">
+       		<a class="pp" href="http://stock.caijing.com.cn/2012-10-25/112228212.html" id="uigs_6" target=_blank> <b>涓繙鑸?繍鍓崭笁瀛e噣鍒?84.79涓囧厓 鍚屾瘮闄?5%</b></a><cite>财经网 2012-10-25 20:58<!--resultinfodate:2012-10-25-->
+</cite></h3>
+        			<div class="ft">
+銆銆<font color=#cc0033><!--red_beg-->涓 浗<!--red_end--></font>缃?0链?5镞ヨ 涓 繙鑸 繍鏅氶棿鍏 竷涓夊 搴姤锻婄О锛岀 涓夊 搴叕鍙稿噣鍒鼎杈冧笂骞村悓链熶笅闄?2.67%锛岃呖798.72涓囧厓銆?/p&gt; 銆銆鍓崭笁瀛o紝鍏 徃钀ヤ笟鏀跺叆涓?5.42浜垮厓锛屽悓姣斿 闀?8.92%锛屽噣鍒鼎涓?84.79涓囧厓锛屽悓姣斾笅闄?4.96%锛...
+</div></td></tr>
+</table></div>
+
+<!--n-->
+<!--m-->
+<div class="rb">
+ <table>
+	<tr>
+		<td width="0" id="nimgdiv7">
+		
+	</td>
+	<td>
+       	<h3 class="pt">
+       		<a class="pp" href="http://news.hexun.com/2012-09-25/146228658.html" id="uigs_7" target=_blank> <b>锅屽镄勫寳浜暀涓崭笅阍卞妫晠灞?</b></a><cite>和讯网 2012-09-25 09:42<!--resultinfodate:2012-09-25-->
+</cite></h3>
+        			<div class="ft">
+5鍙锋涓昏瀹夌疆娴峰褰掓潵镄勮宪鍚嶅钥呭拰锲藉唴鐭悕绉戝瀹跺眳浣忋傝槠涓嶆槸寤虹瓒镄勭粡鍏镐箣浣滐紝鍙槸涓鑸櫘阃氱殑瀹胯垗妤煎畤锛屽嵈澶勫娲嬫孩镌鍒涙柊鐞嗗康鍜屾濈淮锛屾浘浜敓鍑轰竴绯诲垪浼熷镄勬濇兂銆傛瘮濡傦紝鍙戝睍<font color=#cc0033><!--red_beg-->涓浗<!--red_end--></font>浜洪犲崼鏄熷缓璁功鍦繖閲...
+</div></td></tr>
+</table></div>
+
+<!--n-->
+<!--m-->
+<div class="rb">
+ <table>
+	<tr>
+		<td width="0" id="nimgdiv8">
+		
+	</td>
+	<td>
+       	<h3 class="pt">
+       		<a class="pp" href="http://news.163.com/12/0917/05/8BJ5Q51M00014AED.html" id="uigs_8" target=_blank> <b>鎴戝浗鎻愪氦涓沧捣閮垎娴峰烟锛掞紣锛愭捣閲屼互澶栧...</b></a><cite>网易 2012-09-17 05:58<!--resultinfodate:2012-09-17-->
+</cite></h3>
+        			<div class="ft">
+<font color=#cc0033><!--red_beg-->涓浗<!--red_end--></font>鏀垮簻灏嗘彁浜?/P&gt; 涓沧捣200娴烽噷澶?/P&gt; 澶檰鏋跺垝鐣屾 鎹柊鍗庣鐢?澶栦氦閮紤锛栨棩琛锛屼腑锲芥敛搴滃喅瀹氩悜銆婅仈鍚埚浗娴锋磱娉曞叕绾嬭绔嬬殑澶檰鏋剁晫闄愬锻树细鎻愪氦涓沧捣閮垎娴峰烟锛掞紣锛愭捣閲屼互澶栧闄嗘灦鍒掔晫妗堛傚浗瀹舵捣娲嫔眬鐩...
+</div></td></tr>
+</table></div>
+
+<!--n-->
+<!--m-->
+<div class="rb">
+ <table>
+	<tr>
+		<td width="0" id="nimgdiv9">
+		
+		<div class="nimgbox" id="imgboxID9" style="display:none">
+			<a class="show_his" href="http://world.kankanews.com/tw/2012-10-27/1701412.shtml" target=_blank><img id="imgID9" title="查看新闻" border="0" class="nimg"></a>
+		</div>
+		<script lang=javascript>
+		$('#imgID9')
+			.load(function(){ $('#imgboxID9').css('display', 'block'); })
+			.attr('src', 'http://img02.store.sogou.com/net/a/04/link?&url=http%253A%252F%252Fhimg2.huanqiu.com%252Fattachment2010%252F2012%252F1027%252F20121027084256808.jpg&appid=14');
+		</script>
+		
+	</td>
+	<td>
+       	<h3 class="pt">
+       		<a class="pp" href="http://world.kankanews.com/tw/2012-10-27/1701412.shtml" id="uigs_9" target=_blank> <b>璋锋瓕娆蹭笌娉曞浗鏀垮簻璋埚垽 鍗忓晢鎼灭储闄愬埗闂</b></a><cite>看看新闻网 2012-10-27 08:26<!--resultinfodate:2012-10-27-->
+</cite></h3>
+        			<div class="ft">
+銆銆涓婂懆链夋姤阆撶О璋锋瓕姝h冭槛灏嗘硶锲界殑鏂伴椈绔欑偣浠庤胺姝屾悳绱㈠紩鎿庣殑鎼灭储缁撴灉<font color=#cc0033><!--red_beg-->涓 <!--red_end--></font>幓闄わ紝铡熷洜鏄 硶锲介氲绷浜嗕竴椤规硶妗堬紝鍐呭 涓鸿 姹傛悳绱㈠紩鎿庡湪鎶揿彇鏂伴椈椤甸溃镄勬枃绔犳椂鏀 粯涓瀹氱殑璐圭敤銆傝繖瀵硅胺姝岃岃鏄 釜姣旇...
+</div></td></tr>
+</table></div>
+
+<!--n-->
+
+<!--z-->
 
 
-</div><div class="foot"></div></div>
-<div class="cr" id="footer">
+
+
+
+
+
+
+        </div>
+<script language="javascript" src="http://www.sogou.com/setcolor.js"></script>
+<script language="javascript"><!--
+//we call the set red function here
+if(keywords!="") setAllColor('f',keywords,'#cc0033');
+if(keywords!="") setAllColor('a',keywords,'red');
+//--></script>
+
+
+
+  <table class="hint">
+  <caption>相关搜索&nbsp;&nbsp;</caption>
+<tr><td><a href="?query=%C0%AB+%9B%BD&mode=1&sort=0&time=0&loc=hint1&p=42040301&dp=1" id=news_hint_1 >阔 浗</a></td><td><a href="?query=wow%9B%BD&mode=1&sort=0&time=0&loc=hint2&p=42040301&dp=1" id=news_hint_2 >wow浗</a></td><td><a href="?query=%E5%BE%B7%E5%9B%BD%CF%E2+%BE%BA&mode=1&sort=0&time=0&loc=hint3&p=42040301&dp=1" id=news_hint_3 >寰峰浗镶 竞</a></td></tr><tr><td><a href="?query=%CB%AB%C9%AB%9B%BD%BA%EC%C0%B6%B7%D6%B2%BC&mode=1&sort=0&time=0&loc=hint4&p=42040301&dp=1" id=news_hint_4 >双色浗红蓝分布</a></td><td><a href="?query=%9B%BD&mode=1&sort=0&time=0&loc=hint5&p=42040301&dp=1" id=news_hint_5 >浗</a></td><td><a href="?query=%E4%B8&mode=1&sort=0&time=0&loc=hint6&p=42040301&dp=1" id=news_hint_6 >涓</a></td></tr><tr><td><a href="?query=%E4%B8%C1%F7%B3%E4%B5%E7%CA%C7%CA%B2%C3%B4%D2%E2%CB%BC&mode=1&sort=0&time=0&loc=hint7&p=42040301&dp=1" id=news_hint_7 >涓流充电是什么意思</a></td><td><a href="?query=%C9%CF%B9%C5%CB%AE%C1%E9%E4%B8%C1%F7%D4%F5%C3%B4%D7%F6&mode=1&sort=0&time=0&loc=hint8&p=42040301&dp=1" id=news_hint_8 >上古水灵涓流怎么做</a></td><td><a href="?query=%E4%B8%C1%F7%B3%E4%B5%E7&mode=1&sort=0&time=0&loc=hint9&p=42040301&dp=1" id=news_hint_9 >涓流充电</a></td></tr></table>
+<!--hint:阔 浗#*#wow浗#*#寰峰浗镶 竞#*#双色浗红蓝分布#*#浗#*#涓#*#涓流充电是什么意思#*#上古水灵涓流怎么做#*#涓流充电#*#-->
+
+
+
+        <div class="p">
+          &nbsp;&nbsp;<strong>1</strong>&nbsp;&nbsp;<a id="sogou_page_2" href="?query=%E4%B8%AD%E5%9B%BD&page=2&time=0&mode=1&sort=0&p=42040301&dp=1">2</a>&nbsp;<a id="sogou_page_3" href="?query=%E4%B8%AD%E5%9B%BD&page=3&time=0&mode=1&sort=0&p=42040301&dp=1">3</a>&nbsp;<a id="sogou_page_4" href="?query=%E4%B8%AD%E5%9B%BD&page=4&time=0&mode=1&sort=0&p=42040301&dp=1">4</a>&nbsp;<a id="sogou_page_5" href="?query=%E4%B8%AD%E5%9B%BD&page=5&time=0&mode=1&sort=0&p=42040301&dp=1">5</a>&nbsp;<a id="sogou_next" href="?query=%E4%B8%AD%E5%9B%BD&page=2&time=0&mode=1&sort=0&p=42040301&dp=1" class="np">下一页&gt;</a><br>
+	
+
+</div> 
+</div><div class="foot"><form method="get" name="searchForm1" id="searchForm1" onsubmit="var elem=document.getElementById('olym_bottom');if(elem&&elem.checked){this.w.value=olymw;}">
+			<div class="qborder">
+				<input type="text" class="query" name="query" id="bottom_form_querytext" value="涓浗">
+			</div>
+			<input type="hidden" name="big5">
+			<input type="hidden" name="insite" value="">
+			<input type="hidden" name="sort" value="0">
+			<input type="hidden" name="time" value="0">
+			<input type="hidden" name="p" value="42040301"><input type="hidden" name="dp" value="1">
+			<input type="hidden" name="w" value="03009900">
+			<input type="hidden" name="_ast" value="1353017144"/>
+			<input type="hidden" name="_asf" value="news.sogou.com"/>
+			<input type="submit" value="搜狗搜索" class="sbtn1" uigs="searchBtBottom" id="bottom_form_searchBt" onmousedown="this.className='btnactive'" onmouseup="this.className='sbtn1'" onmouseout="this.className='sbtn1'">
+		</form></div></div>
+<div class="cr" id="footer"><a href="javascript:void(0);" onclick="setHomepage()">设为首页</a> | 
 	<a id="sogou_newshelp" href="http://help.sogou.com/news.html" target="_blank">搜索帮助</a> | <a id="news_feedbackdown" href="http://www.sogou.com/feedback/?product=%D0%C2%CE%C5%CB%D1%CB%F7&w=03021800" target="_blank">对结果不满意?</a>|<a id="sogouweibo" href="http://e.weibo.com/sogou" target="_blank">官方微博</a> &copy; 2012 SOGOU.COM <a href="http://www.sogou.com/docs/terms.htm" target="_blank">免责声明</a>
 </div>
 
 <script type="text/javascript" src="http://www.sohu.com/sohuflash_1.js"></script>
 
-<script language='JavaScript' src='http://js.sogou.com/pv_sogou.js'></script><img src='/images/fav.ico?1352962543812' height=0 border=0 width=0><script lang=javascript>
+<script language='JavaScript' src='http://js.sogou.com/pv_sogou.js'></script><img src='/images/fav.ico?1353017144387' height=0 border=0 width=0><script lang=javascript>
 //window.onload = imgLoad;
 function imgLoad(){
 /*
@@ -606,7 +883,7 @@ function showBrandAD(pid, pos, callback) {
 		urlBuff.push("&suid=");
 		urlBuff.push(getCookie("SUID"));
 		urlBuff.push("&page_id=");
-		urlBuff.push("df97163c-3bf0-4f4c-933b-bacdafd3fce2");
+		urlBuff.push("2af827c5-c4c3-420d-ac35-1503db54e4e8");
 		urlBuff.push("&ads_cnt=3");
 		urlBuff.push("&url=");
 		urlBuff.push(escape(window.location.href));
@@ -632,10 +909,10 @@ function setCookie(name, value, expires, path, domain, secure) {
 function switchsort(obj){
 	if(obj.id=="news_sortbytime"){
 		setCookie("sortcookie","1",1000 * 60 * 60 * 24 * 365 * 10,"/","sogou.com",null);
-		window.location.href="./news?&clusterId=&p=42230305&time=0&query=%E9%90%9C%E5%AC%AB%E5%B0%3F&mode=1&media=&sort=1";
+		window.location.href="./news?&clusterId=&p=42230305&time=0&query=%E4%B8%AD%E5%9B%BD&mode=1&media=&sort=1";
 	}else{
 		setCookie("sortcookie","0",1000 * 60 * 60 * 24 * 365 * 10,"/","sogou.com",null);
-		window.location.href="./news?&clusterId=&p=42230304&time=0&query=%E9%90%9C%E5%AC%AB%E5%B0%3F&mode=1&media=&sort=0";
+		window.location.href="./news?&clusterId=&p=42230304&time=0&query=%E4%B8%AD%E5%9B%BD&mode=1&media=&sort=0";
 	}
 }
 </script>
@@ -662,9 +939,9 @@ function setHomepage() {
 </script>
 
 <script type="text/javascript">
-var uigs_para={"uigs_productid":"news","uigs_pbtag":"A",query:'%E9%90%9C%E5%AC%AB%E5%B0%3F',page:1,sort:0,mode:1,'abtest':'b','leftIsHidden':leftIsHidden,'inttab':'61_0-39_1-43_2-41_3-40_4-28_5-18_6-9_7-29_8-30_9-45_10-62_11-','intcat':'news'};
+var uigs_para={"uigs_productid":"news","uigs_pbtag":"A",query:'%E4%B8%AD%E5%9B%BD',page:1,sort:0,mode:1,'abtest':'b','leftIsHidden':leftIsHidden,'inttab':'61_0-9_1-41_2-40_3-28_4-39_5-43_6-18_7-29_8-30_9-45_10-62_11-','intcat':'news'};
 </script>
 <script type='text/javascript' src='/js/pb_v.1.7.js'></script>
 </body></html>
-<!--uuid:df97163c-3bf0-4f4c-933b-bacdafd3fce2-->
-<!--lyc-->
+<!--uuid:2af827c5-c4c3-420d-ac35-1503db54e4e8-->
+<!--zly-->

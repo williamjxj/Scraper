@@ -27,7 +27,7 @@ $(function() {
 		$('#163_news, #sohu_news, #tengxun_news').empty();
 		//var kw = UrlEncode($('#q').val());
 		var q = $('#q').val();
-		
+		/*
 		$.getJSON('/cgi-bin/threads/news_tengxun.cgi', { 'q' : q }, function(data) {
 			var txt='<ul class="nav nav-pills nav-stacked">';
 			$.each(data, function(key, val) {
@@ -45,7 +45,7 @@ $(function() {
 			txt +='</ul>\n';
 			$('#163_news').html(txt);
 		});
-		
+		*/
 		$.getJSON('/cgi-bin/threads/news_sogou.cgi', { 'q' : q }, function(data) {
 			var txt='<ul class="nav nav-pills nav-stacked">';
 			$.each(data, function(key, val) {
