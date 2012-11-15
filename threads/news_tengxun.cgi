@@ -2,9 +2,9 @@
 
 use strict;
 use warnings;
-use utf8;
+#use utf8;
 #use encoding 'utf-8';
-#use encoding 'gb2312';
+use encoding 'gb2312';
 #use encoding "euc-cn";
 use WWW::Mechanize;
 use CGI qw(:standard);
@@ -49,7 +49,7 @@ $mech->submit_form(
 $mech->success or die $mech->response->status_line;
 
 =comment
-my $fh = FileHandle->new('../html/t3.html', "w" );
+my $fh = FileHandle->new("../html/t3.html", "w" );
 #binmode($fh, ":encoding(utf8)");
 binmode($fh, ":utf8");
 print $fh $mech->content;
