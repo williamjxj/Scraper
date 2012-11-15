@@ -43,7 +43,7 @@ $mech->submit_form(
   fields    => { 
     ty => 'c',
     pid=>'n.home.result',
-    w => "王波"
+    w => '王波'
   }
 );
 $mech->success or die $mech->response->status_line;
