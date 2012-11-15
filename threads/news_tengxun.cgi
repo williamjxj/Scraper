@@ -2,9 +2,9 @@
 
 use strict;
 use warnings;
-use utf8;
+#use utf8;
 #use encoding 'utf-8';
-#use encoding 'gb2312';
+use encoding 'gb2312';
 #use encoding "euc-cn";
 use WWW::Mechanize;
 use CGI qw(:standard);
@@ -43,11 +43,10 @@ $mech->submit_form(
   fields    => { 
     ty => 'c',
     pid=>'n.home.result',
-    w => "王波"
+    w => '王波'
   }
 );
 $mech->success or die $mech->response->status_line;
-
 
 my $html = strip_result( $mech->content );
 
