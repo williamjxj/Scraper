@@ -5,13 +5,13 @@ use warnings;
 #use utf8;
 #use encoding 'utf-8';
 #use encoding 'gb2312';
+#use encoding "euc-cn";
 use WWW::Mechanize;
 use CGI qw(:standard);
 use JSON;
 use Encode;
 
-#binmode(STDIN, ":encoding(utf8)");
-binmode(STDOUT, ":encoding(utf8)");
+binmode(STDOUT, ":utf8");
 
 use constant SURL => q{http://news.soso.com/};
 
@@ -20,14 +20,17 @@ print header(-charset=>'utf-8');
 my $q = CGI->new;
 
 my $keyword = $q->param('q');
-#Encode::decode("gb2312", $keyword);
 
 Encode::_utf8_on($keyword);
+# yes: with or without use utf8;
+#print $keyword; exit;
 
-#my $octets = decode('gb2312', $keyword);
-#$keyword = Encode::encode("gb2312", decode("utf8", $keyword));
-#$keyword = Encode::decode("utf8", $keyword);
-#my $octets = Encode::encode("gb2312", $keyword);
+#$keyword = Encode::encode("gb2312", "$keyword");
+#$keyword = encode("gb2312", decode("euc-cn", "$keyword"));
+#$keyword = encode("euc-cn", $keyword);
+
+# the UTF8 flag is on.
+# $keyword = decode("gb2312", $keyword);
 
 my $mech = WWW::Mechanize->new( ) or die;
 $mech->timeout( 20 );
@@ -39,19 +42,20 @@ $mech->submit_form(
   form_name => 'flpage',
   fields    => { 
     ty => 'c',
-    sd => 0,
-    st => 'r',
-    usort => 'on',
     pid=>'n.home.result',
-    w => $keyword
+    w => Encode::encode("euc-cn", "$keyword")
   }
 );
 $mech->success or die $mech->response->status_line;
 
+=comment
 my $fh = FileHandle->new('../html/t3.html', "w" );
+#binmode($fh, ":encoding(utf8)");
+binmode($fh, ":utf8");
 print $fh $mech->content;
 $fh->autoflush(1);
 $fh->close();
+=cut
 
 my $html = strip_result( $mech->content );
 
