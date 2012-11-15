@@ -43,11 +43,12 @@ $mech->submit_form(
   fields    => { 
     ty => 'c',
     pid=>'n.home.result',
-    w => '王波'
+    w => "王波"
   }
 );
 $mech->success or die $mech->response->status_line;
 
+<<<<<<< HEAD
 =comment
 my $fh = FileHandle->new("../html/t3.html", "w" );
 #binmode($fh, ":encoding(utf8)");
@@ -56,6 +57,8 @@ print $fh $mech->content;
 $fh->autoflush(1);
 $fh->close();
 =cut
+=======
+>>>>>>> 1c8a5229b671083a50c4c64a3be600a17d82604b
 
 my $html = strip_result( $mech->content );
 
