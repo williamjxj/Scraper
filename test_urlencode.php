@@ -6,7 +6,7 @@ $a = '王波';
 
 $b = urlencode($a);
 
-$c =  mb_convert_encoding($a, 'utf-8', 'gb2312');
+$c =  mb_convert_encoding($a, 'gb2312', 'utf-8');
 
 echo "[" . $a . '], [' . $b . "], [" . $c . "]<br>\n";
 ?>
