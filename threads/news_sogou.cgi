@@ -22,10 +22,11 @@ my $keyword = $q->param('q');
 
 #Encode::_utf8_on($keyword);
 
-$keyword = decode("euc-cn", "$keyword");
+#$keyword = decode("utf8", "$keyword");
 #$keyword = Encode::encode("euc-cn", "$keyword");
 
-#Encode::from_to($keyword, 'utf8', 'gb2312');
+Encode::from_to($keyword, 'utf8', 'gb2312');
+
 #Encode::from_to($keyword, 'gb2312', 'utf8');
 
 my $mech = WWW::Mechanize->new( ) or die;
