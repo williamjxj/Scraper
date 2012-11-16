@@ -2,7 +2,6 @@
 
 use strict;
 use warnings;
-#use utf8;
 use WWW::Mechanize;
 use CGI qw/:standard/;
 use JSON;
