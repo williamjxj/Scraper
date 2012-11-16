@@ -1,21 +1,10 @@
 #!/usr/bin/perl
-#很奇怪，www.baidu.com,www.soso.com都能和www::mechanize一起工作。
-# news.163.com也是。
-# 代码daemons/, threads/.cgi, threads/news都大同小异，都是decode('utf8',keyword)然后调用mechanize的submit_form()
-# 但是，news.soso.com, news.sogou.com不可以。我花了两天多的时间，就是调不通，总是乱码。
-# 无论gbk,gb2312/euc-cn, utf8/utf-8,还是
-# encode,decode,from_to全都用上了，就是不行。开始怀疑是字符编码的转换，尝试了%CD%F5%B2%A8，’中国‘等多种方式，就是不行。
-# 后来才怀疑是Mechanize的问题：
-# I was recently (and graciously) informed here that later versions of www::mechanize will automatically encode pages 
-# (in utf8 it would seem).
-# 将 www::mechanize转化为LWP::Simple就可以了！
-# javascript的UrlEncode,将’中国‘转换为%CD%F5%B2%A8，等于Perl的encode("gbk", '中国')
 
 use strict;
 use warnings;
 use CGI qw/:standard/;
 use Encode;
-use LWP::Simple;
+use LWP::Simple qw(!head);
 use JSON;
 
 #binmode(STDIN, ":encoding(utf8)");
