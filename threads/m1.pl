@@ -14,7 +14,7 @@ $mech->timeout( 20 );
 $mech->get( SURL );
 $mech->success or die $mech->response->status_line;
 
-my $keyword = "中国";
+my $keyword = '中国';
 #$keyword=encode("gbk", $keyword);
 
 $mech->submit_form(
