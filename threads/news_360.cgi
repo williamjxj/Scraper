@@ -22,11 +22,13 @@ $url .= '&q='.$keyword.'&pq='.$keyword;
 
 my $content = get $url;
 
-my $fh = FileHandle->new( '../html/t2.html', "w" );
-binmode $fh, ':utf8';
-print $fh $content;
-$fh->autoflush(1);
-$fh->close();
+######################################################
+# my $fh = FileHandle->new( '../html/t2.html', "w" );
+# binmode $fh, ':utf8';
+# print $fh $content;
+# $fh->autoflush(1);
+# $fh->close();
+######################################################
 
 my $html = strip_result( $content );
 
@@ -45,9 +47,7 @@ sub strip_result
   my ( $html ) = @_;
   $html =~ m {
       id="news"
-      .*?
-      >
-      (.*?) #soso用ol->li来划分每条记录
+      (.*?)
       id="page"
   }six;
   return $1;
@@ -71,8 +71,6 @@ sub parse_result
         (?:.*?)
         <p>
         (.*?) #3.正文
-        </p>
-        (?:.*?)
         </li>
     }sgix) {
         my ($t1,$t2,$t3) = ($1,$2,$3);
