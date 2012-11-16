@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 #use utf8;
-#use encoding 'euc-cn', STDIN => 'euc-cn', STDOUT => 'euc-cn';
 use WWW::Mechanize;
 use CGI qw/:standard/;
 use JSON;
@@ -20,18 +19,8 @@ print header(-charset=>'utf-8');
 my $q = CGI->new;
 my $keyword = $q->param('q');
 
-#Encode::_utf8_on($keyword);
-
-#$keyword = decode("utf8", "$keyword");
-#Encode::from_to($keyword, 'gb2312', 'utf8');
-
-#$keyword = encode("euc-cn", $keyword);
-#Encode::from_to($keyword, 'utf8', 'euc-cn');
-
 my $mech = WWW::Mechanize->new( ) or die;
 $mech->timeout( 20 );
-
-#print $keyword; exit;
 
 $mech->get( SURL );
 $mech->success or die $mech->response->status_line;
@@ -46,21 +35,13 @@ $mech->submit_form(
 );
 $mech->success or die $mech->response->status_line;
 
-print $mech->content;
-
-exit;
-
-#my $html = Encode::decode("utf8", $mech->content);
-#$html = strip_result($html);
 my $html = strip_result($mech->content);
 
-=comment
 my $fh = FileHandle->new('../html/t2.html', "w" );
 binmode $fh, ':utf8';
 print $fh $mech->content;
 $fh->autoflush(1);
 $fh->close();
-=cut
 
 my $aoh = parse_result($html);
 

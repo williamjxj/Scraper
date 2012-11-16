@@ -29,6 +29,10 @@ $(function() {
 		var kw = UrlEncode($('#q').val());
 		/*
 		$.getJSON('/cgi-bin/threads/news_tengxun.cgi', { 'q' : q }, function(data) {
+			if(data==null || (typeof data==='undefined') || (data.length==0)) {
+				$('#tengxun_news').html('No Data for ['+q+'], ['+kw+']');
+				return false;
+			}
 			var txt='<ul class="nav nav-pills nav-stacked">';
 			$.each(data, function(key, val) {
 				txt += '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
@@ -38,6 +42,10 @@ $(function() {
 		});
 
 		$.getJSON('/cgi-bin/threads/news_163.cgi', { 'q' : q }, function(data) {
+			if(data==null || (typeof data==='undefined') || (data.length==0)) {
+				$('#163_news').html('No Data for ['+q+'], ['+kw+']');
+				return false;
+			}
 			var txt='<ul class="nav nav-pills nav-stacked">';
 			$.each(data, function(key, val) {
 				txt += '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
@@ -46,7 +54,11 @@ $(function() {
 			$('#163_news').html(txt);
 		});
 		*/
-		$.getJSON('/cgi-bin/threads/news_sogou.cgi', { 'q' : kw }, function(data) {
+		$.getJSON('/cgi-bin/threads/news_sogou.cgi', { q : kw }, function(data) {
+			if(data==null || (typeof data==='undefined') || (data.length==0)) {  // data is null.
+				$('#sohu_news').html('No Data for ['+q+'], ['+kw+']');
+				return false;
+			}
 			var txt='<ul class="nav nav-pills nav-stacked">';
 			$.each(data, function(key, val) {
 				txt += '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
