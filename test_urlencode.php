@@ -16,5 +16,8 @@ echo "[" . $a . '], [' . $b . "], [" . $c . '], [' . $d . "<br>\n";
 
 ?>
 <script language="javascript">
-alert(encodeURI('王波'));
-</script
+//%E7%8E%8B%E6%B3%A2
+$(document).ready(function() {
+    alert(encodeURI('王波'));
+});
+</script>
