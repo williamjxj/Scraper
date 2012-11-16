@@ -69,8 +69,9 @@ CAD5
 停车
 =cut
 
-my $str='&#38463;&#26031;';  
-$str=~s/&#(/d+);/chr(($1 + 0 ))/eg;//之前的，好不容易才探索出之前的那个正确的方法  
-#$str=~s/&#(/d+);/pack('U' ,$ 1 )/eg;//后来的  
-print(encode('gbk' ,$str));
+$str='&#38463;&#26031;';  
+$str=~s/&#(\d+);/chr(($1 + 0 ))/eg;
+#$str=~s/&#(\d+);/pack('U' ,$ 1 )/eg;
+#print(encode('gbk' ,$str));
+print(encode('utf8' ,$str));
 print "<br>\n";
