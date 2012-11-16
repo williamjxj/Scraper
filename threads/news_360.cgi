@@ -44,11 +44,11 @@ sub strip_result
 {
   my ( $html ) = @_;
   $html =~ m {
-      <ul\sid="results"
+      id="news"
       .*?
       >
       (.*?) #soso用ol->li来划分每条记录
-      </ul>
+      id="page"
   }six;
   return $1;
 }
@@ -76,7 +76,7 @@ sub parse_result
         </li>
     }sgix) {
         my ($t1,$t2,$t3) = ($1,$2,$3);
-		$t3 =~ s/<nobr.*?<\/nobr>//gi;
+		$t3 =~ s/<a.*?\<\/a>//gi;
         push (@{$aoh}, [$t1,$t2,$t3]);
     }
     return $aoh;
