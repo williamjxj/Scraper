@@ -17,4 +17,4 @@ echo "[" . $a . '], [' . $b . "], [" . $c . '], [' . $d . "<br>\n";
 ?>
 <script language="javascript">
 alert(encodeURI('王波'));
-</script
+</script>
