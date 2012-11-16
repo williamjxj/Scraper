@@ -57,3 +57,20 @@ print "<br>\n";
 my $unicode = "\x{505c}\x{8f66}";
 print encode( "utf8", $unicode );
 print "<br>\n";
+
+=comment
+E694B6
+CAD5
+%E6%94%B6
+收
+6536
+\u6c49\u8bed
+收
+停车
+=cut
+
+my $str='&#38463;&#26031;';  
+$str=~s/&#(/d+);/chr(($1 + 0 ))/eg;//之前的，好不容易才探索出之前的那个正确的方法  
+#$str=~s/&#(/d+);/pack('U' ,$ 1 )/eg;//后来的  
+print(encode('gbk' ,$str));
+print "<br>\n";
