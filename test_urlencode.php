@@ -14,6 +14,7 @@ $d = urlencode($c);
 //[王波], [%E7%8E%8B%E6%B3%A2], [��], [%CD%F5%B2%A8
 echo "[" . $a . '], [' . $b . "], [" . $c . '], [' . $d . "<br>\n";
 
-
-
 ?>
+<script language="javascript">
+alert(encodeURI('王波'));
+</script
