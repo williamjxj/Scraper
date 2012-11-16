@@ -7,7 +7,6 @@ use CGI qw/:standard/;
 use JSON;
 use Encode;
 use Data::Dumper;
-
 #binmode(STDIN, ":encoding(utf8)");
 binmode STDOUT, ":utf8";
 
@@ -15,11 +14,16 @@ use constant SURL => q{http://news.sogou.com/};
 
 print header(-charset=>'utf-8');
 
-my $q = CGI->new;
+#my $q = CGI->new;
 # my $keyword = $q->param('q');
 
-my $keyword = "中国";
-# my $keyword = "%D6%D0%B9%FA";
+#my $keyword = "中国";
+my $keyword = "%D6%D0%B9%FA";
+
+#Encode::from_to($keyword, 'utf8', 'gbk');
+#Encode::from_to($keyword, 'utf8', 'gbk');
+#Encode::from_to($keyword, "gbk", 'utf8');
+#$keyword = encode("gbk", $keyword);
 
 my $mech = WWW::Mechanize->new( ) or die;
 $mech->timeout( 20 );
