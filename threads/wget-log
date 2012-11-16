@@ -11,4 +11,9 @@ Retrying.
 
 --2012-11-16 13:39:55--  (try: 3)  http://news.soso.com/n.q?pid=n.home.result
 Connecting to news.soso.com|124.89.102.145|:80... connected.
+HTTP request sent, awaiting response... Read error (Connection timed out) in headers.
+Retrying.
+
+--2012-11-16 13:54:58--  (try: 4)  http://news.soso.com/n.q?pid=n.home.result
+Connecting to news.soso.com|124.89.102.145|:80... connected.
 HTTP request sent, awaiting response... 
