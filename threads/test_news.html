@@ -1,73 +1,84 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Test Perl news</title>
-<script src="http://code.jquery.com/jquery-latest.js"></script>
-<script type="text/javascript" src="/fmxw/js/UrlEncode.js"></script>
-</head>
-<body>
-<form action="javascript:;" method="get">
-  <input type="text" name="q" id="q" style="width:399px" placeholder="请输入关键词" value="王波" />
-  <input type="submit" value="Submit" />
-</form>
-<hr />
-<h2>腾讯soso（Tengxun）</h2>
-<div id="tengxun_news"></div>
-<hr />
-<h2>163有道</h2>
-<div id="163_news"></div>
-<hr />
-<h2>Sohu搜狗</h2>
-<div id="sohu_news"></div>
-</body>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Test Perl news</title>
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
+		<script type="text/javascript" src="/fmxw/js/UrlEncode.js"></script>
+	</head>
+	<body>
+		<form action="javascript:;" method="get">
+			<input type="text" name="q" id="q" style="width:399px" placeholder="请输入关键词" value="王波" />
+			<input type="submit" value="Submit" />
+		</form>
+		<hr />
+		<h2>腾讯soso（Tengxun）</h2>
+		<div id="tengxun_news"></div>
+		<hr />
+		<h2>163有道</h2>
+		<div id="163_news"></div>
+		<hr />
+		<h2>Sohu搜狗</h2>
+		<div id="sohu_news"></div>
+		<hr />
+		<h2>Test搜狗</h2>
+		<div id="div_sogou"></div>
+	</body>
 </html>
 <script type="text/javascript">
-$(function() {
-	$('form').submit(function() {
-		$('#163_news, #sohu_news, #tengxun_news').empty();
-		var q = $('#q').val();
-		var kw = UrlEncode($('#q').val());
-		/*
-		$.getJSON('/cgi-bin/threads/news_tengxun.cgi', { 'q' : q }, function(data) {
-			if(data==null || (typeof data==='undefined') || (data.length==0)) {
-				$('#tengxun_news').html('No Data for ['+q+'], ['+kw+']');
-				return false;
-			}
-			var txt='<ul class="nav nav-pills nav-stacked">';
-			$.each(data, function(key, val) {
-				txt += '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
-			});
-			txt +='</ul>\n';
-			$('#tengxun_news').html(txt);
-		});
+    $(function() {
+        $('form').submit(function() {
+            $('#163_news, #sohu_news, #tengxun_news').empty();
+            var q = $('#q').val();
+            var kw = UrlEncode($('#q').val());
+            /*
+             $.getJSON('/cgi-bin/threads/news_tengxun.cgi', { 'q' : q }, function(data) {
+             if(data==null || (typeof data==='undefined') || (data.length==0)) {
+             $('#tengxun_news').html('No Data for ['+q+'], ['+kw+']');
+             return false;
+             }
+             var txt='<ul class="nav nav-pills nav-stacked">';
+             $.each(data, function(key, val) {
+             txt += '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
+             });
+             txt +='</ul>\n';
+             $('#tengxun_news').html(txt);
+             });
 
-		$.getJSON('/cgi-bin/threads/news_163.cgi', { 'q' : q }, function(data) {
-			if(data==null || (typeof data==='undefined') || (data.length==0)) {
-				$('#163_news').html('No Data for ['+q+'], ['+kw+']');
-				return false;
-			}
-			var txt='<ul class="nav nav-pills nav-stacked">';
-			$.each(data, function(key, val) {
-				txt += '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
-			});
-			txt +='</ul>\n';
-			$('#163_news').html(txt);
-		});
-		*/
-		$.getJSON('/cgi-bin/threads/news_sogou.cgi', { q : kw }, function(data) {
-			if(data==null || (typeof data==='undefined') || (data.length==0)) {  // data is null.
-				$('#sohu_news').html('No Data for ['+q+'], ['+kw+']');
-				return false;
-			}
-			var txt='<ul class="nav nav-pills nav-stacked">';
-			$.each(data, function(key, val) {
-				txt += '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
-			});
-			txt +='</ul>\n';
-			$('#sohu_news').html(txt);
-		});
+             $.getJSON('/cgi-bin/threads/news_163.cgi', { 'q' : q }, function(data) {
+             if(data==null || (typeof data==='undefined') || (data.length==0)) {
+             $('#163_news').html('No Data for ['+q+'], ['+kw+']');
+             return false;
+             }
+             var txt='<ul class="nav nav-pills nav-stacked">';
+             $.each(data, function(key, val) {
+             txt += '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
+             });
+             txt +='</ul>\n';
+             $('#163_news').html(txt);
+             });
+             */
+            $.getJSON('/cgi-bin/threads/news_sogou.cgi', {
+                q : kw
+            }, function(data) {
+                if (data == null || ( typeof data === 'undefined') || (data.length == 0)) {// data is null.
+                    $('#sohu_news').html('No Data for [' + q + '], [' + kw + ']');
+                    return false;
+                }
+                var txt = '<ul class="nav nav-pills nav-stacked">';
+                $.each(data, function(key, val) {
+                    txt += '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
+                });
+                txt += '</ul>\n';
+                $('#sohu_news').html(txt);
+            });
 
-		return false;
-	});
-});
+            var t2 = 'http://news.sogou.com/news?query=';
+            var t3 = '&mode=1&p=42040301';
+            var t = t2 + kw + t3;
+            alert(t);
+            $('#sogou').load(t);
+
+            return false;
+        });
+    }); 
 </script>
