@@ -2,24 +2,27 @@
 
 use strict;
 use warnings;
+#use utf8;
 use CGI qw/:standard/;
 use Encode;
 use LWP::Simple qw(!head);
 use JSON;
 
-#binmode(STDIN, ":encoding(utf8)");
 binmode STDOUT, ":utf8";
 
-my $url = q{http://news.soso.com/n.q?pid=n.home.result&ty=c&w=};
+my $url = q{http://news.soso.com/n.q?pid=n.home.result&ty=c&w=%CD%F5%B2%A8};
+#my $url = q{http://news.soso.com/n.q?w=};
+#my $url = q{http://news.soso.com/n.q?pid=n.search.active&ty=c&w=};
+$url = q{http://news.soso.com/n.q?w=%CD%F5%B2%A8};
 
 print header(-charset=>'utf-8');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
 
-$keyword = encode("gb2312", $keyword);
+#$keyword = encode("utf8", $keyword);
 
-my $content = get $url.$keyword;
+my $content = get $url;
 
 my $html = strip_result( $content );
 
