@@ -2,47 +2,25 @@
 
 use strict;
 use warnings;
-use WWW::Mechanize;
 use CGI qw/:standard/;
-use encoding "euc-cn", STDOUT=>'utf-8';
-use JSON;
 use Encode;
+use LWP::Simple qw(!head);
+use JSON;
 
-binmode(STDOUT, ":encoding(utf8)");
+binmode STDOUT, ":utf8";
 
-use constant SURL => q{http://news.youdao.com/};
+my $url = q{http://news.youdao.com/search?start=0&length=10&ue=utf8&s=&tl=&keyfrom=news.index&q=};
 
 print header(-charset=>'utf-8');
 
 my $q = CGI->new;
-
 my $keyword = $q->param('q');
 
 Encode::_utf8_on($keyword);
 
-my $mech = WWW::Mechanize->new( ) or die;
-$mech->timeout( 20 );
+my $content = get $url.$keyword;
 
-$mech->get( SURL );
-$mech->success or die $mech->response->status_line;
-
-# if form_number is not specified, current-selected form is used.
-$mech->submit_form(
-  fields    => { 
-    ue => 'utf8',
-    s => 'byrelevance',
-    q => $keyword
-  }
-);
-$mech->success or die $mech->response->status_line;
-
-my $fh = FileHandle->new('../html/t1.html', "w" );
-binmode $fh, ':utf8';
-print $fh $mech->content;
-$fh->autoflush(1);
-$fh->close();
-
-my $html = strip_result( $mech->content );
+my $html = strip_result( $content );
 
 my $aoh = parse_result($html);
 

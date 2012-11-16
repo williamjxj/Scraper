@@ -2,43 +2,26 @@
 
 use strict;
 use warnings;
-#use utf8;
-use WWW::Mechanize;
-use CGI qw(:standard);
-use JSON;
+use CGI qw/:standard/;
 use Encode;
-use URI::Escape;
+use LWP::Simple qw(!head);
+use JSON;
 
-binmode(STDOUT, ":utf8");
+#binmode(STDIN, ":encoding(utf8)");
+binmode STDOUT, ":utf8";
 
-use constant SURL => q{http://news.soso.com/};
+my $url = q{http://news.soso.com/n.q?pid=n.home.result&ty=c&w=};
 
 print header(-charset=>'utf-8');
 
 my $q = CGI->new;
-
 my $keyword = $q->param('q');
 
-# Encode::_utf8_on($keyword);
-$keyword = Encode::decode("gb2312", $keyword);
+$keyword = encode("gb2312", $keyword);
 
-my $mech = WWW::Mechanize->new( ) or die;
-$mech->timeout( 20 );
+my $content = get $url.$keyword;
 
-$mech->get( SURL );
-$mech->success or die $mech->response->status_line;
-
-$mech->submit_form(
-  form_name => 'flpage',
-  fields    => { 
-    ty => 'c',
-    pid=>'n.home.result',
-    w => $keyword
-  }
-);
-$mech->success or die $mech->response->status_line;
-
-my $html = strip_result( $mech->content );
+my $html = strip_result( $content );
 
 my $aoh = parse_result($html);
 

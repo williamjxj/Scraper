@@ -20,7 +20,7 @@ my $keyword = $q->param('q');
 #my $keyword = "中国";
 #my $keyword = "%D6%D0%B9%FA";
 
-$keyword=encode("gbk", $keyword);
+$keyword = encode("gbk", $keyword);
 
 my $content = get $url.$keyword;
 

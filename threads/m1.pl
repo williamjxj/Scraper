@@ -2,33 +2,98 @@
 
 use strict;
 use warnings;
-use utf8;
 use WWW::Mechanize;
+use CGI qw/:standard/;
+
+#use encoding "euc-cn", STDOUT=>'utf-8';
+use JSON;
 use Encode;
 
-binmode(STDOUT, ":encoding(utf8)");
+binmode( STDOUT, ":encoding(utf8)" );
 
-use constant SURL => q{http://news.sogou.com/};
+use constant SURL => q{http://news.youdao.com/};
 
-my $mech = WWW::Mechanize->new( ) or die;
-$mech->timeout( 20 );
+print header( -charset => 'utf-8' );
 
-$mech->get( SURL );
+my $q = CGI->new;
+
+my $keyword = $q->param('q');
+
+Encode::_utf8_on($keyword);
+
+my $mech = WWW::Mechanize->new() or die;
+$mech->timeout(20);
+
+$mech->get(SURL);
 $mech->success or die $mech->response->status_line;
 
-my $keyword = '中国';
-$keyword=encode("gbk", $keyword);
-
-#Encode::from_to($keyword, 'utf8', "gbk");
-
+# if form_number is not specified, current-selected form is used.
 $mech->submit_form(
-    form_name => 'searchForm',
-    fields    => {
-    query => $keyword,
-    p => '42040301',
-    mode => 1
-  }
+	fields => {
+		ue => 'utf8',
+		s  => 'byrelevance',
+		q  => $keyword
+	}
 );
 $mech->success or die $mech->response->status_line;
 
-print $mech->content;
+my $fh = FileHandle->new( '../html/t1.html', "w" );
+binmode $fh, ':utf8';
+print $fh $mech->content;
+$fh->autoflush(1);
+$fh->close();
+
+my $html = strip_result( $mech->content );
+
+my $aoh = parse_result($html);
+
+my $json = JSON->new->allow_nonref;
+
+print $json->encode($aoh);
+
+exit 9;
+
+###########################
+#
+sub strip_result {
+	my ($html) = @_;
+	$html =~ m {
+      <ul\sid="results"
+      .*?
+      >
+      (.*?) #soso用ol->li来划分每条记录
+      </ul>
+  }six;
+	return $1;
+}
+
+sub parse_result {
+	my ($html) = @_;
+	return unless $html;
+	my $aoh = [];
+	while (
+		$html =~ m {
+    <h3
+    .*?
+    href="
+    (.*?) #1.链接地址
+    "
+    (?:.*?)
+    >
+    (.*?) #2.标题
+        </a>
+        (?:.*?)
+        <p>
+        (.*?) #3.正文
+        </p>
+        (?:.*?)
+        </li>
+    }sgix
+	  )
+	{
+		my ( $t1, $t2, $t3 ) = ( $1, $2, $3 );
+		$t3 =~ s/<nobr.*?<\/nobr>//gi;
+		push( @{$aoh}, [ $t1, $t2, $t3 ] );
+	}
+	return $aoh;
+}
