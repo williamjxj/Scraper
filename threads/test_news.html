@@ -11,8 +11,8 @@
 			<input type="submit" value="Submit" />
 		</form>
 		<hr />
-		<h2>腾讯soso（Tengxun）</h2>
-		<div id="tengxun_news"></div>
+		<h2>360</h2>
+		<div id="360_news"></div>
 		<hr />
 		<h2>163有道</h2>
 		<div id="163_news"></div>
@@ -20,21 +20,19 @@
 		<h2>Sohu搜狗</h2>
 		<div id="sohu_news"></div>
 		<hr />
-		<h2>Test搜狗</h2>
-		<div id="div_sogou"></div>
 	</body>
 </html>
 <script type="text/javascript">
     $(function() {
         $('form').submit(function() {
-            $('#163_news, #sohu_news, #tengxun_news').empty();
+            $('#163_news, #sohu_news, #360_news').empty();
             var q = $('#q').val();
             var kw = UrlEncode($('#q').val());
             
-            //$.getJSON('/cgi-bin/threads/news_tengxun.cgi', { 'q' : kw }, function(data) {
-            $.getJSON('/cgi-bin/threads/1.cgi', { 'q' : q }, function(data) {
+            //$.getJSON('/cgi-bin/threads/news_360.cgi', { 'q' : kw }, function(data) {
+            $.getJSON('/cgi-bin/threads/news_360.cgi', { 'q' : q }, function(data) {
              if(data==null || (typeof data==='undefined') || (data.length==0)) {
-             $('#tengxun_news').html('No Data for ['+q+'], ['+kw+']');
+             $('#360_news').html('No Data for ['+q+'], ['+kw+']');
              return false;
              }
              var txt='<ul class="nav nav-pills nav-stacked">';
@@ -42,7 +40,7 @@
              txt += '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
              });
              txt +='</ul>\n';
-             $('#tengxun_news').html(txt);
+             $('#360_news').html(txt);
             });
 /*
             $.getJSON('/cgi-bin/threads/news_163.cgi', { 'q' : q }, function(data) {
