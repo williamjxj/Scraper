@@ -3,7 +3,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Test Perl news</title>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
-<!--script type="text/javascript" src="js/UrlEncode.js"></script-->
+<script type="text/javascript" src="/fmxw/js/UrlEncode.js"></script>
 </head>
 <body>
 <form action="javascript:;" method="get">
@@ -25,8 +25,8 @@
 $(function() {
 	$('form').submit(function() {
 		$('#163_news, #sohu_news, #tengxun_news').empty();
-		//var kw = UrlEncode($('#q').val());
 		var q = $('#q').val();
+		var kw = UrlEncode($('#q').val());
 		/*
 		$.getJSON('/cgi-bin/threads/news_tengxun.cgi', { 'q' : q }, function(data) {
 			var txt='<ul class="nav nav-pills nav-stacked">';
@@ -46,7 +46,7 @@ $(function() {
 			$('#163_news').html(txt);
 		});
 		*/
-		$.getJSON('/cgi-bin/threads/news_sogou.cgi', { 'q' : q }, function(data) {
+		$.getJSON('/cgi-bin/threads/news_sogou.cgi', { 'q' : kw }, function(data) {
 			var txt='<ul class="nav nav-pills nav-stacked">';
 			$.each(data, function(key, val) {
 				txt += '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
