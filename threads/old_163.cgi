@@ -1,4 +1,6 @@
 #!/usr/bin/perl
+#原来的news_163.cgi.工作很好，但是用LWP:::Simple替换WWW::Mechanize.
+#用news_163.cgi代替本文件。
 
 use strict;
 use warnings;

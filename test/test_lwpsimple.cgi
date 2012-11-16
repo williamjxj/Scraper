@@ -1,4 +1,6 @@
 #!/usr/bin/perl
+# work fine.
+# sogou用GBK.
 
 use strict;
 use warnings;

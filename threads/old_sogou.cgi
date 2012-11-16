@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+# NOT WORK!
 
 use strict;
 use warnings;
