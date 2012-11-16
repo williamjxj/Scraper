@@ -24,6 +24,14 @@ $keyword = encode("gbk", $keyword);
 
 my $content = get $url.$keyword;
 
+#################
+#my $fh = FileHandle->new( '../html/t1.html', "w" );
+#binmode $fh, ':utf8';
+#print $fh $content;
+#$fh->autoflush(1);
+#$fh->close();
+#################
+
 my $html = strip_result($content);
 
 my $aoh = parse_result($html);
@@ -44,7 +52,7 @@ sub strip_result
 	  .*?
 	  >
       (.*?) #soso用ol->li来划分每条记录
-      <table\sclass="hint"
+      (?:<table\sclass="hint"|id="footer")
   }six;
   return $1;
 }

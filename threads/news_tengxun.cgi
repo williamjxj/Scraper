@@ -10,21 +10,22 @@ use JSON;
 
 binmode STDOUT, ":utf8";
 
-my $url = q{http://news.soso.com/n.q?pid=n.home.result&ty=c&w=%CD%F5%B2%A8};
+#my $url = q{http://news.soso.com/n.q?pid=n.home.result&ty=c&w=%CD%F5%B2%A8};
+#$url = q{http://news.soso.com/n.q?w=%CD%F5%B2%A8};
 #my $url = q{http://news.soso.com/n.q?w=};
-#my $url = q{http://news.soso.com/n.q?pid=n.search.active&ty=c&w=};
-$url = q{http://news.soso.com/n.q?w=%CD%F5%B2%A8};
+
+my $url = q{http://news.soso.com/n.q?pid=n.search.active&ty=c&w=};
 
 print header(-charset=>'utf-8');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
 
-#$keyword = encode("utf8", $keyword);
+$keyword = encode("gb2312", $keyword);
 
-my $content = get $url;
+my $content = get $url.$keyword;
 
-my $html = strip_result( $content );
+my $html = strip_result($content);
 
 my $aoh = parse_result($html);
 

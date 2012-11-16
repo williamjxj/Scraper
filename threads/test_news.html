@@ -31,7 +31,8 @@
             var q = $('#q').val();
             var kw = UrlEncode($('#q').val());
             
-            $.getJSON('/cgi-bin/threads/news_tengxun.cgi', { 'q' : kw }, function(data) {
+            //$.getJSON('/cgi-bin/threads/news_tengxun.cgi', { 'q' : kw }, function(data) {
+            $.getJSON('/cgi-bin/threads/1.cgi', { 'q' : q }, function(data) {
              if(data==null || (typeof data==='undefined') || (data.length==0)) {
              $('#tengxun_news').html('No Data for ['+q+'], ['+kw+']');
              return false;
@@ -70,7 +71,6 @@
                 $('#sohu_news').html(txt);
             });
 */
-
             return false;
         });
     }); 
