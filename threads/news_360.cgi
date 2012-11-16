@@ -7,24 +7,28 @@ use Encode;
 use LWP::Simple qw(!head);
 use JSON;
 
-#binmode(STDIN, ":encoding(utf8)");
 binmode STDOUT, ":utf8";
 
-my $url = q{http://news.sogou.com/news?p=42040301&mode=1&query=};
+my $url = q{http://news.so.com/ns?src=srp&tn=news};
 
 print header(-charset=>'utf-8');
 
 my $q = CGI->new;
 my $keyword = $q->param('q');
 
-#my $keyword = "中国";
-#my $keyword = "%D6%D0%B9%FA";
+Encode::_utf8_on($keyword);
 
-$keyword = encode("gbk", $keyword);
+$url .= '&q='.$keyword.'&pq='.$keyword;
 
-my $content = get $url.$keyword;
+my $content = get $url;
 
-my $html = strip_result($content);
+my $fh = FileHandle->new( '../html/t2.html', "w" );
+binmode $fh, ':utf8';
+print $fh $content;
+$fh->autoflush(1);
+$fh->close();
+
+my $html = strip_result( $content );
 
 my $aoh = parse_result($html);
 
@@ -32,19 +36,19 @@ my $json = JSON->new->allow_nonref;
 
 print $json->encode($aoh);
 
-exit 8;
+exit 9;
 
 ###########################
-
+#
 sub strip_result
 {
   my ( $html ) = @_;
   $html =~ m {
-      <div\sclass="results"
-	  .*?
-	  >
+      <ul\sid="results"
+      .*?
+      >
       (.*?) #soso用ol->li来划分每条记录
-      (?:<table\sclass="hint"|id="footer")
+      </ul>
   }six;
   return $1;
 }
@@ -55,7 +59,7 @@ sub parse_result
     return unless $html;
     my $aoh = [];    
   while ($html =~ m {
-    class="pt"
+    <h3
     .*?
     href="
     (.*?) #1.链接地址
@@ -65,12 +69,14 @@ sub parse_result
     (.*?) #2.标题
         </a>
         (?:.*?)
-        <div\sclass="ft">
+        <p>
         (.*?) #3.正文
-        </div>
+        </p>
+        (?:.*?)
+        </li>
     }sgix) {
         my ($t1,$t2,$t3) = ($1,$2,$3);
-		$t3 =~ s/<a.*?<\/a>//ig;
+		$t3 =~ s/<nobr.*?<\/nobr>//gi;
         push (@{$aoh}, [$t1,$t2,$t3]);
     }
     return $aoh;
