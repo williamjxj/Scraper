@@ -16,7 +16,10 @@ use constant SURL => q{http://news.sogou.com/};
 print header(-charset=>'utf-8');
 
 my $q = CGI->new;
-my $keyword = $q->param('q');
+# my $keyword = $q->param('q');
+
+my $keyword = "中国";
+# my $keyword = "%D6%D0%B9%FA";
 
 my $mech = WWW::Mechanize->new( ) or die;
 $mech->timeout( 20 );
