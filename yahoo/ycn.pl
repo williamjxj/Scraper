@@ -9,18 +9,11 @@ use Data::Dumper;
 use DBI;
 use Encode qw(decode);
 
-BEGIN{
-	if ( $^O eq 'MSWin32' ) {
-		use lib qw(../lib/);
-	}
-	else {
-		use lib qw(/home/williamjxj/scraper/lib/);
-	}
-}
+use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 use yahoo;
 
-use constant SURL => q{http://search.yahoo.com/};
+use constant SURL => q{http://cn.search.yahoo.com/};
 
 die "usage: $0 keyword" if ($#ARGV != 0);
 our $keyword = decode("utf8", $ARGV[0]);

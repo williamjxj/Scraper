@@ -15,7 +15,7 @@ use config;
 use db;
 use google;
 
-use constant SURL => q{http://www.google.com};
+use constant SURL => q{http://www.google.com.hk};
 
 die "usage: $0 keyword" if ($#ARGV != 0);
 our $keyword = decode("utf8", $ARGV[0]);
@@ -24,15 +24,6 @@ our $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
 
 my $gg = new google( $dbh );
 
-=comment
-定义插入数组的缺省值.
-tag: 关键词
-clicks: 总共点击的次数, 0-1000
-likes: 欣赏此文, 0-100
-guanzhu: 关注此文, 0-100
-created: 'google'
-source:'google搜索程序'
-=cut
 my $h = {
 	'keyword' => $dbh->quote($keyword),
 	'source' => $dbh->quote(SURL),

@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Perl 网页抓取 繁体 、英文</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+<form action="javascript:;" method="get">
+  <input type="text" name="q" id="q" style="width:399px" placeholder="请输入关键词" value="王波" />
+  <button type="button" class="btn" id="search_button">查询关键词</button>
+</form>
+<hr />
+<h3>雅虎香港</h3>
+<div id="hk"></div>
+<hr />
+<h3>Yahoo!台湾奇摩搜尋</h3>
+<div id="tw"></div>
+<hr />
+<h3>YAHOO!en</h3>
+<div id="en"></div>
+<script type="text/javascript">
+$(function() {
+$('#search_button').click(function() {
+	var q = $('#q').val();
+	$.getJSON('./yhk.pl', { 'q' : q }, function(data) {
+		var ary = [];
+		$.each(data, function(key, val) {
+			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
+			ary.push(t);
+		});
+		$('#hk').append(ary);
+	});
+	
+	$.getJSON('./ytw.pl', { 'q' : q }, function(data) {
+		var ary = [];
+		$.each(data, function(key, val) {
+			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
+			ary.push(t);
+		});
+		$('#tw').append(ary);
+	});
+	
+	$.getJSON('./yen.pl', { 'q' : q }, function(data) {
+		var ary = [];
+		$.each(data, function(key, val) {
+			t = '<li><a href="' + val[0] + '">' + val[1] + '</a><br>' + val[2] + '</li>';
+			ary.push(t);
+		});
+		$('#en').append(ary);
+	});
+  });
+});
+</script>
+</body>
+</html>

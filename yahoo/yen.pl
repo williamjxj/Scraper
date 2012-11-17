@@ -4,20 +4,12 @@ use strict;
 use warnings;
 use utf8;
 use encoding 'utf8';
-use lib qq{/home/williamjxj/perl5/lib/perl5/};
 use WWW::Mechanize;
 use Data::Dumper;
 use DBI;
 use Encode qw(decode);
 
-BEGIN{
-	if ( $^O eq 'MSWin32' ) {
-		use lib qw(../lib/);
-	}
-	else {
-		use lib qw(/home/williamjxj/scraper/lib/);
-	}
-}
+use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 use db;
 use yahoo;

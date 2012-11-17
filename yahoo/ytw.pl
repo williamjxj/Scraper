@@ -9,16 +9,6 @@ use Data::Dumper;
 use DBI;
 use Encode qw(decode);
 
-BEGIN{
-	if ( $^O eq 'MSWin32' ) {
-		use lib qw(../lib/);
-	}
-	else {
-		use lib qw(/home/williamjxj/scraper/lib/);
-	}
-}
-use config;
-use yahoo;
 
 use constant SURL => q{http://tw.search.yahoo.com/};
 

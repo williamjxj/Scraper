@@ -2,6 +2,15 @@
 ##! /cygdrive/c/Perl/bin/perl.exe -w
 #和gg.pl不同的是, 本文件从命令行执行,而不是从php进行调用.
 # 没有输入'查询关键词'参数.
+=comment
+定义插入数组的缺省值.
+tag: 关键词
+clicks: 总共点击的次数, 0-1000
+likes: 欣赏此文, 0-100
+guanzhu: 关注此文, 0-100
+created: 'google'
+source:'google搜索程序'
+=cut
 
 use strict;
 use warnings;

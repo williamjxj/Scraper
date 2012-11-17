@@ -132,32 +132,31 @@ sub insert_keyword_kr
 		.*?
 		<td>
 		.*?
-		href=(.*?)  #1. kurl
+		href="(.*?)"  #1. kurl
+		.*?
 		>
 		(.*?)   #2. keyword
 		</a>
 	    }sgix) {
 		my ( $t1, $t2 ) = ( $1, $2 );
-		$t1 =~ s/^.*?"//;
-		$t1 =~ s/\\.*$//;
 		push( @{$aoh}, [ $t1, $t2 ] );
 	};
 	
-	my ($kurl, $keyword, $kid, $sth, $q);
+	my ($kurl, $keyword, $kid, $sth);
 	foreach my $k ( @{$aoh} ) {
-		$kurl = $k->[0];
-		$keyword = $k->[1];
+		$kurl = $dbh->quote($k->[0]);
+		$keyword = $dbh->quote($k->[1]);
 		
-		$sth = $dbh->prepare("INSERT IGNORE INTO keywords(keyword, createdby, created) VALUES ( ?, 'top', now() )");
-		$sth->execute($keyword) or next;
+		$sth = $dbh->prepare('INSERT IGNORE INTO keywords(keyword) VALUES ( ? )');
+		$sth->execute($keyword);
 	
-		$kid = $dbh->{'mysql_insertid'} or $kid = $bd->get_kid_by_keyword($keyword);
+		$kid = $dbh->{'mysql_insertid'};
 	
 		$sth = $dbh->prepare(
-			"INSERT IGNORE INTO key_related (rk, kurl, kid, keyword, createdby, created) 
-			VALUES(?,?,?,?,'top',now())"
+			'INSERT IGNORE INTO key_related (rk, kurl, kid, keyword, createdby, created) 
+			VALUES(?,?,?,?,?,?)'
 		);
-		$sth->execute( $keyword, $kurl, $kid, $keyword);
+		$sth->execute( $keyword, $kurl, $kid, $keyword, now(), now() );
 	}
 }
 
@@ -165,7 +164,7 @@ __DATA__
 实时热点排行榜,http://top.baidu.com/rss_xml.php?p=top10,新闻
 七日关注排行榜,http://top.baidu.com/rss_xml.php?p=weekhotspot,新闻
 今日热门搜索排行榜,http://top.baidu.com/rss_xml.php?p=top_keyword,新闻
-世说新词排行榜,http://top.baidu.com/rss_xml.php?p=shishuoxinci,新闻
+世说新词排行榜,http://top.baidu.com/rss_xml.php?p=shishuoxinci,新闻kk
 最近事件排行榜,http://top.baidu.com/rss_xml.php?p=shijian,事件
 上周事件排行榜,http://top.baidu.com/rss_xml.php?p=shijian_lastweek,事件
 上月事件排行榜,http://top.baidu.com/rss_xml.php?p=shijian_lastmonth,事件
