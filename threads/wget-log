@@ -61,4 +61,42 @@ Retrying.
 
 --2012-11-16 16:11:15--  (try:13)  http://news.soso.com/n.q?pid=n.home.result
 Connecting to news.soso.com|124.89.102.145|:80... connected.
-HTTP request sent, awaiting response... 
+HTTP request sent, awaiting response... Read error (Connection timed out) in headers.
+Retrying.
+
+--2012-11-16 16:26:29--  (try:14)  http://news.soso.com/n.q?pid=n.home.result
+Connecting to news.soso.com|124.89.102.145|:80... connected.
+HTTP request sent, awaiting response... Read error (Connection timed out) in headers.
+Retrying.
+
+--2012-11-16 16:41:39--  (try:15)  http://news.soso.com/n.q?pid=n.home.result
+Connecting to news.soso.com|124.89.102.145|:80... connected.
+HTTP request sent, awaiting response... Read error (Connection timed out) in headers.
+Retrying.
+
+--2012-11-16 16:56:49--  (try:16)  http://news.soso.com/n.q?pid=n.home.result
+Connecting to news.soso.com|124.89.102.145|:80... connected.
+HTTP request sent, awaiting response... Read error (Connection timed out) in headers.
+Retrying.
+
+--2012-11-16 17:12:02--  (try:17)  http://news.soso.com/n.q?pid=n.home.result
+Connecting to news.soso.com|124.89.102.145|:80... connected.
+HTTP request sent, awaiting response... Read error (Connection timed out) in headers.
+Retrying.
+
+--2012-11-16 17:27:16--  (try:18)  http://news.soso.com/n.q?pid=n.home.result
+Connecting to news.soso.com|124.89.102.145|:80... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: http://news.soso.com [following]
+--2012-11-16 17:27:22--  http://news.soso.com/
+Connecting to news.soso.com|124.89.102.145|:80... connected.
+HTTP request sent, awaiting response... Read error (Connection timed out) in headers.
+Retrying.
+
+--2012-11-16 17:42:23--  (try: 2)  http://news.soso.com/
+Connecting to news.soso.com|124.89.102.145|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/html]
+Saving to: `index.html'
+
+     0K .
