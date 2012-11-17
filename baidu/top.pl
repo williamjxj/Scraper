@@ -132,31 +132,32 @@ sub insert_keyword_kr
 		.*?
 		<td>
 		.*?
-		href="(.*?)"  #1. kurl
-		.*?
+		href=(.*?)  #1. kurl
 		>
 		(.*?)   #2. keyword
 		</a>
 	    }sgix) {
 		my ( $t1, $t2 ) = ( $1, $2 );
+		$t1 =~ s/^.*?"//;
+		$t1 =~ s/\\.*$//;
 		push( @{$aoh}, [ $t1, $t2 ] );
 	};
 	
-	my ($kurl, $keyword, $kid, $sth);
+	my ($kurl, $keyword, $kid, $sth, $q);
 	foreach my $k ( @{$aoh} ) {
-		$kurl = $dbh->quote($k->[0]);
-		$keyword = $dbh->quote($k->[1]);
+		$kurl = $k->[0];
+		$keyword = $k->[1];
 		
-		$sth = $dbh->prepare('INSERT IGNORE INTO keywords(keyword) VALUES ( ? )');
-		$sth->execute($keyword);
+		$sth = $dbh->prepare("INSERT IGNORE INTO keywords(keyword, createdby, created) VALUES ( ?, 'top', now() )");
+		$sth->execute($keyword) or next;
 	
-		$kid = $dbh->{'mysql_insertid'};
+		$kid = $dbh->{'mysql_insertid'} or $kid = $bd->get_kid_by_keyword($keyword);
 	
 		$sth = $dbh->prepare(
-			'INSERT IGNORE INTO key_related (rk, kurl, kid, keyword, createdby, created) 
-			VALUES(?,?,?,?,?,?)'
+			"INSERT IGNORE INTO key_related (rk, kurl, kid, keyword, createdby, created) 
+			VALUES(?,?,?,?,'top',now())"
 		);
-		$sth->execute( $keyword, $kurl, $kid, $keyword, now(), now() );
+		$sth->execute( $keyword, $kurl, $kid, $keyword);
 	}
 }
 

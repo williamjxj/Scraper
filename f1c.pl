@@ -188,14 +188,22 @@ foreach my $url ( @{$links} ) {
 
 	$sth = $dbh->do($sql);
 	
+	my ($kid, $q);
 	my $keywords = $news->get_keywords($news->parse_keywords_list($mech->content));
 	#插入关键词
 	foreach my $keyword (@{$keywords})  {
-		$keyword = $dbh->quote($keyword);
-		#$sql = qq{ insert ignore into tags(name) values( $keyword ) };
-		#$sth = $dbh->do($sql);	
+		$q = $dbh->quote($keyword);
 	
-		$sql = qq{ insert ignore into keywords(keyword) values( $keyword ) };
+		$sql = qq{ insert ignore into keywords(keyword, createdby, created) values( $q, 'f1c', now() ) };
+		$sth = $dbh->do($sql) or next;
+
+		$kid = $dbh->{'mysql_insertid'};
+		if(! $kid) {
+			$kid=$news->get_kid_by_keyword($keyword);
+		}
+
+		$sql = qq{ insert ignore into key_related(rk, kurl, kid, keyword, createdby, created) 
+			values( $q, '', $kid, $q, 'f1c', now() ) };
 		$sth = $dbh->do($sql);	
 	}
 	$mech->back();

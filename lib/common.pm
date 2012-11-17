@@ -94,9 +94,7 @@ sub close_log {
 }
 
 sub get_kid_by_keyword {
-	my ( $self, $keyword ) = @_;
-	my ($q) = ($keyword =~ m/^(.*?)\s+/);
-	return 0 unless $q;
+	my ( $self, $q ) = @_;
 	my $sth =
 	  $self->{dbh}->prepare(qq{ select kid from keywords where keyword = ? });
 	$sth->execute($q);
