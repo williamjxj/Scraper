@@ -56,7 +56,7 @@ my $h = {
 	'cate_id' => 0,
 	'item' => '',
 	'item_id' => 0,
-	'createdby' => $dbh->quote('baidi_' . $bd->get_os_stripname(__FILE__)),
+	'createdby' => $dbh->quote($bd->get_os_stripname(__FILE__)),
 };
 
 GetOptions( 'log' => \$log );
@@ -109,6 +109,9 @@ foreach $data (<DATA>) {
 	} 
 
 	$bd->insert_baidu($h, $rank);
+	
+	#william add on 2012-11-16
+	insert_keyword_kr($dbh, $h->{'desc'});
 }
 	
 $dbh->disconnect();
@@ -118,6 +121,44 @@ $bd->write_log("----------------------------------------------\n");
 $bd->close_log();
 
 exit 8;
+
+sub insert_keyword_kr 
+{
+	my ($dbh, $html) = @_;
+	my $aoh = [];
+
+	while ($html =~ m {
+		</th>
+		.*?
+		<td>
+		.*?
+		href="(.*?)"  #1. kurl
+		.*?
+		>
+		(.*?)   #2. keyword
+		</a>
+	    }sgix) {
+		my ( $t1, $t2 ) = ( $1, $2 );
+		push( @{$aoh}, [ $t1, $t2 ] );
+	};
+	
+	my ($kurl, $keyword, $kid, $sth);
+	foreach my $k ( @{$aoh} ) {
+		$kurl = $dbh->quote($k->[0]);
+		$keyword = $dbh->quote($k->[1]);
+		
+		$sth = $dbh->prepare('INSERT IGNORE INTO keywords(keyword) VALUES ( ? )');
+		$sth->execute($keyword);
+	
+		$kid = $dbh->{'mysql_insertid'};
+	
+		$sth = $dbh->prepare(
+			'INSERT IGNORE INTO key_related (rk, kurl, kid, keyword, createdby, created) 
+			VALUES(?,?,?,?,?,?)'
+		);
+		$sth->execute( $keyword, $kurl, $kid, $keyword, now(), now() );
+	}
+}
 
 __DATA__
 实时热点排行榜,http://top.baidu.com/rss_xml.php?p=top10,新闻
