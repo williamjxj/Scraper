@@ -9,7 +9,9 @@ use Data::Dumper;
 use DBI;
 use Encode qw(decode);
 
-
+use lib qw(/home/williamjxj/scraper/lib/);
+use config;
+use yahoo;
 use constant SURL => q{http://tw.search.yahoo.com/};
 
 die "usage: $0 keyword" if ($#ARGV != 0);

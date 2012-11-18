@@ -116,7 +116,7 @@ foreach $data (<DATA>) {
 	
 $dbh->disconnect();
 $end_time = time;
-$bd->write_log( "Total total data: [ " . $num . "], " . ( $end_time - $start_time ) . " ] seconds used.\n" );
+$bd->write_log( "Total total data: [ " . $num . " ], [ " . ( $end_time - $start_time ) . " ] seconds used.\n" );
 $bd->write_log("----------------------------------------------\n");
 $bd->close_log();
 

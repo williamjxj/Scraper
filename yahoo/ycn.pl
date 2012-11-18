@@ -67,7 +67,7 @@ foreach my $p (@{$aoh}) {
 	$h->{'likes'} = $cn->generate_random(100);
 	$h->{'guanzhu'} = $cn->generate_random(100);	
 
-	$sql = qq{ insert ignore into contents(
+	$sql = qq{ insert ignore into contents_1(
 		title,
 		url,
 		author,
