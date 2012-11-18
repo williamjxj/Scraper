@@ -19,6 +19,15 @@ die "usage: $0 keyword" if ($#ARGV != 0);
 our $keyword = decode("utf8", $ARGV[0]);
 
 my $cn = new yahoo();
+
+=comment
+定义插入数组的缺省值.
+keyword: 关键词
+clicks: 总共点击的次数, 0-1000
+likes: 欣赏此文, 0-100
+guanzhu: 关注此文, 0-100
+created: 'yahoo'
+=cut
 my $h = {
 	'keyword' => $cn->{'dbh'}->quote($keyword),
 	'source' => $cn->{'dbh'}->quote(SURL),

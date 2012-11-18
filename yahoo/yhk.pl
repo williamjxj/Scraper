@@ -8,14 +8,27 @@ use WWW::Mechanize;
 use Data::Dumper;
 use DBI;
 use Encode qw(decode);
+use CGI qw(:standard);
 
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 use yahoo;
 use constant SURL => q{http://hk.search.yahoo.com/};
 
-die "usage: $0 keyword" if ($#ARGV != 0);
-our $keyword = decode("utf8", $ARGV[0]);
+our $keyword;
+if ($#ARGV == 0) {
+	$keyword = decode("utf8", $ARGV[0]);
+}
+else {
+	my $q = CGI->new;
+	if (defined($q->param('q'))) {
+		$keyword = $q->param('q');
+		Encode::_utf8_on($keyword);	
+	}
+}
+else {
+	die "usage: $0 keyword";	
+}
 
 my $hk = new yahoo() or die $!;
 my $h = {
@@ -36,22 +49,13 @@ $mech->submit_form(
 	fields    => { p => $keyword }
 );
 $mech->success or die $mech->response->status_line;
-#$mech->save_content(HTML.'hk1.html');
-# undefined subroutune: print $mech-text();
-# $mech->dump_text();
-# $hk->write_file('hk1.html', $mech->content);
 
 # 保存查询的url, 上面有字符集, 查询数量等信息.
 $h->{'author'} = $hk->{'dbh'}->quote($mech->uri()->as_string) if($mech->uri);
 
-
 my $t = $hk->strip_result( $mech->content );
-# $hk->write_file('hk2.html', $t);
-
 
 my $aoh = $hk->parse_result($t);
-# $hk->write_file('hk3.html', $aoh);
-
 
 # yahoo竟然没有相关关键词推荐!!!
 my $sql = '';

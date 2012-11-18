@@ -9,6 +9,7 @@ use WWW::Mechanize;
 use Data::Dumper;
 use DBI;
 use Encode qw(decode);
+use CGI qw(:standard);
 
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
@@ -17,8 +18,20 @@ use google;
 
 use constant SURL => q{http://www.google.com.tw};
 
-die "usage: $0 keyword" if ($#ARGV != 0);
-our $keyword = decode("utf8", $ARGV[0]);
+our $keyword;
+if ($#ARGV == 0) {
+	$keyword = decode("utf8", $ARGV[0]);
+}
+else {
+	my $q = CGI->new;
+	if (defined($q->param('q'))) {
+		$keyword = $q->param('q');
+		Encode::_utf8_on($keyword);	
+	}
+}
+else {
+	die "usage: $0 keyword";	
+}
 
 our $dbh = new db( USER, PASS, DSN.":hostname=".HOST );
 
@@ -94,7 +107,7 @@ foreach my $p (@{$aoh}) {
 	$h->{'likes'} = $gg->generate_random(100);
 	$h->{'guanzhu'} = $gg->generate_random(100);	
 
-	my $sql = qq{ insert ignore into contents(
+	my $sql = qq{ insert ignore into } . CONTENTS_1 . qq{(
 		title,
 		url,
 		author,

@@ -8,25 +8,30 @@ use WWW::Mechanize;
 use Data::Dumper;
 use DBI;
 use Encode qw(decode);
+use CGI qw(:standard);
 
 use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 use yahoo;
 use constant SURL => q{http://tw.search.yahoo.com/};
 
-die "usage: $0 keyword" if ($#ARGV != 0);
-our $keyword = decode("utf8", $ARGV[0]);
+our $keyword;
+if ($#ARGV == 0) {
+	$keyword = decode("utf8", $ARGV[0]);
+}
+else {
+	my $q = CGI->new;
+	if (defined($q->param('q'))) {
+		$keyword = $q->param('q');
+		Encode::_utf8_on($keyword);	
+	}
+}
+else {
+	die "usage: $0 keyword";	
+}
 
 my $tw = new yahoo();
 
-=comment
-定义插入数组的缺省值.
-keyword: 关键词
-clicks: 总共点击的次数, 0-1000
-likes: 欣赏此文, 0-100
-guanzhu: 关注此文, 0-100
-created: 'yahoo'
-=cut
 my $h = {
 	'keyword' => $tw->{'dbh'}->quote($keyword),
 	'source' => $tw->{'dbh'}->quote(SURL),
@@ -46,19 +51,13 @@ $mech->submit_form(
 	fields    => { p => $keyword }
 );
 $mech->success or die $mech->response->status_line;
-#$mech->save_content(HTML.'tw1.html');
-# undefined subroutune: print $mech-text();
-# $mech->dump_text();
-# $tw->write_file('tw1.html', $mech->content);
 
 # 保存查询的url, 上面有字符集, 查询数量等信息.
 $h->{'author'} = $tw->{'dbh'}->quote($mech->uri()->as_string) if($mech->uri);
 
 my $t = $tw->strip_result( $mech->content );
-# $tw->write_file('tw2.html', $t);
 
 my $aoh = $tw->parse_result($t);
-# $tw->write_file('tw3.html', $aoh);
 
 # yahoo竟然没有相关关键词推荐!!!
 my $sql = '';
