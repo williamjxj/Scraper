@@ -61,7 +61,7 @@ sub parse_newslist {
     }sgix) {
         my ($href,$title,$source,$created) = ($1,$2,$3,$4,$5);
         my ($clicks) = ($5 =~ m/(\d+)/s);
-        
+        $created =~ s{(\d+)/(\d+)/(d+)}{20$3-$1-$2}s;
         push (@{$aoh}, [$href,$title,$source,$created,$clicks]);
     }
     return $aoh;
@@ -99,14 +99,13 @@ sub parse_detail {
 
 	$desc =~ s{<font\scolor=E6E6DD>\swww.6park.com</font>}{}g;
 	$desc =~ s{<script.*?</script>}{}g;
-	$desc =~ s{<img.*?src="(.*?)".*?/>}{<img src="$1"/>}g;
+	$desc =~ s{<img.*?src=(.*?)\s.*?/>}{<img src=$1 />}g;
 	
 	$sd =~ m {
 		:\s
 		(.*?)		# 来源
 		于
 		(.*?)		# 时间
-		</time>
 	}sgix;
 	my ($source, $pubdate) = ($1, $2);
 	
