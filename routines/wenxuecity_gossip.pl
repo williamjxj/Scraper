@@ -31,8 +31,8 @@ use config;
 use db;
 use wenxuecity;
 
-use constant SURL => q{http://www.wenxuecity.com/news/1};
-use constant PRES => q{http://www.wenxuecity.com/news/};
+use constant SURL => q{http://www.wenxuecity.com/news/gossip/1};
+use constant PRES => q{http://www.wenxuecity.com/news/gossip/};
 
 BEGIN {
     $SIG{'INT'}  = 'IGNORE';
@@ -81,11 +81,11 @@ $dbh = new db( USER, PASS, DSN . ":hostname=" . HOST );
 $wxc = new wenxuecity( $dbh ) or die $!;
 
 our $h = {
-	'createdby'	=> $dbh->quote('wenxuecity.pl'),
+	'createdby'	=> $dbh->quote('wenxuecity_gossip.pl'),
 	'category'	=> $dbh->quote('文学城'),
 	'cate_id'	=> 26,
-	'item'		=> $dbh->quote('滚动新闻'),
-	'iid'		=> 295
+	'item'		=> $dbh->quote('生活百态'),
+	'iid'		=> 297
 };
 
 # 日志文件处理：
@@ -116,7 +116,8 @@ LOOP:
 $mech->get($page_url);
 $mech->success or die $mech->response->status_line;
 
-# $mech->save_content('w2.html');
+# 保存当前的page_url.
+$h->{'author'} = $dbh->quote($page_url);
 
 my $html = $mech->content;
 
@@ -149,7 +150,6 @@ foreach my $p ( @{$aoh} ) {
 	# 来自细节页面。
 	$h->{'detail_title'} = $dbh->quote($title);
 	$h->{'source'} = $dbh->quote($source);
-	$h->{'author'} = $dbh->quote($source);
 	$h->{'pubdate'} = $dbh->quote( $pubdate );
 	$h->{'clicks'}  = $clicks ? $clicks : $wxc->generate_random();
 	$h->{'desc'}  = $dbh->quote( $desc );
