@@ -97,6 +97,10 @@ sub parse_detail {
     }sgix;
 	my ($title, $sd, $desc) = ($1, $2, $3);
 
+	$desc =~ s{<font\scolor=E6E6DD>\swww.6park.com</font>}{}g;
+	$desc =~ s{<script.*?</script>}{}g;
+	$desc =~ s{<img.*?src="(.*?)".*?/>}{<img src="\1"/>}g;
+	
 	$sd =~ m {
 		:\s
 		(.*?)		# 来源
