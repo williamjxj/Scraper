@@ -98,19 +98,15 @@ sub parse_detail {
 	my ($title, $sd, $desc) = ($1, $2, $3);
 
 	$sd =~ m {
-		author">
+		:\s
 		(.*?)		# 来源
-		</span>
-		.*?
-		itemprop="datePublished"
-		.*?
-		>
+		于
 		(.*?)		# 时间
 		</time>
 	}sgix;
 	my ($source, $pubdate) = ($1, $2);
 	
-    return ($title, $pubdate, $desc);
+    return ($title, $pubdate, $desc, $source);
 }
 
 
