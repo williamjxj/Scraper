@@ -81,8 +81,8 @@ $dbh = new db( USER, PASS, DSN . ":hostname=" . HOST );
 $wxc = new wenxuecity( $dbh ) or die $!;
 
 our $h = {
-	'createdby'	=> $dbh->quote('文学城'),
-	'category'	=> $dbh->quote(''),
+	'createdby'	=> $dbh->quote('wenxuecity.pl'),
+	'category'	=> $dbh->quote('文学城'),
 	'cate_id'	=> 26,
 	'item'		=> $dbh->quote('滚动新闻'),
 	'iid'		=> 295
