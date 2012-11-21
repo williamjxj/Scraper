@@ -61,7 +61,7 @@ sub parse_newslist {
     }sgix) {
         my ($href,$title,$source,$created) = ($1,$2,$3,$4,$5);
         my ($clicks) = ($5 =~ m/(\d+)/s);
-        $created =~ s{(\d+)/(\d+)/(d+)}{20$3-$1-$2}s;
+        $created =~ s{(\d+)/(\d+)/(\d+)}{20$3-$1-$2}g;
         push (@{$aoh}, [$href,$title,$source,$created,$clicks]);
     }
     return $aoh;
@@ -104,8 +104,8 @@ sub parse_detail {
 	$sd =~ m {
 		:\s
 		(.*?)		# 来源
-		于
-		(.*?)		# 时间
+		\s
+		(.*)		# 时间
 	}sgix;
 	my ($source, $pubdate) = ($1, $2);
 	
