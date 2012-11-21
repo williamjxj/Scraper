@@ -78,11 +78,11 @@ sub strip_detail {
 	return $1;
 }
 
-# $title, $source, $pubdate, $clicks, $desc
-# $title, $pubdate, $desc 
+# Use of uninitialized value $html
+# $title, $pubdate, $desc, $source
 sub parse_detail {
 	my ($self, $html) = @_;
-
+    return unless $html;
     $html =~ m {
     	<h2
     	.*?>
