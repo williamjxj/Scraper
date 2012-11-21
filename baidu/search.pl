@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use utf8;
 use encoding 'utf8';
-#use lib qw(/home/williamjxj/perl5/lib/perl5/);
 use WWW::Mechanize;
 use Data::Dumper;
 use DBI;
