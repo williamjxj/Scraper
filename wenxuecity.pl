@@ -123,7 +123,7 @@ my $html = $mech->content;
 my $pagenav = $wxc->strip_pagenav($html);
 my $newslist = $wxc->strip_newslist($html);
 
-$page_url = $wxc->parse_next_page($pagenav);
+$page_url = PRES . $wxc->parse_next_page($pagenav);
 
 my $aoh = $wxc->parse_newslist($newslist);
 
@@ -135,6 +135,8 @@ foreach my $p ( @{$aoh} ) {
 	$num++;
 	$mech->follow_link( url => $url );
 	$mech->success or next;
+
+	#$mech->save_content('w2.html'); exit;
 	
 	$detail = $wxc->strip_detail($mech->content);
 	my ($title, $source, $pubdate, $clicks, $desc) = $wxc->parse_detail($detail);
@@ -147,6 +149,7 @@ foreach my $p ( @{$aoh} ) {
 	# 来自细节页面。
 	$h->{'detail_title'} = $dbh->quote($title);
 	$h->{'source'} = $dbh->quote($source);
+	$h->{'author'} = $dbh->quote($source);
 	$h->{'pubdate'} = $dbh->quote( $pubdate );
 	$h->{'clicks'}  = $clicks ? $clicks : $wxc->generate_random();
 	$h->{'desc'}  = $dbh->quote( $desc );

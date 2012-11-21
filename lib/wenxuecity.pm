@@ -39,7 +39,8 @@ sub parse_next_page
 	my ($alink, $next_page) = ($1, $2);
 	$alink =~ s/^\s*//;
 	$alink =~ s/\s*%//;
-    return [ $alink, $next_page ];
+    #return [ $alink, $next_page ];
+    return $alink;
 }
 
 
@@ -84,14 +85,13 @@ sub strip_detail {
 		id="newswrapper"
 		(.*?)
 		id="comment"
-	};
+	}sgix;
 	return $1;
 }
 
 # $title, $source, $pubdate, $clicks, $desc
 sub parse_detail {
 	my ($self, $html) = @_;
-	my $aoh = [];
 
     $html =~ m {
     	<h1
@@ -112,10 +112,9 @@ sub parse_detail {
     	(.*)	#正文,贪婪匹配到最后的div
     	</div>
     }sgix;
-    
 	my ($title, $sd, $clicks, $desc) = ($1, $2, $3, $4);
 
-	$sd = m{
+	$sd =~ m {
 		author">
 		(.*?)		# 来源
 		</span>
@@ -128,10 +127,7 @@ sub parse_detail {
 	}sgix;
 	my ($source, $pubdate) = ($1, $2);
 	
-
-    push (@{$aoh}, [$title, $source, $pubdate, $clicks, $desc]);
-    
-    return $aoh;
+    return ($title, $source, $pubdate, $clicks, $desc);
 }
 
 
