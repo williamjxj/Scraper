@@ -79,7 +79,7 @@ foreach my $page ( 1 .. 10 ) {
 		$mech->follow_link( url => $url );
 		$mech->success or next;
 
-		$mech->save_content('6park2.html'); exit;
+		#$mech->save_content('6park2.html'); exit;
 
 		$detail = $ly->strip_detail( $mech->content );
 		my ( $title, $pubdate, $desc, $source1 ) = $ly->parse_detail($detail);
