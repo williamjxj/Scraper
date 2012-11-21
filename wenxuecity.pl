@@ -32,6 +32,7 @@ use db;
 use wenxuecity;
 
 use constant SURL => q{http://www.wenxuecity.com/news/1};
+use constant PRES => q{http://www.wenxuecity.com/news/};
 
 BEGIN {
     $SIG{'INT'}  = 'IGNORE';
@@ -80,8 +81,11 @@ $dbh = new db( USER, PASS, DSN . ":hostname=" . HOST );
 $wxc = new wenxuecity( $dbh ) or die $!;
 
 our $h = {
-	'source'    => $dbh->quote(SURL),
-	'createdby' => $dbh->quote('文学城'),
+	'createdby'	=> $dbh->quote('文学城'),
+	'category'	=> $dbh->quote(''),
+	'cate_id'	=> 26,
+	'item'		=> $dbh->quote('滚动新闻'),
+	'iid'		=> 295
 };
 
 # 日志文件处理：
@@ -111,19 +115,19 @@ LOOP:
 #$mech->get($page_url, ':content_file' => 'w1.html');
 $mech->get($page_url);
 $mech->success or die $mech->response->status_line;
-$mech->save_content('w2.html');
-exit;
+
+# $mech->save_content('w2.html');
 
 my $html = $mech->content;
 
-#my $ht = $wxc->parse_date( $end_date, $html );
-#unless ($ht) die;
+my $pagenav = $wxc->strip_pagenav($html);
+my $newslist = $wxc->strip_newslist($html);
 
-my $ht = $wxc->strip_result($html);
+$page_url = $wxc->parse_next_page($pagenav);
 
-$page_url = $wxc->parse_next_page($ht);
+my $aoh = $wxc->parse_newslist($newslist);
 
-my $aoh = $wxc->parse_result($ht);
+my $detail;
 
 foreach my $p ( @{$aoh} ) {
 	my $url = $p->[0];
@@ -131,14 +135,23 @@ foreach my $p ( @{$aoh} ) {
 	$num++;
 	$mech->follow_link( url => $url );
 	$mech->success or next;
+	
+	$detail = $wxc->strip_detail($mech->content);
+	my ($title, $source, $pubdate, $clicks, $desc) = $wxc->parse_detail($detail);
 
-	$h->{'url'}   = $dbh->quote( $p->[0] );
-	$h->{'title'} = $dbh->quote( strip_tag( $p->[1] ) );
-	$h->{'desc'}  = $dbh->quote( strip_tag( $p->[2] ) );
+	#来自列表页面。
+	$h->{'url'}   = $dbh->quote( PRES . $p->[0] );
+	$h->{'title'} = $dbh->quote( $p->[1] );
+	$h->{'created'} = $dbh->quote($p->[2]);
+	
+	# 来自细节页面。
+	$h->{'detail_title'} = $dbh->quote($title);
+	$h->{'source'} = $dbh->quote($source);
+	$h->{'pubdate'} = $dbh->quote( $pubdate );
+	$h->{'clicks'}  = $clicks ? $clicks : $wxc->generate_random();
+	$h->{'desc'}  = $dbh->quote( $desc );
 
-	$h->{'pubdate'} = $dbh->quote( $wxc->get_time('2') );
-
-	$h->{'clicks'}  = $wxc->generate_random();
+	# 构造数据。
 	$h->{'likes'}   = $wxc->generate_random(100);
 	$h->{'guanzhu'} = $wxc->generate_random(100);
 
@@ -148,6 +161,10 @@ foreach my $p ( @{$aoh} ) {
 				author,
 				source,
 				pubdate,
+				category,
+				cate_id,
+				item,
+				iid,
 				tags,
 				clicks,
 				likes,
@@ -161,12 +178,16 @@ foreach my $p ( @{$aoh} ) {
 				$h->{'author'},
 				$h->{'source'},
 				$h->{'pubdate'},
-				$h->{'keyword'},
+				$h->{'category'},
+				$h->{'cate_id'},
+				$h->{'item'},
+				$h->{'iid'},
+				$h->{'detail_title'},
 				$h->{'clicks'},
 				$h->{'likes'},
 				$h->{'guanzhu'},
 				$h->{'createdby'},
-				now(),
+				$h->{'created'},
 				$h->{'desc'}
 			)
 	};
