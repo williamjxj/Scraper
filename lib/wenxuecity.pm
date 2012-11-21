@@ -12,89 +12,128 @@ sub new {
 	bless $self, $type;
 }
 
-sub strip_result {
+sub strip_pagenav {
 	my ($self, $html) = @_;
-}
-
-sub parse_result {
-    my ($self, $html) = @_;
-    return unless $html;
-    my $aoh = [];
-    while ($html =~ m {
-        <li\sclass=(?:g|"g")>
-        (?:.*?)
-        <h3\sclass=(?:r|"r")>
-        (?:.*?)
-		<a
-		(?:.*?)
-		href="(.*?)"	#1.url部分
-        (?:.*?)
-		>
-		(.*?)			#2.标题部分
-		</a>
-		(?:.*?)
-        <div\sclass=(?:s|"s")>
-        (?:.*?)
-        <cite>
-        (.*?)			#3.source部分
-        </cite>
-        (?:.*?)
-        <span\sclass="st">
-        (.*?)			#4.content正文部分
-        </span>
-        (?:.*?)
-		</li>
-    }sgix) {
-        my ($t1,$t2,$t3, $t4) = ($1,$2,$3,$4);
-		$t1 =~ s/^\/url\?q=//  if($t1 =~ m/^\/url/);
-		$t1 =~ s/\&sa=.*$//  if($t1 =~ m/\&sa=/);
-		#$t1 =~ s/^.*\?q=//  if($t1 =~ m/^.*\?q=/);
-		$t2 =~ s/\<em>//g if ($t2=~m/\<em>/);
-		$t2 =~ s/\<\/em>//g if ($t2=~m/\<\/em>/);
-		$t2 =~ s/\<b>\.+\<\/b>//s;
-		$t4 =~ s/\<br>.*$//sg;
-		$t4 =~ s/\<b>\.\.\.\<\/b>/.../sg;
-		$t4 =~ s/\<.*?>//sg;
-        push (@{$aoh}, [$t1,$t2,$t3,$t4]);
-    }
-    return $aoh;
-}
-
-sub strip_detail {
-	my ($self, $html) = @_;
-}
-
-sub parse_detail {
-	my ($self, $html) = @_;	
+	$html =~ m{
+		class="pagenav
+		(.*?)
+		id="newslist"
+	}sgix;
+	return $1;	
 }
 
 sub parse_next_page
 {
     my ( $self, $html ) = @_;
     return unless $html;
-    while (
-        $html =~ m {
-        id=(?:nav|"nav")
-        (?:.*)
-	<b>(.*?)</b>			# current page.
+
+    $html =~ m {
+		class="current"
 		(?:.*?)
-        <td>
+		href="(.*?)"	# next page link
 		(?:.*?)
-		<a(?:.*?)\shref="(.*?)"
-		(?:.*?)
-		</span>
+		>
 		(.*?)			# next page.
-		(?:</a>|</td>)
-    }sgix) {
-		my ($cur_page, $alink, $next_page) = ($1, $2, $3);
-		$cur_page =~ s/\<span.*?>//g;
-		$cur_page =~ s/\<\/span>//g;
-		$next_page =~ s/\<span.*?>//g;
-		$next_page =~ s/\<\/span>//g;
-        return [ $cur_page, $alink, $next_page ];
-    }
-    return;
+		(?:</a>|</li>)
+    }sgix;
+	my ($alink, $next_page) = ($1, $2);
+	$alink =~ s/^\s*//;
+	$alink =~ s/\s*%//;
+    return [ $alink, $next_page ];
 }
+
+
+sub strip_newslist {
+	my ($self, $html) = @_;
+	$html =~ m{
+		id="newslist"
+		(.*?)
+		class="pagenav
+	}sgix;
+	return $1;
+}
+
+sub parse_newslist {
+    my ($self, $html) = @_;
+    return unless $html;
+    my $aoh = [];
+    while ($html =~ m {
+    	<li>
+    	.*?
+    	href="(.*?)"	#链接
+    	.*?
+    	>
+    	(.*?)			# 标题
+    	</a>
+    	.*?
+    	class="dateline">
+    	(.*?)			#日期
+    	</div>
+    	.*?
+    	</li>
+    }sgix) {
+        my ($t1,$t2,$t3) = ($1,$2,$3);
+        push (@{$aoh}, [$t1,$t2,$t3]);
+    }
+    return $aoh;
+}
+
+sub strip_detail {
+	my ($self, $html) = @_;
+	$html =~ m{
+		id="newswrapper"
+		(.*?)
+		id="comment"
+	};
+	return $1;
+}
+
+# $title, $source, $pubdate, $clicks, $desc
+sub parse_detail {
+	my ($self, $html) = @_;
+	my $aoh = [];
+
+    $html =~ m {
+    	<h1
+    	.*?>
+    	(.*?)	#标题
+    	</h1>
+    	.*?
+    	id="postmeta">
+    	(.*?)	#来源，时间
+    	</div>
+    	.*?
+    	id="countnum">
+    	(.*?)	#阅读次数。
+    	</span>
+    	.*?
+    	id="postbody"
+    	.*?>
+    	(.*)	#正文,贪婪匹配到最后的div
+    	</div>
+    }sgix;
+    
+	my ($title, $sd, $clicks, $desc) = ($1, $2, $3, $4);
+
+	$sd = m{
+		author">
+		(.*?)		# 来源
+		</span>
+		.*?
+		itemprop="datePublished"
+		.*?
+		>
+		(.*?)		# 时间
+		</time>
+	}sgix;
+	my ($source, $pubdate) = ($1, $2);
+	
+
+    push (@{$aoh}, [$title, $source, $pubdate, $clicks, $desc]);
+    
+    return $aoh;
+}
+
 
 
 ## clean any expired %seen tags
