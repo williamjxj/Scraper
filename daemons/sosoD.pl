@@ -60,7 +60,7 @@ my $h = {
 	'createdby' => $dbh->quote( $ss->get_os_stripname(__FILE__) ),
 };
 
-my $mech = WWW::Mechanize->new() or die;
+my $mech = WWW::Mechanize->new( autocheck=>0 ) or die $!;
 $mech->timeout(30);
 
 #####################################################

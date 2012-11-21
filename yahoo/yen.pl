@@ -25,9 +25,9 @@ else {
 		$keyword = $q->param('q');
 		Encode::_utf8_on($keyword);	
 	}
-}
-else {
-	die "usage: $0 keyword";	
+	else {
+		die "usage: $0 keyword";	
+	}
 }
 
 my $yh = new yahoo();

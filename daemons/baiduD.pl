@@ -55,6 +55,8 @@ our $h = {
 	'createdby' => $dbh->quote('baiduD'),
 };
 
+# can't quite when error, just next. by default autocheck is ON.
+# don't bother checking the return value of get() post(), just continue.
 my $mech = WWW::Mechanize->new( autocheck => 0 ) or die;
 $mech->timeout(20);
 
