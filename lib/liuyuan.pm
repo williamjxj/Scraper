@@ -70,7 +70,7 @@ sub parse_newslist {
 sub strip_detail {
 	my ($self, $html) = @_;
 	$html =~ m{
-		class="td3"
+		class=(?:"td3"|td3)
 		.*?>
 		(.*?)	#正文
 		<td
@@ -91,10 +91,11 @@ sub parse_detail {
     	(.*?)	#</center>新闻来源: 纽约时报 于November 21, 2012 02:05:22 
     	<span
     	.*?
+		<!--bodybegin-->
     	(.*?)	#正文
-    	<center>
+		<!--bodyend-->
     }sgix;
-	my ($title, $sd, $clicks, $desc) = ($1, $2, $3, $4);
+	my ($title, $sd, $desc) = ($1, $2, $3);
 
 	$sd =~ m {
 		author">
