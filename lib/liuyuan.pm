@@ -31,9 +31,10 @@ sub parse_next_page
 sub strip_newslist {
 	my ($self, $html) = @_;
 	$html =~ m{
-		class="dc_bar"
+		class=(?:dc_bar|"dc_bar")
 		.*?
-		class="dc_bar"
+		class=(?:dc_bar|"dc_bar")
+		.*?>
 		(.*?)		#列表
 		<table
 	}sgix;
@@ -48,19 +49,19 @@ sub parse_newslist {
     	<li>
     	.*?
     	href="(.*?)"	#链接
-    	.*?
-    	>
-    	(.*?)			#标题
+    	.*?>
+    	(.*?)		#标题
     	</a>
-    	(.*?)			#来源
+    	(.*?)		#来源
     	<i>
-    	(.*?)
+    	(.*?)		#日期
     	</i>
-    	(.*?)
-    	</li>
+    	(.*?)		#阅读次数
+    	(?:</li>|<ul>|</ul)
     }sgix) {
-        my ($href,$title,$source,$created) = ($1,$2,$3,$4);
-        my ($clicks) = ($5 =~ m/(\d+)/);
+        my ($href,$title,$source,$created) = ($1,$2,$3,$4,$5);
+        my ($clicks) = ($5 =~ m/(\d+)/s);
+        
         push (@{$aoh}, [$href,$title,$source,$created,$clicks]);
     }
     return $aoh;
