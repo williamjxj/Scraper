@@ -99,7 +99,7 @@ sub parse_detail {
 
 	$desc =~ s{<font\scolor=E6E6DD>\swww.6park.com</font>}{}g;
 	$desc =~ s{<script.*?</script>}{}g;
-	$desc =~ s{<img.*?src=(.*?)\s.*?/>}{<img src=$1 />}g;
+	$desc =~ s{<img.*?src=(.*?)\s.*?>}{<img src=$1 />}g;
 	
 	$sd =~ m {
 		:\s
