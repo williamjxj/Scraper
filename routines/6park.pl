@@ -62,11 +62,9 @@ foreach my $page ( 1 .. 10 ) {
 	$mech->get($page_url);
 	$mech->success or die $mech->response->status_line;
 
-	$mech->save_content('6park1.html');
-	exit;
+	# $mech->save_content('6park1.html'); exit;
 	my $html = $mech->content;
 
-	my $pagenav  = $ly->strip_pagenav($html);
 	my $newslist = $ly->strip_newslist($html);
 
 	# $href,$title,$source,$created,$clicks
