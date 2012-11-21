@@ -31,9 +31,9 @@ sub parse_next_page
 sub strip_newslist {
 	my ($self, $html) = @_;
 	$html =~ m{
-		class=(dc_bar|"dc_bar")
+		class=(?:dc_bar|"dc_bar")
 		.*?
-		class=(dc_bar|"dc_bar")
+		class=(?:dc_bar|"dc_bar")
 		.*?>
 		(.*?)		#列表
 		<table
