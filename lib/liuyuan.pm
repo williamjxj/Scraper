@@ -1,4 +1,4 @@
-package liuyan;
+package liuyuan;
 
 use config;
 use common;

@@ -37,7 +37,7 @@ $start_time = time;
 
 $dbh = new db( USER, PASS, DSN . ":hostname=" . HOST );
 
-$ly = new $liuyuan($dbh) or die $!;
+$ly = new liuyuan($dbh) or die $!;
 
 our $h = {
 	'createdby' => $dbh->quote('6park.pl'),
@@ -102,7 +102,7 @@ foreach my $page ( 1 .. 10 ) {
 		$h->{'likes'}   = $ly->generate_random(100);
 		$h->{'guanzhu'} = $ly->generate_random(100);
 
-		my $sql = qq{  insert ignore into contents_2(
+		my $sql = qq{  insert ignore into contents_3(
 				title,
 				url,
 				author,
@@ -148,7 +148,7 @@ END {
 	$dbh->disconnect();
 	$end_time = time;
 	$ly->write_log(
-		    "Terminated: Total [$todate] days' data (end at: $end_date): [ "
+		    "Terminated: Total [$todate] days' data: [ "
 		  . ( $end_time - $start_time )
 		  . " ] seconds used.\n" );
 
