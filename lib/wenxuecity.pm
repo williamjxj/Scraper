@@ -17,7 +17,6 @@ sub strip_result {
 }
 
 sub parse_result {
-	my ($self, $html) = @_;
     my ($self, $html) = @_;
     return unless $html;
     my $aoh = [];
@@ -101,10 +100,24 @@ sub parse_next_page
 ## clean any expired %seen tags
 sub clean {
 	my $now = time;
+	my %seen;
 	for ( keys %seen ) {
 		delete $seen{$_} if $seen{$_} < $now;
 	}
 }
+
+sub get_end_date {
+	my ( $self, $todate ) = @_;
+	my $sth =
+	$self->{dbh}->prepare( qq{ select date_format(date_sub(now(), interval } . $todate . qq{ day), '%Y-%m-%d' ) } );
+	$sth->execute();
+	my @row = $sth->fetchrow_array();
+	$sth->finish();
+	return $row[0];
+}
+
+
+=head1
 
 sub test1 {
     my ( $self, $html ) = @_;
@@ -114,9 +127,6 @@ sub test1 {
 	$m->field( "n", 100 );
 	$m->click();
 }
-
-
-=head1
 
 my @image_links = grep {
   $links[$_][0] =~ m{^http://story\.news\.yahoo\.com/} and $links[$_][1] eq "[IMG]";

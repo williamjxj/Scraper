@@ -75,26 +75,29 @@ $help && usage();
 
 $start_time = time;
 
-our $dbh = new db( USER, PASS, DSN . ":hostname=" . HOST );
-our $wxc = new common() or die $!;
-$wxc->{dbh} = $dbh;
+$dbh = new db( USER, PASS, DSN . ":hostname=" . HOST );
+
+$wxc = new wenxuecity( $dbh ) or die $!;
 
 our $h = {
 	'source'    => $dbh->quote(SURL),
 	'createdby' => $dbh->quote('文学城'),
 };
 
-$wxc = new wxc( $db->{dbh} ) or die $!;
-
 # 日志文件处理：
 my($file, $dir, $suffix) = fileparse(__FILE__, qr/\[^.]*/);
-$log = new FileHandle( $file, RW_MODE ) or die "$!";
-$log->autoflush(1);
-$log( "[" . $file . "]: start at: [" . localtime() . "]." );
+#$log = new FileHandle( $file, RW_MODE ) or die "$!";
+#$log->autoflush(1);
+
+$log = $wxc->get_filename(__FILE__);
+$wxc->set_log($log);
+$wxc->write_log( "[" . $log . "]: start at: [" . localtime() . "]."
+);
+
 
 # 决定scrape到哪一天。
 if ($todate) {
-	$end_date = $wxc->get_us_end_date($todate);
+	$end_date = $wxc->get_end_date($todate);
 }
 
 #
@@ -105,20 +108,25 @@ $mech->timeout(20);
 $page_url = SURL;
 
 LOOP:
+#$mech->get($page_url, ':content_file' => 'w1.html');
 $mech->get($page_url);
 $mech->success or die $mech->response->status_line;
+$mech->save_content('w2.html');
+exit;
 
 my $html = $mech->content;
 
-my $ht = $wxc->parse_date( $end_date, $html );
-unless ($ht) END;
+#my $ht = $wxc->parse_date( $end_date, $html );
+#unless ($ht) die;
+
+my $ht = $wxc->strip_result($html);
 
 $page_url = $wxc->parse_next_page($ht);
 
-my $aoh = $wxc->parse_item_main($ht);
+my $aoh = $wxc->parse_result($ht);
 
-foreach my $t ( @{$aoh} ) {
-	my $url = $t->[0];
+foreach my $p ( @{$aoh} ) {
+	my $url = $p->[0];
 
 	$num++;
 	$mech->follow_link( url => $url );
@@ -134,7 +142,7 @@ foreach my $t ( @{$aoh} ) {
 	$h->{'likes'}   = $wxc->generate_random(100);
 	$h->{'guanzhu'} = $wxc->generate_random(100);
 
-	my $sql = qq{  insert ignore into contents(
+	my $sql = qq{  insert ignore into contents_2(
 				title,
 				url,
 				author,
@@ -160,9 +168,9 @@ foreach my $t ( @{$aoh} ) {
 				$h->{'createdby'},
 				now(),
 				$h->{'desc'}
-			)};
-		$dbh->do($sql);
-	}
+			)
+	};
+	$dbh->do($sql);
 	$mech->back();
 }
 
@@ -175,9 +183,9 @@ END {
 	      "Terminated: Total [$todate] days' data (end at: $end_date): [ "
 		. ( $end_time - $start_time )
 		. " ] seconds used.\n" );
+
   $wxc->write_log(
-"[$jobs],[$city],[$item]: There are total [ $num ] records was processed succesfully!\n"
-  );
+"There are total [ $num ] records was processed succesfully!\n" );
   $wxc->write_log("==============================================\n");
   $wxc->close_log();
   exit 6;
