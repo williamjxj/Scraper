@@ -28,7 +28,7 @@ use db;
 use wenxuecity;
 
 use constant SURL => q{http://www.wenxuecity.com/news/gossip/};
-use constant PRES => q{http://www.wenxuecity.com/};
+use constant PRES => q{http://www.wenxuecity.com};
 
 BEGIN {
 	$SIG{'INT'}  = 'IGNORE';
@@ -47,7 +47,8 @@ our ( $page_url, $num ) = ( '', 0 );
 our ( $mech, $wxc, $log ) = ( undef, undef, undef );
 our ( $dbh, $sth );
 
-my ( $start_from, $end_at, $version, $help ) = ( 583, 1155, '1.0' );
+#my ( $start_from, $end_at, $version, $help ) = ( 583, 1155, '1.0' );
+my ( $start_from, $end_at, $version, $help ) = ( 1, 3, '1.0' );
 my ( $todate, $end_date );
 
 usage()

@@ -69,7 +69,7 @@ $0 -s 1 -e 3
 
 =cut
 
-my ( $start_from, $end_at, $version, $help ) = ( 1, 3, '1.0' );
+my ( $start_from, $end_at, $version, $help ) = ( 1, 5, '1.0' );
 my ( $todate, $end_date );
 
 usage()
@@ -114,9 +114,9 @@ if ( defined $todate ) {
 $mech = WWW::Mechanize->new( autocheck => 0 ) or die $!;
 $mech->timeout(20);
 
-# 在执行之前，再一次确认有值。
-$start_from = 372  unless $start_from;
-$end_at     = 3726 unless $end_at;
+# 在执行之前，再一次确认有值。372,3726 
+$start_from = 1  unless $start_from;
+$end_at     = 5 unless $end_at;
 
 #3737: http://www.wenxuecity.com/news/3727
 foreach my $page ( $start_from .. $end_at ) {

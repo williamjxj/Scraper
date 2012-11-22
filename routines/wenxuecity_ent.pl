@@ -28,6 +28,7 @@ use db;
 use wenxuecity;
 
 use constant SURL => q{http://www.wenxuecity.com/news/ent/};
+use constant PRES => q{http://www.wenxuecity.com};
 
 BEGIN {
 	$SIG{'INT'}  = 'IGNORE';
@@ -89,9 +90,9 @@ if ( defined $todate ) {
 $mech = WWW::Mechanize->new( autocheck => 0 ) or die $!;
 $mech->timeout(20);
 
-# 在执行之前，再一次确认有值。
+# 在执行之前，再一次确认有值。 1223
 $start_from = 1    unless $start_from;
-$end_at     = 1223 unless $end_at;
+$end_at     = 3 unless $end_at;
 
 foreach my $page ( $start_from .. $end_at ) 
 {
@@ -126,7 +127,7 @@ foreach my $page ( $start_from .. $end_at )
 		  $wxc->parse_detail($detail);
 
 		#来自列表页面。
-		$h->{'url'}     = $dbh->quote( SURL . $p->[0] );
+		$h->{'url'}     = $dbh->quote( PRES . $p->[0] );
 		$h->{'title'}   = $dbh->quote( $p->[1] );
 		$h->{'created'} = $dbh->quote( $p->[2] );
 

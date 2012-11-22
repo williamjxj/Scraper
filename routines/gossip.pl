@@ -135,7 +135,7 @@ foreach my $p ( @{$aoh} ) {
 	my ($title, $source, $pubdate, $clicks, $desc) = $wxc->parse_detail($detail);
 
 	#来自列表页面。
-	$h->{'url'}   = $dbh->quote( PRES . $p->[0] );
+	$h->{'url'}   = $dbh->quote( 'http://www.wenxuecity.com' . $p->[0] );
 	$h->{'title'} = $dbh->quote( $p->[1] );
 	$h->{'created'} = $dbh->quote($p->[2]);
 	
