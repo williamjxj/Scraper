@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+#Usage: dwnews.pl -e 3
 
 use warnings;
 use strict;
@@ -28,13 +29,12 @@ BEGIN {
 }
 
 our ( $start_time, $end_time ) = ( 0, 0 );
-our ($todate) = (INTERVAL_DATE);
 our ( $page_url, $num ) = ( '', 0 );
 our ( $mech, $dwn, $log ) = ( undef, undef, undef );
 our ( $dbh, $sth );
 
+# total and default 100, here 3: 'dwnews.pl -e 3'.
 my ( $start_from, $end_at, $version, $help ) = ( 1, 100, '1.0' );
-my ( $todate, $end_date );
 
 usage()
   unless (
@@ -74,6 +74,9 @@ $mech->timeout(20);
 foreach my $page ( $start_from .. $end_at ) {
 	if ( $page != 1 ) {
 		$page_url = SURL . 'index' . $page . '.shtm';
+	}
+	else {
+		$page_url = SURL;
 	}
 
 	$h->{'author'} = $dbh->quote($page_url);

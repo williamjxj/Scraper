@@ -1,4 +1,5 @@
 #!/usr/bin/perl -w
+#Usage: 6park.pl -e 3
 
 use warnings;
 use strict;
@@ -32,8 +33,8 @@ our ( $page_url,   $num )      = ( '', 0 );
 our ( $mech, $ly, $log ) = ( undef, undef, undef );
 our ( $dbh, $sth );
 
+# total and default is 10, use '-e 3' to scrape 3 pages.
 my ( $start_from, $end_at, $version, $help ) = ( 1, 10, '1.0' );
-my ( $todate, $end_date );
 
 usage()
   unless (
