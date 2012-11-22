@@ -28,6 +28,7 @@ use db;
 use wenxuecity;
 
 use constant SURL => q{http://www.wenxuecity.com/news/gossip/};
+use constant PRES => q{http://www.wenxuecity.com/};
 
 BEGIN {
 	$SIG{'INT'}  = 'IGNORE';
@@ -127,7 +128,7 @@ foreach my $page ( $start_from .. $end_at )
 		  $wxc->parse_detail($detail);
 
 		#来自列表页面。
-		$h->{'url'}     = $dbh->quote( SURL . $p->[0] );
+		$h->{'url'}     = $dbh->quote( PRES . $p->[0] );
 		$h->{'title'}   = $dbh->quote( $p->[1] );
 		$h->{'created'} = $dbh->quote( $p->[2] );
 
