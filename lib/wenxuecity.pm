@@ -141,6 +141,7 @@ sub clean {
 	}
 }
 
+#overrwrite common->get_end_date()
 sub get_end_date {
 	my ( $self, $todate ) = @_;
 	my $sth =

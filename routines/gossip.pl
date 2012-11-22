@@ -27,8 +27,8 @@ use config;
 use db;
 use wenxuecity;
 
-use constant SURL => q{http://www.wenxuecity.com/news/1};
-use constant PRES => q{http://www.wenxuecity.com/news/};
+use constant SURL => q{http://www.wenxuecity.com/news/gossip/1};
+use constant PRES => q{http://www.wenxuecity.com/news/gossip/};
 
 BEGIN {
     $SIG{'INT'}  = 'IGNORE';
@@ -77,17 +77,12 @@ $dbh = new db( USER, PASS, DSN . ":hostname=" . HOST );
 $wxc = new wenxuecity( $dbh ) or die $!;
 
 our $h = {
-	'createdby'	=> $dbh->quote('wenxuecity_news.pl'),
+	'createdby'	=> $dbh->quote('wenxuecity_gossip.pl'),
 	'category'	=> $dbh->quote('文学城'),
 	'cate_id'	=> 26,
-	'item'		=> $dbh->quote('滚动新闻'),
-	'iid'		=> 295
+	'item'		=> $dbh->quote('生活百态'),
+	'iid'		=> 297
 };
-
-# 日志文件处理：
-#my($file, $dir, $suffix) = fileparse(__FILE__, qr/\[^.]*/);
-#$log = new FileHandle( $file, RW_MODE ) or die "$!";
-#$log->autoflush(1);
 
 $log = $wxc->get_filename(__FILE__);
 $wxc->set_log($log);
@@ -114,8 +109,6 @@ $mech->success or die $mech->response->status_line;
 
 # 保存当前的page_url.
 $h->{'author'} = $dbh->quote($page_url);
-
-# $mech->save_content('w2.html');
 
 my $html = $mech->content;
 
