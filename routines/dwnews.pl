@@ -89,7 +89,12 @@ foreach my $page ( 1 .. 10 )
 		my ( $title, $pubdate, $desc ) = $dwn->parse_detail($detail);
 
 		#来自列表页面。
-		$h->{'url'}     = $dbh->quote( PRES . $p->[1] );
+		if ($p->[1] =~ m/http:/i) {
+			$h->{'url'} = $dbh->quote( $p->[1] );
+		}
+		else {
+			$h->{'url'} = $dbh->quote( PRES . $p->[1] );
+		}
 		$h->{'title'}   = $dbh->quote( $p->[2] );
 		$h->{'created'} = $dbh->quote( $p->[0] );
 
