@@ -38,7 +38,7 @@ sub parse_newslist {
     return unless $html;
     my $aoh = [];
     while ($html =~ m {
-    	<li>
+    	<li
     	.*?
     	<span>
     	(.*?)			#日期

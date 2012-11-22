@@ -30,7 +30,7 @@ BEGIN {
 our ( $start_time, $end_time ) = ( 0, 0 );
 our ($todate) = (INTERVAL_DATE);
 our ( $page_url, $num ) = ( 'http://china.dwnews.com/highlights/', 0 );
-our ( $mech, $wxc, $log ) = ( undef, undef, undef );
+our ( $mech, $dwn, $log ) = ( undef, undef, undef );
 our ( $dbh, $sth );
 
 $start_time = time;
@@ -55,9 +55,11 @@ $dwn->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 $mech = WWW::Mechanize->new( autocheck => 0 ) or die $!;
 $mech->timeout(20);
 
-foreach my $page ( 1 .. 10 ) {
-	if ( $page != 1 ) $page_url =
-	  'http://china.dwnews.com/highlights/index' . $page . '.shtm';
+foreach my $page ( 1 .. 10 )
+{
+	if ( $page != 1 ) {
+		$page_url = 'http://china.dwnews.com/highlights/index' . $page . '.shtm';
+	}
 
 	$h->{'author'} = $dbh->quote($page_url);
 
@@ -73,24 +75,24 @@ foreach my $page ( 1 .. 10 ) {
 
 	my $detail;
 
+	# created, link, title
 	foreach my $p ( @{$aoh} ) {
-		my $url = $p->[0];
+		my $url = $p->[1];
 
 		$num++;
 		$mech->follow_link( url => $url );
 		$mech->success or next;
 
-		$mech->save_content('dw2.html');
-		exit;
+		$mech->save_content('dw2.html'); exit;
 
 		$detail = $dwn->strip_detail( $mech->content );
 		my ( $title, $source, $pubdate, $clicks, $desc ) =
 		  $dwn->parse_detail($detail);
 
 		#来自列表页面。
-		$h->{'url'}     = $dbh->quote( PRES . $p->[0] );
-		$h->{'title'}   = $dbh->quote( $p->[1] );
-		$h->{'created'} = $dbh->quote( $p->[2] );
+		$h->{'url'}     = $dbh->quote( PRES . $p->[1] );
+		$h->{'title'}   = $dbh->quote( $p->[2] );
+		$h->{'created'} = $dbh->quote( $p->[0] );
 
 		# 来自细节页面。
 		$h->{'detail_title'} = $dbh->quote($title);
@@ -150,7 +152,7 @@ END {
 	$dbh->disconnect();
 	$end_time = time;
 	$dwn->write_log(
-		    "Terminated: Total [$todate] days' data (end at: $end_date): [ "
+		    "Terminated: Total [$todate] days' data: [ "
 		  . ( $end_time - $start_time )
 		  . " ] seconds used.\n" );
 
