@@ -30,7 +30,10 @@ sub strip_newslist {
 		(.*?)
 		</ul>
 	}sgix;
-	return $1;
+	# 有很多注释掉的内容，要先除去，再解析。
+	$l = $1;
+	$l =~ s{<!--.*?-->}{}sg;
+	return $l;
 }
 
 sub parse_newslist {
