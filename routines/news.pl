@@ -109,19 +109,24 @@ $mech = WWW::Mechanize->new( autocheck => 0 ) or die $!;
 $mech->timeout(20);
 
 #
-# $page_url = SURL;
+$page_url = SURL;
 
-foreach my $page (372..3726) {
-
-$page_url = 'http://www.wenxuecity.com/news/'.$page;
-$h->{'author'} = $dbh->quote($page_url);
-
+LOOP:
+#$mech->get($page_url, ':content_file' => 'w1.html');
 $mech->get($page_url);
 $mech->success or die $mech->response->status_line;
 
+# 保存当前的page_url.
+$h->{'author'} = $dbh->quote($page_url);
+
+# $mech->save_content('w2.html');
+
 my $html = $mech->content;
 
+my $pagenav = $wxc->strip_pagenav($html);
 my $newslist = $wxc->strip_newslist($html);
+
+$page_url = PRES . $wxc->parse_next_page($pagenav);
 
 my $aoh = $wxc->parse_newslist($newslist);
 
@@ -134,6 +139,8 @@ foreach my $p ( @{$aoh} ) {
 	$mech->follow_link( url => $url );
 	$mech->success or next;
 
+	#$mech->save_content('w2.html'); exit;
+	
 	$detail = $wxc->strip_detail($mech->content);
 	my ($title, $source, $pubdate, $clicks, $desc) = $wxc->parse_detail($detail);
 
@@ -188,12 +195,12 @@ foreach my $p ( @{$aoh} ) {
 				$h->{'created'},
 				$h->{'desc'}
 			)
-		};
-		$dbh->do($sql);
-		$mech->back();
-	}
+	};
+	$dbh->do($sql);
+	$mech->back();
 }
 
+goto LOOP if ($page_url);
 
 END {
   $dbh->disconnect();
