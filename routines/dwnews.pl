@@ -55,7 +55,8 @@ $dwn->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 $mech = WWW::Mechanize->new( autocheck => 0 ) or die $!;
 $mech->timeout(20);
 
-foreach my $page ( 1 .. 10 )
+#foreach my $page ( (2) )
+foreach my $page ( 1 .. 100 )
 {
 	if ( $page != 1 ) {
 		$page_url = 'http://china.dwnews.com/highlights/index' . $page . '.shtm';
@@ -88,6 +89,12 @@ foreach my $page ( 1 .. 10 )
 		$detail = $dwn->strip_detail( $mech->content );
 		my ( $title, $pubdate, $desc ) = $dwn->parse_detail($detail);
 
+		#undef: next if($title eq '' || $desc eq ''); 
+		unless (defined $desc) {
+			$mech->back();
+			next;
+		}
+
 		#来自列表页面。
 		if ($p->[1] =~ m/http:/i) {
 			$h->{'url'} = $dbh->quote( $p->[1] );
@@ -110,7 +117,7 @@ foreach my $page ( 1 .. 10 )
 		$h->{'likes'}   = $dwn->generate_random(100);
 		$h->{'guanzhu'} = $dwn->generate_random(100);
 
-		my $sql = qq{  insert ignore into contents_3(
+		my $sql = qq{  insert ignore into } . CONTENTS_NEW . qq{(
 				title,
 				url,
 				author,

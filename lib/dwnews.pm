@@ -31,7 +31,7 @@ sub strip_newslist {
 		</ul>
 	}sgix;
 	# 有很多注释掉的内容，要先除去，再解析。
-	$l = $1;
+	my $l = $1;
 	$l =~ s{<!--.*?-->}{}sg;
 	return $l;
 }
@@ -65,7 +65,7 @@ sub strip_detail {
 	$html =~ m{
 		class="newsview"
 		(.*?)
-		class="(pagenum3|mzsm)"
+		class="(?:pagenum|mzsm)
 	}sgix;
 	return $1;
 }

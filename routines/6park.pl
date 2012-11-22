@@ -101,7 +101,7 @@ foreach my $page ( 1 .. 10 ) {
 		$h->{'likes'}   = $ly->generate_random(100);
 		$h->{'guanzhu'} = $ly->generate_random(100);
 
-		my $sql = qq{  insert ignore into contents_3(
+		my $sql = qq{  insert ignore into } . CONTENTS_NEW . qq{(
 				title,
 				url,
 				author,
