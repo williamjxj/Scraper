@@ -70,7 +70,7 @@ sub strip_detail {
 # $title, $source, $pubdate, $clicks, $desc
 sub parse_detail {
 	my ($self, $html) = @_;
-
+	return unless $html;
     $html =~ m {
     	<h1
     	.*?>
@@ -91,7 +91,7 @@ sub parse_detail {
 	$pubdate =~ s{</span>}{}s;
 	$desc =~ s/<!--.*?-->//s;
 	
-    return [$title, $pubdate, $desc];
+    return ($title, $pubdate, $desc);
 }
 
 sub get_end_date {
