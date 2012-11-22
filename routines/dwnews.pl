@@ -65,7 +65,7 @@ foreach my $page ( 1 .. 10 )
 
 	$mech->get($page_url);
 	$mech->success or die $mech->response->status_line;
-	$mech->save_content('dw1.html');
+	# $mech->save_content('dw1.html');
 
 	my $html = $mech->content;
 
@@ -86,7 +86,7 @@ foreach my $page ( 1 .. 10 )
 		# $mech->save_content('dw2.html'); exit;
 
 		$detail = $dwn->strip_detail( $mech->content );
-		my ( $title, $pubdate, $desc ) = @{$dwn->parse_detail($detail)};
+		my ( $title, $pubdate, $desc ) = $dwn->parse_detail($detail);
 
 		#来自列表页面。
 		$h->{'url'}     = $dbh->quote( PRES . $p->[1] );
@@ -162,22 +162,3 @@ END {
 	exit 6;
 }
 
-sub usage {
-	print <<HELP;
-Uage:
-      $0
-     or:
-      $0 -h  [-v]
-Description:
-  -t from what date to download? default it's from 2 days before.
-  -h this help
-  -v version
-
-Examples:
-     (1) $0     # use default
-     (5) $0 -h  # get help
-     (6) $0 -v  # get version
-
-HELP
-	exit 3;
-}
