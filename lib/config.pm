@@ -17,7 +17,7 @@ use constant CONTENTS => q{contents};
 use constant CONTENTS_1 => q{contents_1};
 use constant CONTEXTS => q{contexts};
 use constant FOOD => q{食品};
-use constant INTERVAL_DATE => 7;
+use constant INTERVAL_DATE => 2;
 use constant RW_MODE => "a";
 
 use constant HOST => q{localhost};

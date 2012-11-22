@@ -86,22 +86,12 @@ sub parse_detail {
     	(.*)	#正文,贪婪匹配到最后的div
     	</div>
     }sgix;
-	my ($title, $sd, $desc) = ($1, $2, $3);
-
-	$sd =~ m {
-		author">
-		(.*?)		# 来源
-		</span>
-		.*?
-		itemprop="datePublished"
-		.*?
-		>
-		(.*?)		# 时间
-		</time>
-	}sgix;
-	my ($source, $pubdate) = ($1, $2);
+	my ($title, $pubdate, $desc) = ($1, $2, $3);
+	$pubdate =~ s/.*a>//s;
+	$pubdate =~ s{</span>}{}s;
+	$desc =~ s/<!--.*?-->//s;
 	
-    return ($title, $source, $pubdate, $desc);
+    return [$title, $pubdate, $desc];
 }
 
 sub get_end_date {

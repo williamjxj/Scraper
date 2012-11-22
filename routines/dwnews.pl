@@ -83,11 +83,10 @@ foreach my $page ( 1 .. 10 )
 		$mech->follow_link( url => $url );
 		$mech->success or next;
 
-		$mech->save_content('dw2.html'); exit;
+		# $mech->save_content('dw2.html'); exit;
 
 		$detail = $dwn->strip_detail( $mech->content );
-		my ( $title, $source, $pubdate, $clicks, $desc ) =
-		  $dwn->parse_detail($detail);
+		my ( $title, $pubdate, $desc ) = @{$dwn->parse_detail($detail)};
 
 		#来自列表页面。
 		$h->{'url'}     = $dbh->quote( PRES . $p->[1] );
@@ -95,14 +94,14 @@ foreach my $page ( 1 .. 10 )
 		$h->{'created'} = $dbh->quote( $p->[0] );
 
 		# 来自细节页面。
-		$h->{'detail_title'} = $dbh->quote($title);
-		$h->{'source'}       = $dbh->quote($source);
+		$h->{'detail_title'} = $dbh->quote($title); #tags.
+		$h->{'source'}       = $dbh->quote('多维新闻');
 
 		$h->{'pubdate'} = $dbh->quote($pubdate);
-		$h->{'clicks'}  = $clicks ? $clicks : $dwn->generate_random();
-		$h->{'desc'}    = $dbh->quote($desc);
+		$h->{'desc'}    = $dbh->quote($desc); #content
 
 		# 构造数据。
+		$h->{'clicks'}  = $dwn->generate_random();
 		$h->{'likes'}   = $dwn->generate_random(100);
 		$h->{'guanzhu'} = $dwn->generate_random(100);
 
