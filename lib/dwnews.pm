@@ -72,9 +72,8 @@ sub parse_detail {
 	my ($self, $html) = @_;
 	return unless $html;
     $html =~ m {
-    	<h1
-    	.*?>
-    	(.*?)	#标题
+    	<h1>
+    	(.*?)
     	</h1>
     	.*?
     	<span>
@@ -86,10 +85,18 @@ sub parse_detail {
     	(.*)	#正文,贪婪匹配到最后的div
     	</div>
     }sgix;
-	my ($title, $pubdate, $desc) = ($1, $2, $3);
+	my ($title, $pubdate, $desc) = ($1, $2, $self->trim($3));
 	$pubdate =~ s/.*a>//s;
 	$pubdate =~ s{</span>}{}s;
+
 	$desc =~ s/<!--.*?-->//s;
+	$desc =~ s{<script.*?</script>}{}s;
+	if($desc =~ m/id="adverid"/) {
+		$desc =~ s{<div.*?id="adverid".*?</div>}{}s;
+	}
+	if($desc =~ m/class="xgzt"/) {
+		$desc =~ s{<div\sclass="xgzt".*</ul>\s*</div>\s*</div>}{}s;
+	}
 	
     return ($title, $pubdate, $desc);
 }
