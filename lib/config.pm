@@ -19,7 +19,7 @@ use constant CONTENTS_NEW => q{contents_new};
 use constant CONTEXTS => q{contexts};
 use constant FOOD => q{食品};
 use constant INTERVAL_DATE => 3;
-use constant RW_MODE => "a";
+use constant RW_MODE => "a+";
 
 use constant HOST => q{localhost};
 1;

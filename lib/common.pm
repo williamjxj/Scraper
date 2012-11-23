@@ -44,6 +44,7 @@ sub get_os_stripname {
 }
 
 # 日志文件的缺省格式： logs/baidu_120920.log, logs/focus_120919.log
+# 将日期改为每月一个，而不是每天一个。不然产生的琐碎文件太多。
 sub get_filename {
 	my ( $self, $filename ) = @_;
 	my ( $time, $date );
@@ -53,7 +54,10 @@ sub get_filename {
 		( $time->[5] + 1900 ) % 100,
 		$time->[4] + 1,
 		$time->[3] );
-	return LOG . $sn . '_' . $date . '.log';
+	my $month = sprintf( "%02d%02d",
+		( $time->[5] + 1900 ) % 100,
+		$time->[4] + 1 );
+	return LOG . $sn . '_' . $month . '.log';
 }
 
 # 上述生成的文件名转化为实际文件：
