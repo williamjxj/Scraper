@@ -76,18 +76,28 @@ sub parse_detail {
 
 	$desc =~ s{<script.*?</script>}{}sg if $desc=~m/\<script/s;
 	# $desc =~ s{<iframe.*?</iframe>}{}sg if $desc=~m/\<iframe/s;
+	$desc =~ s{
+		<table\scellpadding=4\salign=left\sborder=0\swidth=300\sheight=250>
+		.*?
+		<table
+		.*?
+		</table>
+		\s+
+		</table>
+	}{}sgix if($desc =~ m/<table/s);
+
 	$desc =~ s{<img\ssrc=(.*?)\s}{<img\ssrc=http://boxun.com$1 }sgix  if($desc=~m/\<img/s);
 	$desc =~ s{href=(.*?)(>|\s)}{href=http://boxun.com$1$2}sgix  if($desc=~m/\<a/s);
 	
 	$sd =~ s/\s.*$//; #remove space & thereafter.
 	$sd =~ m {
-		(.*?)
+		(?:.*?)
 		(\d.*)
 	}sgix;
-	my ($source, $pubdate) = ($1, $2);
+	my $pubdate = $1;
 
+	my $source = $sd;
 	$source =~ s/^\(// if $source=~m/^\(/;
-	$source .= $pubdate if $source !~ m/\d/;
 
     return ($title, $pubdate, $desc, $source);
 }
