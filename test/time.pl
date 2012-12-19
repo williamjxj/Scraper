@@ -14,3 +14,11 @@ my $now = localtime;
 
 print '['.$now."]\n";
 
+my $desc = "
+<a href=/news/12234>1234</a>
+<a href=/news/222 >222</a>
+abc
+";
+$desc =~ s{href=(.*?)(>|\s)}{href=boxun.com$1$2}sgi  if($desc=~m/\<a/s);
+
+print $desc . "\n";

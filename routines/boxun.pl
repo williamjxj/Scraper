@@ -30,7 +30,7 @@ BEGIN {
 
 our ( $start_time, $end_time ) = ( 0,  0 );
 our ( $page_url,   $num )      = ( '', 0 );
-our ( $mech, $ly, $log ) = ( undef, undef, undef );
+our ( $mech, $bx, $log ) = ( undef, undef, undef );
 our ( $dbh, $sth );
 
 # total and default is 10, use '-e 3' to scrape 3 pages.
@@ -51,7 +51,7 @@ $start_time = time;
 
 $dbh = new db( USER, PASS, DSN . ":hostname=" . HOST );
 
-$ly = new liuyuan($dbh) or die $!;
+$bx = new boxun($dbh) or die $!;
 
 our $h = {
 	'createdby' => $dbh->quote('boxun.pl'),
@@ -61,9 +61,9 @@ our $h = {
 	'iid'       => 301
 };
 
-$log = $ly->get_filename(__FILE__);
-$ly->set_log($log);
-$ly->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
+$log = $bx->get_filename(__FILE__);
+$bx->set_log($log);
+$bx->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 
 $mech = WWW::Mechanize->new( autocheck => 0 ) or die $!;
 $mech->timeout(20);
@@ -76,13 +76,12 @@ foreach my $page ( $start_from .. $end_at ) {
 	$mech->get($page_url);
 	$mech->success or die $mech->response->status_line;
 
-	# $mech->save_content('boxun1.html'); exit;
+	# $mech->save_content('bx1.html'); exit;
 	my $html = $mech->content;
 
-	my $newslist = $ly->strip_newslist($html);
+	my $newslist = $bx->strip_newslist($html);
 
-	# $href,$title,$source,$created,$clicks
-	my $aoh = $ly->parse_newslist($newslist);
+	my $aoh = $bx->parse_newslist($newslist);
 
 	my $detail;
 
@@ -93,14 +92,20 @@ foreach my $page ( $start_from .. $end_at ) {
 		$mech->follow_link( url => $url );
 		$mech->success or next;
 
-		$detail = $ly->strip_detail( $mech->content );
-		my ( $title, $pubdate, $desc, $source ) = $ly->parse_detail($detail);
+		# $mech->save_content('bx2.html'); exit;
+		$detail = $bx->strip_detail( $mech->content );
+		my ( $title, $pubdate, $desc, $source ) = $bx->parse_detail($detail);
 		next unless $desc;
 
-		$h->{'url'}     = $dbh->quote( $p->[0] );
+		if($p->[0] =~ m/boxun.com/i) {
+			$h->{'url'}     = $dbh->quote( $p->[0] );
+		}
+		else {
+			$h->{'url'}     = $dbh->quote( 'http://boxun.com'.$p->[0] );
+		}
 		$h->{'title'}   = $dbh->quote( $p->[1] );
 		$h->{'source'}  = $dbh->quote( $source );
-		$h->{'clicks'}  = $ly->generate_random();
+		$h->{'clicks'}  = $bx->generate_random();
 
 		# 来自细节页面。
 		$h->{'detail_title'} = $dbh->quote($title);
@@ -108,10 +113,10 @@ foreach my $page ( $start_from .. $end_at ) {
 		$h->{'desc'}         = $dbh->quote($desc);
 
 		# 构造数据。
-		$h->{'likes'}   = $ly->generate_random(100);
-		$h->{'guanzhu'} = $ly->generate_random(100);
+		$h->{'likes'}   = $bx->generate_random(100);
+		$h->{'guanzhu'} = $bx->generate_random(100);
 
-		my $sql = qq{  insert ignore into contents_3(
+		my $sql = qq{  insert ignore into contents(
 				title,
 				url,
 				author,
@@ -156,12 +161,12 @@ foreach my $page ( $start_from .. $end_at ) {
 END {
 	$dbh->disconnect();
 	$end_time = time;
-	$ly->write_log(
-		    "There are total [ $num ] records was processed succesfully!, [ "
+	$bx->write_log(
+		    "There are total [ $num ] records was processed succesfulbx!, [ "
 		  . ( $end_time - $start_time )
 		  . " ] seconds used.\n" );
-	$ly->write_log("==============================================\n");
-	$ly->close_log();
+	$bx->write_log("==============================================\n");
+	$bx->close_log();
 	exit 6;
 }
 

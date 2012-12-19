@@ -15,11 +15,11 @@ sub new {
 sub strip_newslist {
 	my ($self, $html) = @_;
 	$html =~ m{
-		#C0C0C0
+		C0C0C0
 		.*?
 		</table>
 		(.*?)		#列表
-		#C0C0C0
+		C0C0C0
 	}sgix;
 	return $1;
 }
@@ -35,8 +35,6 @@ sub parse_newslist {
     	.*?>
     	(.*?)		#标题
     	</a>
-    	.*?
-    	</li>
     }sgix) {
         my ($href,$title) = ($1,$2);
         push (@{$aoh}, [$href,$title]);
@@ -47,11 +45,11 @@ sub parse_newslist {
 sub strip_detail {
 	my ($self, $html) = @_;
 	$html =~ m{
-		id="Content"
+		'Content'
 		.*?>
 		(.*?)	#正文
 		<!--bodyend-->
-	}sgix;
+	}sgx;
 	return $1;
 }
 
@@ -60,33 +58,36 @@ sub parse_detail {
     return unless $html;
     $html =~ m {
     	<center>
-    	.*?
-    	<b>
     	(.*?)	#标题
-    	</b>
+    	<
     	.*?
     	<small>
     	(.*?)	#博讯北京时间2012年12月19日 
     	</small>
     	.*?
 		<!--bodystart-->
-    	(.*?)	#正文
-    	<p>
-    	.*?
+    	(.*)	#正文
+		(?:\[|$)
     }sgix;
 	my ($title, $sd, $desc) = ($1, $2, $3);
 
 	# Use of uninitialized value $desc in substitution (s///) at line 100,101,102,104.
 	return unless $desc;
 
-	$desc =~ s{<script.*?</script>}{}g;
+	$desc =~ s{<script.*?</script>}{}sg if $desc=~m/\<script/s;
+	$desc =~ s{src=(.*?)\s}{src=http://boxun.com$1  }sgix  if($desc=~m/\<img/s);
+	$desc =~ s{href=(.*?)(>|\s)}{href=http://boxun.com$1$2}sgix  if($desc=~m/\<a/s);
 	
+	$sd =~ s/\s.*$//; #remove space & thereafter.
 	$sd =~ m {
-		(.*?)		# 来源
-		(\d.*)		# 时间
+		(.*?)
+		(\d.*)
 	}sgix;
 	my ($source, $pubdate) = ($1, $2);
-	
+
+	$source =~ s/^\(// if $source=~m/^\(/;
+	$source .= $pubdate if $source !~ m/\d/;
+
     return ($title, $pubdate, $desc, $source);
 }
 

@@ -100,9 +100,9 @@ sub parse_detail {
 	# Use of uninitialized value $desc in substitution (s///) at line 100,101,102,104.
 	return unless $desc;
 
-	$desc =~ s{<font\scolor=E6E6DD>\swww.6park.com</font>}{}g;
-	$desc =~ s{<script.*?</script>}{}g;
-	$desc =~ s{<img.*?src=(.*?)\s.*?>}{<img src=$1 />}g;
+	$desc =~ s{<font\scolor=E6E6DD>\swww.6park.com</font>}{}sg;
+	$desc =~ s{<script.*?</script>}{}sg;
+	$desc =~ s{<img.*?src=(.*?)\s.*?>}{<img src=$1 />}sg;
 	
 	$sd =~ m {
 		:\s
