@@ -34,7 +34,7 @@ our ( $mech, $bx, $log ) = ( undef, undef, undef );
 our ( $dbh, $sth );
 
 # total and default is 10, use '-e 3' to scrape 3 pages.
-my ( $start_from, $end_at, $version, $help ) = ( 1, 29, '1.0' );
+my ( $start_from, $end_at, $version, $help ) = ( 1, 20, '1.0' );
 
 usage()
   unless (
@@ -87,10 +87,10 @@ $mech->timeout(20);
 
 foreach my $loop ( @{$boxun} ) {
 	$h->{'iid'}  = $loop->[0];
-	$h->{'item'} = $loop->[1];
+	$h->{'item'} = $dbh->quote($loop->[1]);
 	$surl        = $loop->[2];
 	
-	# 1..29
+	# 1..20..29
 	foreach my $page ( $start_from .. $end_at ) {
 		$page_url = $surl . $page . '.shtml';
 		$h->{'author'} = $dbh->quote($page_url);
@@ -139,7 +139,7 @@ foreach my $loop ( @{$boxun} ) {
 			$h->{'likes'}   = $bx->generate_random(100);
 			$h->{'guanzhu'} = $bx->generate_random(100);
 
-			my $sql = qq{  insert ignore into contents(
+			my $sql = qq{  insert ignore into contents_3(
 				title,
 				url,
 				author,
