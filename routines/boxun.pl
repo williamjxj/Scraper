@@ -61,6 +61,23 @@ our $h = {
 	'iid'       => 301
 };
 
+# http://boxun.com/boxun/page
+our $surl  = SURL;
+our $boxun = [
+	[ 302, '大陆新闻',    'http://boxun.com/news/gb/china/page' ],
+	[ 303, '国际新闻',    'http://www.peacehall.com/news/gb/intl/page' ],
+	[ 304, '体育娱乐',    'http://boxun.com/news/gb/sport_ent/page' ],
+	[ 305, '健康生活',    'http://boxun.com/news/gb/health/page' ],
+	[ 306, '军事',          'http://boxun.com/news/gb/army/page' ],
+	[ 307, '港澳台新闻', 'http://boxun.com/news/gb/taiwan/page' ],
+	[ 308, '财经与科技', 'http://boxun.com/news/gb/finance/page' ],
+	[ 309, '特别刊载',    'http://boxun.com/news/gb/z_special/page' ],
+	[ 310, '不平则鸣',    'http://boxun.com/news/gb/yuanqing/page' ],
+	[ 311, '社会万象',    'http://boxun.com/news/gb/misc/page' ],
+	[ 312, '大众观点',    'http://boxun.com/news/gb/pubvp/page' ],
+	[ 301, '博讯焦点',    'http://boxun.com/boxun/page' ]
+];
+
 $log = $bx->get_filename(__FILE__);
 $bx->set_log($log);
 $bx->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
@@ -68,55 +85,61 @@ $bx->write_log( "[" . $log . "]: start at: [" . localtime() . "]." );
 $mech = WWW::Mechanize->new( autocheck => 0 ) or die $!;
 $mech->timeout(20);
 
-# 1..29
-foreach my $page ( $start_from .. $end_at ) {
-	$page_url = SURL . $page . '.shtml';
-	$h->{'author'} = $dbh->quote($page_url);
+foreach my $loop ( @{$boxun} ) {
+	$h->{'iid'}  = $loop->[0];
+	$h->{'item'} = $loop->[1];
+	$surl        = $loop->[2];
+	
+	# 1..29
+	foreach my $page ( $start_from .. $end_at ) {
+		$page_url = $surl . $page . '.shtml';
+		$h->{'author'} = $dbh->quote($page_url);
 
-	$mech->get($page_url);
-	$mech->success or die $mech->response->status_line;
+		$mech->get($page_url);
+		$mech->success or die $mech->response->status_line;
 
-	# $mech->save_content('bx1.html'); exit;
-	my $html = $mech->content;
+		# $mech->save_content('bx1.html'); exit;
+		my $html = $mech->content;
 
-	my $newslist = $bx->strip_newslist($html);
+		my $newslist = $bx->strip_newslist($html);
 
-	my $aoh = $bx->parse_newslist($newslist);
+		my $aoh = $bx->parse_newslist($newslist);
 
-	my $detail;
+		my $detail;
 
-	foreach my $p ( @{$aoh} ) {
-		my $url = $p->[0];
+		foreach my $p ( @{$aoh} ) {
+			my $url = $p->[0];
 
-		$num++;
-		$mech->follow_link( url => $url );
-		$mech->success or next;
+			$num++;
+			$mech->follow_link( url => $url );
+			$mech->success or next;
 
-		# $mech->save_content('bx2.html'); exit;
-		$detail = $bx->strip_detail( $mech->content );
-		my ( $title, $pubdate, $desc, $source ) = $bx->parse_detail($detail);
-		next unless $desc;
+			# $mech->save_content('bx2.html'); exit;
+			$detail = $bx->strip_detail( $mech->content );
+			my ( $title, $pubdate, $desc, $source ) =
+			  $bx->parse_detail($detail);
+			next unless $desc;
 
-		if($p->[0] =~ m/boxun.com/i) {
-			$h->{'url'}     = $dbh->quote( $p->[0] );
-		}
-		else {
-			$h->{'url'}     = $dbh->quote( 'http://boxun.com'.$p->[0] );
-		}
-		$h->{'title'}   = $dbh->quote( $p->[1] );
-		$h->{'source'}  = $dbh->quote( $source );
-		$h->{'clicks'}  = $bx->generate_random();
+			if ( $p->[0] =~ m/boxun.com/i ) {
+				$h->{'url'} = $dbh->quote( $p->[0] );
+			}
+			else {
+				$h->{'url'} = $dbh->quote( 'http://boxun.com' . $p->[0] );
+			}
+			$h->{'title'}  = $dbh->quote( $p->[1] );
+			$h->{'source'} = $dbh->quote($source);
+			$h->{'clicks'} = $bx->generate_random();
 
-		# 来自细节页面。
-		$h->{'detail_title'} = $dbh->quote($title);
-		$h->{'pubdate'}      = $dbh->quote($pubdate);
-		$h->{'desc'}         = $dbh->quote($desc);
+			# 来自细节页面。
+			$h->{'detail_title'} = $dbh->quote($title);
+			$h->{'pubdate'}      = $dbh->quote($pubdate);
+			$h->{'desc'}         = $dbh->quote($desc);
 
-		# 构造数据。
-		$h->{'likes'}   = $bx->generate_random(100);
-		$h->{'guanzhu'} = $bx->generate_random(100);
+			# 构造数据。
+			$h->{'likes'}   = $bx->generate_random(100);
+			$h->{'guanzhu'} = $bx->generate_random(100);
 
-		my $sql = qq{  insert ignore into contents(
+			my $sql = qq{  insert ignore into contents(
 				title,
 				url,
 				author,
@@ -152,10 +175,10 @@ foreach my $page ( $start_from .. $end_at ) {
 				$h->{'desc'}
 			)
 	};
-		$dbh->do($sql);
-		$mech->back();
+			$dbh->do($sql);
+			$mech->back();
+		}
 	}
-
 }
 
 END {
