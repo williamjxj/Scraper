@@ -451,7 +451,7 @@ sub insert_baidu
 		content = $h->{'desc'},
 		pubDate = $h->{'pubDate'}
 	};
-	$self->{dbh}->do($sql);
+	$self->{dbh}->do($sql) or next;
 }
 
 sub select_category {

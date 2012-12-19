@@ -34,7 +34,7 @@ our ( $mech, $ly, $log ) = ( undef, undef, undef );
 our ( $dbh, $sth );
 
 # total and default is 10, use '-e 3' to scrape 3 pages.
-my ( $start_from, $end_at, $version, $help ) = ( 1, 10, '1.0' );
+my ( $start_from, $end_at, $version, $help ) = ( 1, 3, '1.0' );
 
 usage()
   unless (
@@ -93,10 +93,9 @@ foreach my $page ( $start_from .. $end_at ) {
 		$mech->follow_link( url => $url );
 		$mech->success or next;
 
-		#$mech->save_content('6park2.html'); exit;
-
 		$detail = $ly->strip_detail( $mech->content );
 		my ( $title, $pubdate, $desc, $source1 ) = $ly->parse_detail($detail);
+		next unless $desc;
 
 # $source1 和$p->[2]应该一样，是从list页面， detail页面抓取的。
 #来自列表页面。

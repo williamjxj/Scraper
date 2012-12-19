@@ -17,7 +17,7 @@ use feature qw(say);
 use constant START_URL => q{http://food.120v.cn/FoodsTypeList.html};
 use constant ROOT_URL => q{http://food.120v.cn/};
 
-use lib qw(./lib/);
+use lib qw(/home/williamjxj/scraper/lib/);
 use config;
 use db;
 use food_120v_cn;

@@ -97,6 +97,9 @@ sub parse_detail {
     }sgix;
 	my ($title, $sd, $desc) = ($1, $2, $3);
 
+	# Use of uninitialized value $desc in substitution (s///) at line 100,101,102,104.
+	return unless $desc;
+
 	$desc =~ s{<font\scolor=E6E6DD>\swww.6park.com</font>}{}g;
 	$desc =~ s{<script.*?</script>}{}g;
 	$desc =~ s{<img.*?src=(.*?)\s.*?>}{<img src=$1 />}g;
