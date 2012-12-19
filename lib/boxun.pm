@@ -75,7 +75,8 @@ sub parse_detail {
 	return unless $desc;
 
 	$desc =~ s{<script.*?</script>}{}sg if $desc=~m/\<script/s;
-	$desc =~ s{src=(.*?)\s}{src=http://boxun.com$1  }sgix  if($desc=~m/\<img/s);
+	$desc =~ s{<iframe.*?</iframe>}{}sg if $desc=~m/\<iframe/s;
+	$desc =~ s{<img\ssrc=(.*?)\s}{<img\ssrc=http://boxun.com$1 }sgix  if($desc=~m/\<img/s);
 	$desc =~ s{href=(.*?)(>|\s)}{href=http://boxun.com$1$2}sgix  if($desc=~m/\<a/s);
 	
 	$sd =~ s/\s.*$//; #remove space & thereafter.
