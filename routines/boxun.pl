@@ -64,6 +64,7 @@ our $h = {
 # http://boxun.com/boxun/page
 our $surl  = SURL;
 our $boxun = [
+	[ 301, '博讯焦点',    'http://boxun.com/boxun/page'],
 	[ 302, '大陆新闻',    'http://boxun.com/news/gb/china/page' ],
 	[ 303, '国际新闻',    'http://www.peacehall.com/news/gb/intl/page' ],
 	[ 304, '体育娱乐',    'http://boxun.com/news/gb/sport_ent/page' ],
@@ -74,8 +75,7 @@ our $boxun = [
 	[ 309, '特别刊载',    'http://boxun.com/news/gb/z_special/page' ],
 	[ 310, '不平则鸣',    'http://boxun.com/news/gb/yuanqing/page' ],
 	[ 311, '社会万象',    'http://boxun.com/news/gb/misc/page' ],
-	[ 312, '大众观点',    'http://boxun.com/news/gb/pubvp/page' ],
-	[ 301, '博讯焦点',    'http://boxun.com/boxun/page' ]
+	[ 312, '大众观点',    'http://boxun.com/news/gb/pubvp/page' ]
 ];
 
 $log = $bx->get_filename(__FILE__);
@@ -96,7 +96,8 @@ foreach my $loop ( @{$boxun} ) {
 		$h->{'author'} = $dbh->quote($page_url);
 
 		$mech->get($page_url);
-		$mech->success or die $mech->response->status_line;
+		#$mech->success or die $mech->response->status_line;
+		$mech->success or next;
 
 		# $mech->save_content('bx1.html'); exit;
 		my $html = $mech->content;
@@ -139,7 +140,7 @@ foreach my $loop ( @{$boxun} ) {
 			$h->{'likes'}   = $bx->generate_random(100);
 			$h->{'guanzhu'} = $bx->generate_random(100);
 
-			my $sql = qq{  insert ignore into contents_3(
+			my $sql = qq{  insert ignore into contents(
 				title,
 				url,
 				author,
