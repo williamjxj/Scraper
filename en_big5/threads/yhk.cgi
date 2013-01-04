@@ -39,8 +39,6 @@ my $t = $yh->strip_result( $mech->content );
 
 my $aoh = $yh->parse_result($t);
 
-my $aoh = parse_result($t);
-
 #my $json = JSON->new->allow_nonref;
 #my $text = $json->encode($aoh);
 
